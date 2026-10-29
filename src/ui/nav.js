@@ -8,6 +8,13 @@ const els = {};
 let menuOpen = false;
 
 /* ---------- menu ---------- */
+/** Menu ouvert : la page derrière devient inerte (ni focus clavier, ni lecteur d'écran). */
+function setPageInert(on) {
+  [$('#main'), $('.footer')].forEach((el) => {
+    if (el) el.inert = on;
+  });
+}
+
 function openMenu() {
   const { menu, menuBtn, panel, nav } = els;
   if (!menu || menuOpen) return;
@@ -21,6 +28,7 @@ function openMenu() {
   root.classList.add('menu-open');
   menuBtn.setAttribute('aria-expanded', 'true');
   nav.classList.remove('is-hidden');
+  setPageInert(true);
   pauseScroll();
   setTimeout(() => {
     const first = $('a', menu);
@@ -35,6 +43,7 @@ function closeMenu(refocus) {
   menu.classList.remove('is-open');
   root.classList.remove('menu-open');
   menuBtn.setAttribute('aria-expanded', 'false');
+  setPageInert(false);
   resumeScroll();
   if (refocus) menuBtn.focus({ preventScroll: true });
 }

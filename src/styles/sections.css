@@ -189,7 +189,7 @@
 .code{margin:0;font-family:var(--f-mono);font-size:.8rem;line-height:1.7;background:var(--nuit-2);border:1px solid var(--trait);border-radius:12px;padding:1rem 1.2rem;overflow-x:auto;color:var(--craie);white-space:pre;tab-size:2}
 .js-stack .stack{height:100vh;height:100svh}
 .js-stack .stack__grid{height:100%;padding-top:calc(var(--nav-h) + 8px);padding-bottom:24px}
-.js-stack .stack .pad{padding:0;height:100%}
+.js-stack .stack .pad{padding-block:0;height:100%}
 .js-stack .layers{position:relative;min-height:27rem}
 .js-stack .layer-info{position:absolute;left:0;right:0;top:0;opacity:0;transform:translateY(26px);transition:opacity .5s var(--ease-out),transform .7s var(--ease-out);pointer-events:none}
 .js-stack .layer-info.is-active{opacity:1;transform:none;pointer-events:auto}

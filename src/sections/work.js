@@ -13,8 +13,35 @@ export function initWork() {
   gsap.matchMedia().add('(min-width: 901px) and (prefers-reduced-motion: no-preference)', () => {
     work.classList.add('is-horizontal');
     const distance = () => Math.max(0, track.scrollWidth - window.innerWidth);
-    const tween = gsap.to(track, { x: () => -distance(), ease: 'none' });
     const cards = $$('.card', track);
+
+    // barre et compteur suivent le mouvement réel de la piste (lissé par scrub),
+    // pas la position du scroll, qui arrive avant elle
+    const sync = (progress) => {
+      if (bar) bar.style.transform = `scaleX(${progress.toFixed(3)})`;
+      if (!counter) return;
+      // la carte la plus proche du centre de l'écran donne le numéro
+      const mid = window.innerWidth / 2;
+      let best = 0;
+      let bestDist = Infinity;
+      cards.forEach((c, i) => {
+        const r = c.getBoundingClientRect();
+        const d = Math.abs(r.left + r.width / 2 - mid);
+        if (d < bestDist) {
+          bestDist = d;
+          best = i;
+        }
+      });
+      const text = `0${best + 1} / 0${cards.length}`;
+      if (counter.textContent !== text) counter.textContent = text;
+    };
+    const tween = gsap.to(track, {
+      x: () => -distance(),
+      ease: 'none',
+      onUpdate() {
+        sync(this.progress());
+      },
+    });
 
     ScrollTrigger.create({
       trigger: work,
@@ -26,25 +53,6 @@ export function initWork() {
       invalidateOnRefresh: true,
       anticipatePin: 1,
       refreshPriority: 2,
-      onUpdate: (self) => {
-        if (bar) bar.style.transform = `scaleX(${self.progress.toFixed(3)})`;
-        if (counter) {
-          // la carte la plus proche du centre de l'écran donne le numéro
-          const mid = window.innerWidth / 2;
-          let best = 0;
-          let bestDist = Infinity;
-          cards.forEach((c, i) => {
-            const r = c.getBoundingClientRect();
-            const d = Math.abs(r.left + r.width / 2 - mid);
-            if (d < bestDist) {
-              bestDist = d;
-              best = i;
-            }
-          });
-          const text = `0${best + 1} / 0${cards.length}`;
-          if (counter.textContent !== text) counter.textContent = text;
-        }
-      },
     });
 
     // léger parallaxe des maquettes dans leur cadre

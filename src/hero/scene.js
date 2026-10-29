@@ -32,13 +32,22 @@ function start() {
   const hero = document.getElementById('accueil');
   if (!canvas || !hero) return signalGlReady(false);
 
+  // three.js exige WebGL 2 : on vérifie avant de créer le renderer, pour un repli sans erreur
+  const attrs = { antialias: true, alpha: false, powerPreference: 'high-performance' };
+  let context = null;
+  try {
+    context = canvas.getContext('webgl2', attrs);
+  } catch (err) {
+    context = null;
+  }
+  if (!context) return signalGlReady(false);
+
   let renderer;
   try {
-    renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: 'high-performance' });
+    renderer = new THREE.WebGLRenderer({ canvas, context, ...attrs });
   } catch (err) {
     return signalGlReady(false);
   }
-  if (!renderer.getContext()) return signalGlReady(false);
 
   // verre réfractif sur ordinateur, métal poli (plus léger) sur mobile
   const small = Math.min(window.innerWidth, window.innerHeight) < 700;

@@ -22,11 +22,18 @@ function initRefresh() {
     ScrollTrigger.refresh();
   };
   let timer;
+  let lastWidth = window.innerWidth;
   window.addEventListener('resize', () => {
     clearTimeout(timer);
     timer = setTimeout(() => {
       measureMarquee();
-      refresh();
+      buildGitGraph();
+      // la barre d'adresse mobile ne change que la hauteur : ScrollTrigger s'en occupe seul,
+      // un rafraîchissement forcé ferait sauter les sections épinglées
+      if (window.innerWidth !== lastWidth) {
+        lastWidth = window.innerWidth;
+        ScrollTrigger.refresh();
+      }
     }, 180);
   });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(refresh);
