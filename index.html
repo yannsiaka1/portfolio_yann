@@ -1,0 +1,580 @@
+<!doctype html>
+<html lang="fr-CA">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Yann Siaka · Développeur full-stack à Montréal</title>
+  <meta name="description" content="Yann Siaka, développeur full-stack à Montréal : interfaces React, API Laravel, bases PostgreSQL.">
+  <meta name="theme-color" content="#0A0A09">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="fr_CA">
+  <meta property="og:title" content="Yann Siaka · Développeur full-stack">
+  <meta property="og:description" content="Du pixel à la donnée : interfaces React, API Laravel et bases PostgreSQL, conçues et codées de bout en bout.">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <script type="module" src="/src/main.js"></script>
+</head>
+<body>
+<a class="skip" href="#apropos">Aller au contenu</a>
+<div class="grain" aria-hidden="true"></div>
+
+<!-- ============ LOADER ============ -->
+<div class="loader" id="loader" aria-hidden="true">
+  <div class="loader__belts"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="loader__frame">
+    <span class="loader__corner loader__corner--tl"></span><span class="loader__corner loader__corner--tr"></span>
+    <span class="loader__corner loader__corner--bl"></span><span class="loader__corner loader__corner--br"></span>
+    <div class="loader__log">
+      <p>$ npm run build:portfolio</p>
+      <p><span>› compilation des interfaces</span><b>ok</b></p>
+      <p><span>› démarrage de l'API</span><b>ok</b></p>
+      <p><span>› 28 migrations appliquées</span><b>ok</b></p>
+      <p><span>› scène 3D prête</span><b>ok</b></p>
+    </div>
+    <div class="loader__count">
+      <div class="loader__num" aria-hidden="true">
+        <span class="reel"><span class="reel__strip"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span>
+        <span class="reel"><span class="reel__strip"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span>
+        <span class="reel"><span class="reel__strip"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span>
+      </div>
+      <p class="loader__tag">Yann Siaka<br>Développeur full-stack</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============ CURSOR ============ -->
+<div class="cursor" id="cursor" aria-hidden="true">
+  <div class="cursor__dot"></div>
+  <div class="cursor__ring">
+    <span class="cursor__disc"></span>
+    <svg viewBox="0 0 40 40"><circle class="cursor__track" cx="20" cy="20" r="18"/><circle class="cursor__prog" cx="20" cy="20" r="18"/></svg>
+    <span class="cursor__label"></span>
+  </div>
+</div>
+
+<!-- ============ NAV ============ -->
+<header class="nav" id="nav">
+  <div class="nav__inner" data-vibrate>
+    <a class="prompt" href="#accueil" aria-label="Yann Siaka, retour en haut de page">
+      <span class="prompt__user">yann</span><span class="prompt__at">@</span><span class="prompt__host">siaka</span><span class="prompt__colon">:</span><span class="prompt__path" id="navPath">~</span><span class="prompt__dollar">$</span><span class="prompt__caret"></span>
+    </a>
+    <nav class="nav__links" aria-label="Sections">
+      <a href="#projets" data-scramble>Projets</a>
+      <a href="#expertise" data-scramble>Expertise</a>
+      <a href="#methode" data-scramble>Méthode</a>
+      <a href="#parcours" data-scramble>Parcours</a>
+      <a href="#contact" data-scramble>Contact</a>
+    </nav>
+    <div class="nav__actions">
+      <button class="sound" id="soundBtn" type="button" aria-pressed="false" aria-label="Activer le son">
+        <span class="sound__bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="sound__label">Son off</span>
+      </button>
+      <a class="btn btn--pill nav__pill magnetic" href="#contact"><span class="roll"><span data-text="Parlons-en">Parlons-en</span></span></a>
+      <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="menu">
+        <span class="menu-btn__label">Menu</span><span class="menu-btn__icon" aria-hidden="true"><i></i><i></i></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ============ MENU ============ -->
+<div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Menu">
+  <div class="menu__scrim" data-close></div>
+  <div class="menu__panel" data-lenis-prevent>
+    <ul class="menu__links">
+      <li><a href="#accueil"><span class="mono">01</span>Accueil</a></li>
+      <li><a href="#apropos"><span class="mono">02</span>À propos</a></li>
+      <li><a href="#projets"><span class="mono">03</span>Projets</a></li>
+      <li><a href="#expertise"><span class="mono">04</span>Expertise</a></li>
+      <li><a href="#methode"><span class="mono">05</span>Méthode</a></li>
+      <li><a href="#parcours"><span class="mono">06</span>Parcours</a></li>
+      <li><a href="#contact"><span class="mono">07</span>Contact</a></li>
+    </ul>
+    <div class="menu__foot">
+      <p class="mono status">Ouvert aux opportunités · Montréal et à distance</p>
+      <div class="menu__row mono">
+        <span>Montréal <b class="dim" data-clock="mtl">--:--:--</b></span>
+        <span>Douala <b class="dim" data-clock="dla">--:--:--</b></span>
+      </div>
+      <div class="menu__row mono">
+        <a href="https://github.com/" target="_blank" rel="noopener">GitHub ↗</a>
+        <a href="https://www.linkedin.com/" target="_blank" rel="noopener">LinkedIn ↗</a>
+        <a href="#contact">bonjour@yannsiaka.dev</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<canvas id="gl" aria-hidden="true"></canvas>
+<span class="trace-tag" id="traceTag" aria-hidden="true">⚡ survolez une piste</span>
+
+<main id="main">
+
+  <!-- ============ HERO ============ -->
+  <section class="hero" id="accueil" data-path="~">
+    <div class="hero__meta wrap mono" data-vibrate>
+      <p data-intro>Portfolio <span class="dim">· édition 2026</span></p>
+      <p data-intro class="hide-sm">Montréal, QC <span class="dim">45.50° N · 73.57° O</span></p>
+      <p data-intro class="status">Ouvert aux opportunités</p>
+    </div>
+    <div class="hero__fallback" aria-hidden="true">&lt;/&gt;</div>
+    <div class="hero__main wrap">
+      <h1 class="hero__title" id="heroTitle" data-vibrate><span class="line">Du <em>pixel</em></span><span class="line">à la donnée.</span></h1>
+      <div class="hero__side">
+        <p class="hero__lede" data-intro>Développeur full-stack basé à Montréal. Je conçois et je code des produits web de bout en bout, de l'interface React à la base PostgreSQL, pour des marchés bien réels au Cameroun et au Québec.</p>
+        <div class="hero__ctas" data-intro>
+          <a class="btn btn--solid magnetic" href="#projets"><span class="roll"><span data-text="Voir les projets">Voir les projets</span></span><span class="btn__arrow" aria-hidden="true">↘</span></a>
+          <a class="btn btn--ghost magnetic" href="#contact"><span class="roll"><span data-text="Me contacter">Me contacter</span></span></a>
+        </div>
+      </div>
+    </div>
+    <div class="hero__bar wrap mono" data-vibrate>
+      <p class="hint" id="holdHint" data-intro data-state="idle"><span class="hint__meter" aria-hidden="true"><i></i></span><span class="hint__text">Maintenez le symbole appuyé pour <b>casser la prod</b></span></p>
+      <p class="fig" data-intro aria-live="polite"><span id="figN">fig. 01/07</span><span class="fig__sym" id="figSym">&lt;/&gt;</span><span class="fig__name" id="figName">interfaces</span><span class="fig__bar" aria-hidden="true"><i id="figBar"></i></span></p>
+      <p class="scroll-cue" data-intro>Défiler <span class="scroll-cue__line" aria-hidden="true"></span></p>
+    </div>
+  </section>
+
+  <!-- ============ ABOUT ============ -->
+  <section class="panel about pad wrap" id="apropos" data-path="~/a-propos">
+    <p class="eyebrow mono">À propos</p>
+    <p class="statement" id="statement">Je m'appelle Yann. Diplômé en génie logiciel, je construis des produits web complets, de l'écran qu'on touche jusqu'à la base de données qui se souvient. Je numérise des services du quotidien, du <em>transport interurbain au Cameroun</em> aux <em>commerces de Montréal</em>.</p>
+    <div class="about__grid">
+      <div data-reveal="up">
+        <h3 class="mono">Ce qui me guide</h3>
+        <p>Modéliser les données avant la première ligne d'interface. Livrer des écrans rapides, même sur un téléphone modeste et une connexion instable.</p>
+      </div>
+      <div data-reveal="up">
+        <h3 class="mono">En ce moment</h3>
+        <p>Je construis EasyMoov, une plateforme de réservation de bus pour le Cameroun, et je prépare la certification AWS Cloud Practitioner.</p>
+      </div>
+      <a class="link-arrow" href="#parcours" data-reveal="up">Lire le parcours <span aria-hidden="true">↘</span></a>
+    </div>
+  </section>
+
+  <!-- ============ MARQUEE ============ -->
+  <div class="panel marquee" aria-label="Verbes et outils : concevoir, modéliser, coder, livrer. Laravel, PHP, React, TypeScript, PostgreSQL, Redis, Tailwind, Vite, Figma, AWS.">
+    <div class="marquee__row" data-speed="70" data-dir="-1" aria-hidden="true">
+      <div class="marquee__set">
+        <span class="mq-big">Concevoir<span class="sep">&lt;/&gt;</span></span>
+        <span class="mq-big"><span class="o">Modéliser</span><span class="sep">{ }</span></span>
+        <span class="mq-big">Coder<span class="sep">&gt;_</span></span>
+        <span class="mq-big"><span class="o">Livrer</span><span class="sep">//</span></span>
+      </div>
+    </div>
+    <div class="marquee__row" data-speed="45" data-dir="1" aria-hidden="true">
+      <div class="marquee__set">
+        <span class="mq-small">Laravel <i>·</i></span><span class="mq-small">PHP <i>·</i></span><span class="mq-small">React <i>·</i></span><span class="mq-small">TypeScript <i>·</i></span><span class="mq-small">PostgreSQL <i>·</i></span><span class="mq-small">Redis <i>·</i></span><span class="mq-small">Tailwind <i>·</i></span><span class="mq-small">Vite <i>·</i></span><span class="mq-small">Figma <i>·</i></span><span class="mq-small">AWS <i>·</i></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ FACTS ============ -->
+  <section class="panel pad wrap" id="reperes" data-path="~/reperes">
+    <div class="facts__head">
+      <div>
+        <p class="eyebrow mono">Repères</p>
+        <h2 class="h2" data-reveal="words">Le travail, <em>en chiffres.</em></h2>
+      </div>
+      <p data-reveal="up">Des chiffres tirés des projets eux-mêmes, pas d'une estimation.</p>
+    </div>
+    <div class="facts__grid">
+      <article class="fact fact--wide" data-reveal="up">
+        <div class="fact__top mono"><span>EasyMoov · schéma</span><span>PostgreSQL</span></div>
+        <svg class="fact__erd" viewBox="0 0 300 200" aria-hidden="true">
+          <line x1="70" y1="40" x2="150" y2="70"/><line x1="150" y1="70" x2="230" y2="40"/><line x1="150" y1="110" x2="150" y2="150" class="hot"/><line x1="70" y1="150" x2="150" y2="150"/><line x1="230" y1="150" x2="150" y2="150" class="hot"/>
+          <rect x="22" y="22" width="96" height="36" rx="5"/><text x="30" y="44">routes</text>
+          <rect x="102" y="62" width="96" height="48" rx="5"/><text x="110" y="82">trips</text><text x="110" y="98">departs_at</text>
+          <rect x="182" y="22" width="96" height="36" rx="5"/><text x="190" y="44">travel_classes</text>
+          <rect x="102" y="132" width="96" height="36" rx="5" class="hot"/><text x="110" y="154">bookings</text>
+          <rect x="22" y="132" width="70" height="36" rx="5"/><text x="30" y="154">users</text>
+          <rect x="208" y="132" width="80" height="36" rx="5"/><text x="216" y="154">seats</text>
+        </svg>
+        <div class="fact__num"><span class="odo" data-odo>28</span></div>
+        <p class="fact__txt">tables PostgreSQL modélisées pour EasyMoov, avec chaque contrainte métier documentée.</p>
+      </article>
+      <article class="fact fact--mid" data-reveal="up">
+        <div class="fact__top mono"><span>Performance</span><span>DBML</span></div>
+        <div class="fact__num"><span class="odo" data-odo>55</span><sup>+</sup></div>
+        <p class="fact__txt">index posés dès la conception pour garder des requêtes rapides quand les données grossissent.</p>
+      </article>
+      <article class="fact" data-reveal="up">
+        <div class="fact__top mono"><span>Livraison</span><span>A → Z</span></div>
+        <div class="fact__num"><span class="odo" data-odo>3</span></div>
+        <p class="fact__txt">produits conçus et codés de bout en bout : EasyMoov, Precious et Glorious Hall.</p>
+      </article>
+      <article class="fact" data-reveal="up">
+        <div class="fact__top mono"><span>Marchés</span><span>CM ⇄ QC</span></div>
+        <div class="fact__num"><span class="odo" data-odo>2</span></div>
+        <div class="clocks">
+          <div><span>Montréal <span class="dim" data-tz="mtl"></span></span><b data-clock="mtl">--:--:--</b></div>
+          <div><span>Douala <span class="dim" data-tz="dla"></span></span><b data-clock="dla">--:--:--</b></div>
+        </div>
+      </article>
+      <article class="fact" data-reveal="up">
+        <div class="fact__top mono"><span>Cloud</span><span>Parcours AWS</span></div>
+        <ul class="track">
+          <li class="is-now"><span>Cloud Practitioner</span><em>en préparation</em></li>
+          <li><span>Solutions Architect</span><em>ensuite</em></li>
+          <li><span>Data Engineer</span><em>objectif</em></li>
+        </ul>
+        <p class="fact__txt">Trois certifications, avec EasyMoov comme terrain d'exercice.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ WORK ============ -->
+  <section class="panel work" id="projets" data-path="~/projets">
+    <div class="work__pin">
+      <div class="work__track">
+        <div class="work__intro wrap">
+          <div>
+            <p class="eyebrow mono">Projets choisis</p>
+            <h2 class="h2" data-reveal="words">Du schéma <em>au déploiement.</em><span class="work__count">(04)</span></h2>
+          </div>
+          <p>Un produit en construction, deux sites clients et ce portfolio, qui sert de laboratoire.</p>
+        </div>
+
+        <article class="card" data-cursor="Défilez">
+          <div class="card__visual">
+            <div class="mock v-em" data-par>
+              <svg class="erd" viewBox="0 0 260 180" aria-hidden="true"><rect x="8" y="10" width="70" height="34" rx="4"/><rect x="96" y="40" width="70" height="44" rx="4" class="hot"/><rect x="182" y="10" width="70" height="34" rx="4"/><rect x="40" y="120" width="70" height="34" rx="4"/><rect x="150" y="120" width="70" height="34" rx="4"/><line x1="78" y1="27" x2="96" y2="56"/><line x1="166" y1="56" x2="182" y2="27"/><line x1="131" y1="84" x2="75" y2="120" class="hot"/><line x1="131" y1="84" x2="185" y2="120"/></svg>
+              <div class="phone">
+                <div class="em">
+                  <div class="em__top"><span>easy<b>moov</b></span><span class="em__avatar"></span></div>
+                  <p class="em__hello">Où allez-vous ?</p>
+                  <div class="em__card">
+                    <div class="em__field"><span>Départ</span><b>Douala</b></div>
+                    <div class="em__field"><span>Arrivée</span><b>Yaoundé</b></div>
+                    <div class="em__row"><div class="em__field"><span>Date</span><b>Demain</b></div><div class="em__field"><span>Places</span><b>2</b></div></div>
+                    <div class="em__classes"><span class="on">Classique</span><span>VIP</span></div>
+                    <div class="em__cta">Rechercher</div>
+                  </div>
+                  <div class="em__trip"><div><b>07:30</b><span>Douala</span></div><i></i><div><b>11:30</b><span>Yaoundé</span></div></div>
+                  <div class="em__amen"><span>Wi-Fi</span><span>Clim</span><span>Prises</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card__body">
+            <div class="card__meta mono"><span>Produit</span><span class="on">en construction</span></div>
+            <h3 class="card__title">EasyMoov</h3>
+            <p class="card__desc">Réservation de bus interurbains au Cameroun, avec taxis et programme de fidélité.</p>
+            <ul class="card__facts">
+              <li>Schéma PostgreSQL de 28 tables et 55+ index</li>
+              <li>28 migrations Laravel ordonnées, générées depuis le schéma</li>
+              <li>Classes de voyage et équipements relationnels</li>
+              <li>Écrans mobile-first, mode clair et sombre</li>
+            </ul>
+            <ul class="tags"><li>Laravel</li><li>React</li><li>PostgreSQL</li><li>Redis</li></ul>
+          </div>
+        </article>
+
+        <article class="card" data-cursor="Défilez">
+          <div class="card__visual">
+            <div class="mock v-pr" data-par>
+              <div class="browser">
+                <div class="browser__bar"><i></i><i></i><i></i><span class="browser__url">precious-jus.com</span></div>
+                <div class="pr">
+                  <div class="pr__nav"><b>Precious</b><span>Jus</span><span>Donuts</span><span>Cocktails</span><span>Formations</span></div>
+                  <div class="pr__hero">
+                    <div><span class="pr__kick">100 % bio</span><h4>Des jus pressés à partir de matières naturelles</h4><span class="pr__btn">Commander</span></div>
+                    <div class="pr__bottles"><i class="b1"></i><i class="b2"></i><i class="b3"></i></div>
+                  </div>
+                  <div class="pr__tiles"><span>Jus</span><span>Donuts</span><span>Cocktails</span><span>Formations</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card__body">
+            <div class="card__meta mono"><span>Client</span><span class="on">en production</span></div>
+            <h3 class="card__title">Precious</h3>
+            <p class="card__desc">Site vitrine d'une marque montréalaise de jus 100 % bio, de donuts artisanaux, de cocktails événementiels et de formations.</p>
+            <ul class="card__facts">
+              <li>Maquettes Figma, puis refonte en composants</li>
+              <li>Formulaires envoyés côté serveur, domaine authentifié</li>
+              <li>Indexé par Google, Search Console et DMARC en place</li>
+              <li>Deux produits vendus via Payhip</li>
+            </ul>
+            <ul class="tags"><li>Vite</li><li>React</li><li>Tailwind</li><li>Prérendu</li></ul>
+            <a class="link-arrow card__link" href="https://precious-jus.com" target="_blank" rel="noopener">precious-jus.com <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+
+        <article class="card" data-cursor="Défilez">
+          <div class="card__visual">
+            <div class="mock v-gh" data-par>
+              <div class="browser">
+                <div class="browser__bar"><i></i><i></i><i></i><span class="browser__url">Glorious Hall</span></div>
+                <div class="gh">
+                  <div class="gh__nav"><b>Glorious Hall</b><span>La salle</span><span>Événements</span><span>Contact</span></div>
+                  <div class="gh__hero"><span class="gh__kick">Bonamoussadi · Douala</span><h4>Une salle pour vos plus beaux événements</h4><span class="gh__btn">Demander une date</span></div>
+                  <div class="gh__arches"><i></i><i></i><i></i><i></i></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card__body">
+            <div class="card__meta mono"><span>Client</span><span class="on">site vitrine</span></div>
+            <h3 class="card__title">Glorious Hall</h3>
+            <p class="card__desc">Site d'une salle événementielle à Bonamoussadi, Douala, codé à partir de ma propre maquette.</p>
+            <ul class="card__facts">
+              <li>Composants React typés en TypeScript</li>
+              <li>Animations au défilement</li>
+              <li>Prochaine étape : fiche Google et référencement local</li>
+            </ul>
+            <ul class="tags"><li>React</li><li>TypeScript</li><li>Tailwind</li></ul>
+          </div>
+        </article>
+
+        <article class="card" data-cursor="Défilez">
+          <div class="card__visual">
+            <div class="mock v-lab" data-par>
+              <div class="editor">
+                <div class="editor__tabs"><span class="on">hero.js</span><span>formations.js</span></div>
+<pre><span class="c">// chaque symbole = les mêmes panneaux de verre</span>
+<span class="k">const</span> formations = [
+  { sym: <span class="s">'&lt;/&gt;'</span>, nom: <span class="s">'interfaces'</span> },
+  { sym: <span class="s">'{ }'</span>,  nom: <span class="s">'logique métier'</span> },
+  { sym: <span class="s">'&gt;_'</span>,  nom: <span class="s">'outillage'</span> },
+  { sym: <span class="s">'GET /'</span>, nom: <span class="s">'API REST'</span> },
+];
+
+<span class="k">function</span> <span class="f">explose</span>(p, force) {
+  p.position.<span class="f">addScaledVector</span>(p.dir, force * <span class="n">5.2</span>);
+}</pre>
+              </div>
+            </div>
+          </div>
+          <div class="card__body">
+            <div class="card__meta mono"><span>Labo</span><span class="on">ce site</span></div>
+            <h3 class="card__title">Ce portfolio</h3>
+            <p class="card__desc">Un terrain d'essai pour le motion design : des symboles de code en verre qui se recomposent, explosent au clic long et s'électrisent au survol.</p>
+            <ul class="card__facts">
+              <li>Scène Three.js sans modèle importé, tout est généré</li>
+              <li>Animations GSAP synchronisées au défilement Lenis</li>
+              <li>Sons synthétisés en direct avec Web Audio</li>
+            </ul>
+            <ul class="tags"><li>Three.js</li><li>GSAP</li><li>Lenis</li><li>Web Audio</li></ul>
+          </div>
+        </article>
+        <div class="work__end" aria-hidden="true"></div>
+      </div>
+      <div class="work__progress wrap mono" aria-hidden="true"><span>Défilez</span><span class="bar"><i id="workBar"></i></span><span id="workIdx">01 / 04</span></div>
+    </div>
+  </section>
+
+  <!-- ============ EXPERTISE ============ -->
+  <section class="panel stack" id="expertise" data-path="~/expertise">
+    <div class="pad wrap">
+      <div class="stack__grid">
+        <div>
+          <p class="eyebrow mono">Expertise</p>
+          <h2 class="h2" data-reveal="words">Toute la pile, <em>couche par couche.</em></h2>
+          <div class="iso" aria-hidden="true">
+            <div class="iso__scene" id="isoScene">
+              <div class="iso__layer" style="--z:0" data-layer="3"><span class="iso__label">04 · cloud</span><span class="iso__dots"><i></i></span></div>
+              <div class="iso__layer" style="--z:1" data-layer="2"><span class="iso__label">03 · données</span><span class="iso__dots"><i></i><i></i></span></div>
+              <div class="iso__layer" style="--z:2" data-layer="1"><span class="iso__label">02 · api</span><span class="iso__dots"><i></i><i></i><i></i></span></div>
+              <div class="iso__layer is-active" style="--z:3" data-layer="0"><span class="iso__label">01 · interface</span><span class="iso__dots"><i></i><i></i><i></i><i></i></span></div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="layers">
+            <div class="layer-info is-active" data-info="0">
+              <p class="layer-info__k mono">01 · Interface</p>
+              <h3>Ce que l'on touche <span>· front-end</span></h3>
+              <p>Composants React typés, design system clair et sombre, animations sobres. Je teste chaque écran sur un téléphone d'entrée de gamme avant de le valider.</p>
+              <ul class="tags"><li>React</li><li>TypeScript</li><li>Tailwind</li><li>GSAP</li><li>Figma</li></ul>
+<pre class="code"><span class="k">export function</span> <span class="f">TripCard</span>({ trip }) {
+  <span class="k">return</span> (
+    &lt;<span class="k">article</span> className=<span class="s">"trip"</span>&gt;
+      &lt;<span class="k">h3</span>&gt;{trip.from} → {trip.to}&lt;/<span class="k">h3</span>&gt;
+      &lt;<span class="f">SeatsLeft</span> count={trip.seats} /&gt;
+    &lt;/<span class="k">article</span>&gt;
+  );
+}</pre>
+            </div>
+            <div class="layer-info" data-info="1">
+              <p class="layer-info__k mono">02 · API</p>
+              <h3>Ce qui répond <span>· back-end</span></h3>
+              <p>Contrôleurs Laravel minces, validation stricte, réponses JSON prévisibles. Les règles métier vivent côté serveur, jamais dans l'interface.</p>
+              <ul class="tags"><li>Laravel</li><li>PHP</li><li>REST</li><li>JSON</li></ul>
+<pre class="code"><span class="k">public function</span> <span class="f">store</span>(StoreBookingRequest $request)
+{
+    $booking = Booking::<span class="f">create</span>($request-&gt;<span class="f">validated</span>());
+
+    <span class="k">return new</span> <span class="f">BookingResource</span>($booking);
+}</pre>
+            </div>
+            <div class="layer-info" data-info="2">
+              <p class="layer-info__k mono">03 · Données</p>
+              <h3>Ce qui se souvient <span>· base de données</span></h3>
+              <p>Je modélise avant de coder : schéma DBML, contraintes, index et migrations ordonnées. EasyMoov compte 28 tables documentées.</p>
+              <ul class="tags"><li>PostgreSQL</li><li>Redis</li><li>DBML</li><li>Migrations</li></ul>
+<pre class="code"><span class="k">Table</span> trips {
+  id bigint [pk]
+  route_id bigint [ref: &gt; routes.id]
+  travel_class_id int [ref: &gt; travel_classes.id]
+  departs_at timestamptz [<span class="k">not null</span>]
+
+  <span class="k">indexes</span> { (route_id, departs_at) }
+}</pre>
+            </div>
+            <div class="layer-info" data-info="3">
+              <p class="layer-info__k mono">04 · Cloud</p>
+              <h3>Ce qui tient en ligne <span>· déploiement</span></h3>
+              <p>Mise en ligne, nom de domaine, courriel authentifié et indexation. Je prépare les certifications AWS pour aller plus loin côté infrastructure et données.</p>
+              <ul class="tags"><li>AWS</li><li>DNS</li><li>SPF · DKIM · DMARC</li><li>Search Console</li></ul>
+<pre class="code"><span class="k">const</span> parcoursAws = [
+  { cert: <span class="s">"Cloud Practitioner"</span>,  statut: <span class="s">"en préparation"</span> },
+  { cert: <span class="s">"Solutions Architect"</span>, statut: <span class="s">"ensuite"</span> },
+  { cert: <span class="s">"Data Engineer"</span>,       statut: <span class="s">"objectif"</span> },
+];</pre>
+            </div>
+          </div>
+          <div class="stack__steps" aria-hidden="true"><i class="is-on"></i><i></i><i></i><i></i></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ METHOD ============ -->
+  <section class="panel pad wrap" id="methode" data-path="~/methode">
+    <p class="eyebrow mono">Méthode</p>
+    <h2 class="h2" data-reveal="words">De l'idée <em>au déploiement.</em></h2>
+    <p class="cmd"><b>$</b> git log --oneline --graph --reverse</p>
+    <div class="gitlog" id="gitlog">
+      <svg class="gitlog__svg" id="gitSvg" aria-hidden="true"><path class="base" id="gitBaseMain"/><path class="base" id="gitBaseBranch"/><path class="prog" id="gitProgMain" pathLength="1"/><path class="prog" id="gitProgBranch" pathLength="1"/></svg>
+      <ol class="gitlog__list">
+      <li class="commit">
+        <span class="commit__dot" aria-hidden="true"></span>
+        <div class="commit__head"><p class="commit__line"><span class="commit__hash">9a0c3e8</span><span class="commit__type">feat(terrain)</span></p><h3>Comprendre le besoin</h3></div>
+        <p>Qui utilise le service, sur quel appareil, avec quelle connexion. Je pars des contraintes réelles avant d'ouvrir l'éditeur.</p>
+      </li>
+      <li class="commit">
+        <span class="commit__dot" aria-hidden="true"></span>
+        <div class="commit__head"><p class="commit__line"><span class="commit__hash">2f6b5d1</span><span class="commit__type">feat(données)</span></p><h3>Modéliser d'abord</h3></div>
+        <p>Schéma, contraintes et index avant la première ligne d'interface. Une base claire évite des mois de correctifs.</p>
+      </li>
+      <li class="commit commit--branch">
+        <span class="commit__dot" aria-hidden="true"></span>
+        <div class="commit__head"><p class="commit__line"><span class="commit__hash">e91a7c2</span><span class="commit__type">feat(produit)</span><span class="ref">feature/produit</span></p><h3>Construire écran par écran</h3></div>
+        <p>L'API et les composants avancent ensemble sur une branche dédiée, testés sur mobile à chaque étape.</p>
+      </li>
+      <li class="commit">
+        <span class="commit__dot" aria-hidden="true"></span>
+        <div class="commit__head"><p class="commit__line"><span class="commit__hash">4b8d0f3</span><span class="commit__type">merge</span></p><h3>Livrer proprement</h3></div>
+        <p>Mise en ligne, formulaires fiables, courriel authentifié et indexation par Google.</p>
+      </li>
+      <li class="commit">
+        <span class="commit__dot" aria-hidden="true"></span>
+        <div class="commit__head"><p class="commit__line"><span class="commit__hash">7c1e2a9</span><span class="commit__type">refactor</span><span class="ref">HEAD → main</span></p><h3>Mesurer, puis améliorer</h3></div>
+        <p>Les retours des vrais utilisateurs décident de la prochaine itération.</p>
+      </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============ CHANGELOG ============ -->
+  <section class="panel pad wrap" id="parcours" data-path="~/parcours">
+    <p class="eyebrow mono">Parcours</p>
+    <h2 class="h2" data-reveal="words">Mon parcours, <em>versionné.</em></h2>
+    <div class="doc">
+      <div class="doc__bar mono"><span>CHANGELOG.md</span><span>6 versions</span></div>
+      <div class="release release--next" data-reveal="up">
+        <p class="release__v">[Non publié]<span>Prévu</span></p>
+        <div><h3>IA appliquée et ingénierie des données</h3><p>Retour aux études prévu à Montréal pour me spécialiser dans les données et l'IA appliquée.</p></div>
+      </div>
+      <div class="release" data-reveal="up">
+        <p class="release__v">[2.3.0-beta]<span>En cours</span></p>
+        <div><h3>Parcours AWS</h3><p>Cloud Practitioner en préparation, puis Solutions Architect et Data Engineer.</p></div>
+      </div>
+      <div class="release" data-reveal="up">
+        <p class="release__v">[2.2.0]<span>Ajouté</span></p>
+        <div><h3>Projets clients</h3><p>Precious, en production sur son propre domaine, et Glorious Hall, salle événementielle à Douala.</p></div>
+      </div>
+      <div class="release" data-reveal="up">
+        <p class="release__v">[2.1.0]<span>Ajouté</span></p>
+        <div><h3>EasyMoov</h3><p>Première brique de la vision EasyGroup : numériser le transport et la logistique au Cameroun.</p></div>
+      </div>
+      <div class="release" data-reveal="up">
+        <p class="release__v">[2.0.0]<span>Changement majeur</span></p>
+        <div><h3>Montréal</h3><p>Installation au Québec. Nouveau marché, même exigence.</p></div>
+      </div>
+      <div class="release" data-reveal="up">
+        <p class="release__v">[1.0.0]<span>Version initiale</span></p>
+        <div><h3>Génie logiciel</h3><p>Diplôme en génie logiciel : conception, programmation et gestion de projets logiciels.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CONTACT ============ -->
+  <section class="panel contact pad wrap" id="contact" data-path="~/contact">
+    <p class="eyebrow mono">Contact</p>
+    <h2 class="contact__title" data-reveal="words">Construisons <em>la suite.</em></h2>
+    <p class="contact__intro">Un projet, un poste, une idée à tester ? Décrivez votre besoin en quelques lignes.</p>
+    <div class="contact__grid">
+      <form class="form" id="contactForm" novalidate>
+        <div class="field" id="fieldName">
+          <label for="f-nom">Nom</label>
+          <input id="f-nom" name="nom" type="text" autocomplete="name" placeholder="Awa Ndongo" required>
+          <span class="field__err" id="err-nom"></span>
+        </div>
+        <div class="field" id="fieldMail">
+          <label for="f-courriel">Courriel</label>
+          <input id="f-courriel" name="courriel" type="email" autocomplete="email" placeholder="awa@exemple.com" required>
+          <span class="field__err" id="err-courriel"></span>
+        </div>
+        <fieldset class="field field--chips">
+          <legend>Besoin</legend>
+          <div class="chips">
+            <label class="chip"><input type="radio" name="besoin" id="b-vitrine" value="Site vitrine" checked><span>Site vitrine</span></label>
+            <label class="chip"><input type="radio" name="besoin" id="b-app" value="Application web"><span>Application web</span></label>
+            <label class="chip"><input type="radio" name="besoin" id="b-api" value="API / back-end"><span>API / back-end</span></label>
+            <label class="chip"><input type="radio" name="besoin" id="b-poste" value="Poste ou stage"><span>Poste ou stage</span></label>
+            <label class="chip"><input type="radio" name="besoin" id="b-autre" value="Autre"><span>Autre</span></label>
+          </div>
+        </fieldset>
+        <div class="field" id="fieldMsg">
+          <label for="f-message">Message</label>
+          <textarea id="f-message" name="message" rows="4" placeholder="Quelques lignes sur votre projet…" required></textarea>
+          <span class="field__err" id="err-message"></span>
+        </div>
+        <div class="form__foot">
+          <span class="form__count" id="msgCount">0 / 20 caractères minimum</span>
+          <button class="btn btn--solid magnetic" type="submit"><span class="roll"><span data-text="Envoyer la requête">Envoyer la requête</span></span><span class="btn__arrow" aria-hidden="true">↗</span></button>
+        </div>
+      </form>
+      <div class="req" aria-live="polite">
+        <div class="req__head"><span><b>POST</b> /api/contact</span><span>application/json</span></div>
+        <pre class="req__body" id="reqBody"></pre>
+        <div class="req__res" id="reqRes">// En attente de la requête</div>
+      </div>
+    </div>
+    <div class="direct">
+      <span class="mono dim">Plutôt par courriel ?</span>
+      <span class="direct__mail" id="mailAddr">bonjour@yannsiaka.dev</span>
+      <button class="copy" type="button" data-copy="bonjour@yannsiaka.dev" data-target="mailAddr">Copier</button>
+    </div>
+  </section>
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer wrap" data-path="~/contact">
+  <p class="wordmark" id="wordmark" aria-label="Yann Siaka"><span class="word">Yann</span><span class="word">Siaka</span></p>
+  <div class="footer__row mono">
+    <div>Montréal · <span data-tz="mtl"></span><b data-clock="mtl">--:--:--</b></div>
+    <div>Douala · <span data-tz="dla"></span><b data-clock="dla">--:--:--</b></div>
+    <div class="footer__links">
+      <a href="https://github.com/" target="_blank" rel="noopener">GitHub ↗</a>
+      <a href="https://www.linkedin.com/" target="_blank" rel="noopener">LinkedIn ↗</a>
+      <a href="#contact">Courriel</a>
+    </div>
+    <button class="link-arrow footer__top" type="button" id="toTop">Haut de page <span aria-hidden="true">↑</span></button>
+  </div>
+  <div class="footer__fine"><span>© 2026 Yann Siaka</span><span>Codé à la main avec Three.js, GSAP et Lenis.</span></div>
+</footer>
+</body>
+</html>
