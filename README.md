@@ -83,6 +83,18 @@ Les mêmes panneaux de verre se recomposent en sept symboles, environ toutes les
 | Contact | la requête JSON s'écrit pendant la saisie, validation côté client | `sections/contact.js` |
 | Pied de page | signature à graisse variable, une note par lettre | `sections/footer.js` |
 
+## Projets présentés
+
+Les cartes de la section Projets sont dans `index.html` ; leurs maquettes sont dessinées en CSS (`src/styles/sections.css`, classes `v-em`, `v-pr`, `v-gh`, `v-et`, `v-erp`).
+
+| Projet | Nature | Lien |
+| --- | --- | --- |
+| Easy Life | produit en construction | pas encore en ligne |
+| Precious | site client | [precious-jus.com](https://precious-jus.com/) |
+| Glorious Hall | site client | [glorioushall.com](https://www.glorioushall.com/) |
+| EasyTravel | projet académique | [site](https://easytravel-front-wine.vercel.app/) · [front](https://github.com/yannsiaka1/easytravel-front) · [API](https://github.com/yannsiaka1/easytravel-back) |
+| ERP de l'IUT de Douala | projet tutoré | [front](https://github.com/yannsiaka1/projet-tutore-front) · [API](https://github.com/yannsiaka1/projet-tutore-back) |
+
 ## Accessibilité et performance
 
 - **Mouvement réduit** (réglage système) : pas de préchargement, pas de défilement doux ni d'épinglage, contenu visible immédiatement.
@@ -95,7 +107,8 @@ Les mêmes panneaux de verre se recomposent en sept symboles, environ toutes les
 ## À remplacer avant la mise en ligne
 
 - **Courriel** `bonjour@yannsiaka.dev` (section Contact, menu) : adresse provisoire.
-- **Liens GitHub et LinkedIn** (menu et pied de page) : pointent vers les pages d'accueil.
+- **Lien LinkedIn** (menu et pied de page) : pointe vers la page d'accueil de LinkedIn.
+- **Démo de l'ERP de l'IUT** : le projet Vercel n'a pas encore de déploiement de production ; la carte renvoie au code sur GitHub en attendant.
 - **Formulaire de contact** : aucun envoi réel pour l'instant (`src/sections/contact.js`), à brancher sur un endpoint (Laravel, Formspree…).
 - **Versions du changelog** (section Parcours) : à ajuster à ton vrai parcours.
 - **Image de partage** (`og:image`) : à créer, pour un bel aperçu sur LinkedIn.
