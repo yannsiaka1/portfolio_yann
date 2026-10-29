@@ -85,7 +85,12 @@ Les mêmes panneaux de verre se recomposent en sept symboles, environ toutes les
 
 ## Projets présentés
 
-Les cartes de la section Projets sont dans `index.html` ; leurs maquettes sont dessinées en CSS (`src/styles/sections.css`, classes `v-em`, `v-pr`, `v-gh`, `v-et`, `v-erp`).
+Les cartes de la section Projets sont dans `index.html`.
+
+- **Projets en ligne** (Precious, Glorious Hall, EasyTravel) : vraies captures dans `src/assets/projects/`, sur ordinateur (1440 × 900) dans un cadre de navigateur et sur mobile (390 × 844) dans un téléphone.
+- **Projets pas encore en ligne** (Easy Life, ERP de l'IUT) : maquettes dessinées en CSS (classes `v-em` et `v-erp` dans `src/styles/sections.css`).
+
+Pour rafraîchir une capture : construire le site depuis son dépôt (`npm run build`, puis `npm run preview`), capturer la page d'accueil aux deux formats, puis convertir en WebP : 720 et 1200 px de large pour l'ordinateur, 360 px pour le mobile. Garder les mêmes noms de fichiers.
 
 | Projet | Nature | Lien |
 | --- | --- | --- |
