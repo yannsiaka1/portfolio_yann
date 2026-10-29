@@ -61,6 +61,9 @@
 .track span{min-width:0}
 .track em{font-style:normal;font-family:var(--f-mono);font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;color:var(--cendre)}
 .track li.is-now em{color:var(--ambre)}
+.track li.is-done::before{background:var(--craie);border-color:var(--craie)}
+.track__link{font-family:var(--f-mono);font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ambre);border-bottom:1px solid transparent;transition:border-color .3s}
+.track__link:hover,.track__link:focus-visible{border-color:var(--ambre)}
 
 /* ---------- work ---------- */
 .work{overflow:hidden}
