@@ -1,0 +1,7 @@
+/* Ordre d’import = ordre de la cascade. */
+@import './tokens.css';
+@import './base.css';
+@import './chrome.css';
+@import './hero.css';
+@import './sections.css';
+@import './responsive.css';

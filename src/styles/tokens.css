@@ -1,0 +1,23 @@
+/* Jetons de design : couleurs, polices, gouttière, courbes d’animation. */
+:root{
+  /* Layout: a dark stage. Copy hugs a left gutter like an editor, the 3D symbol owns the right half of the hero, and every later section slides over the WebGL layer. Deliberately single-theme. */
+  --nuit:#0A0A09;
+  --nuit-2:#121210;
+  --nuit-3:#1A1916;
+  --craie:#EDEBE5;
+  --cendre:#8F8B83;
+  --trait:rgba(237,235,229,.12);
+  --trait-fort:rgba(237,235,229,.26);
+  --ambre:#FFB000;
+  --ambre-voile:rgba(255,176,0,.12);
+  --braise:#FF6A1A;
+  --sauge:#BCD2A4;
+  --f-display:"Archivo Variable","Archivo","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --f-serif:"Newsreader Variable","Newsreader","Iowan Old Style","Palatino Linotype",Georgia,serif;
+  --f-mono:"JetBrains Mono Variable","JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --g:clamp(16px,4vw,56px);
+  --nav-h:76px;
+  --ease-out:cubic-bezier(.16,1,.3,1);
+  --ease-io:cubic-bezier(.76,0,.24,1);
+  color-scheme:dark;
+}
