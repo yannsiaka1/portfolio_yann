@@ -28,7 +28,7 @@
       <p>$ npm run build:portfolio</p>
       <p><span>› compilation des interfaces</span><b>ok</b></p>
       <p><span>› démarrage de l'API</span><b>ok</b></p>
-      <p><span>› 28 migrations appliquées</span><b>ok</b></p>
+      <p><span>› schémas PostgreSQL chargés</span><b>ok</b></p>
       <p><span>› scène 3D prête</span><b>ok</b></p>
     </div>
     <div class="loader__count">
@@ -97,7 +97,7 @@
         <span>Douala <b class="dim" data-clock="dla">--:--:--</b></span>
       </div>
       <div class="menu__row mono">
-        <a href="https://github.com/" target="_blank" rel="noopener">GitHub ↗</a>
+        <a href="https://github.com/yannsiaka1" target="_blank" rel="noopener">GitHub ↗</a>
         <a href="https://www.linkedin.com/" target="_blank" rel="noopener">LinkedIn ↗</a>
         <a href="#contact">bonjour@yannsiaka.dev</a>
       </div>
@@ -146,7 +146,7 @@
       </div>
       <div data-reveal="up">
         <h3 class="mono">En ce moment</h3>
-        <p>Je construis EasyMoov, une plateforme de réservation de bus pour le Cameroun, et je prépare la certification AWS Cloud Practitioner.</p>
+        <p>Je construis Easy Life, une plateforme de transport interurbain et multimodal pour le Cameroun, et je prépare la certification AWS Cloud Practitioner.</p>
       </div>
       <a class="link-arrow" href="#parcours" data-reveal="up">Lire le parcours <span aria-hidden="true">↘</span></a>
     </div>
@@ -180,7 +180,7 @@
     </div>
     <div class="facts__grid">
       <article class="fact fact--wide" data-reveal="up">
-        <div class="fact__top mono"><span>EasyMoov · schéma</span><span>PostgreSQL</span></div>
+        <div class="fact__top mono"><span>Easy Life · schéma</span><span>PostgreSQL</span></div>
         <svg class="fact__erd" viewBox="0 0 300 200" aria-hidden="true">
           <line x1="70" y1="40" x2="150" y2="70"/><line x1="150" y1="70" x2="230" y2="40"/><line x1="150" y1="110" x2="150" y2="150" class="hot"/><line x1="70" y1="150" x2="150" y2="150"/><line x1="230" y1="150" x2="150" y2="150" class="hot"/>
           <rect x="22" y="22" width="96" height="36" rx="5"/><text x="30" y="44">routes</text>
@@ -190,18 +190,18 @@
           <rect x="22" y="132" width="70" height="36" rx="5"/><text x="30" y="154">users</text>
           <rect x="208" y="132" width="80" height="36" rx="5"/><text x="216" y="154">seats</text>
         </svg>
-        <div class="fact__num"><span class="odo" data-odo>28</span></div>
-        <p class="fact__txt">tables PostgreSQL modélisées pour EasyMoov, avec chaque contrainte métier documentée.</p>
+        <div class="fact__num"><span class="odo" data-odo>52</span></div>
+        <p class="fact__txt">tables PostgreSQL réparties en 9 schémas pour Easy Life, reliées par 93 clés étrangères.</p>
       </article>
       <article class="fact fact--mid" data-reveal="up">
-        <div class="fact__top mono"><span>Performance</span><span>DBML</span></div>
-        <div class="fact__num"><span class="odo" data-odo>55</span><sup>+</sup></div>
-        <p class="fact__txt">index posés dès la conception pour garder des requêtes rapides quand les données grossissent.</p>
+        <div class="fact__top mono"><span>Architecture</span><span>ADR</span></div>
+        <div class="fact__num"><span class="odo" data-odo>24</span></div>
+        <p class="fact__txt">décisions d'architecture consignées pour Easy Life, relues avant de sceller chaque jalon.</p>
       </article>
       <article class="fact" data-reveal="up">
-        <div class="fact__top mono"><span>Livraison</span><span>A → Z</span></div>
+        <div class="fact__top mono"><span>En ligne</span><span>↗</span></div>
         <div class="fact__num"><span class="odo" data-odo>3</span></div>
-        <p class="fact__txt">produits conçus et codés de bout en bout : EasyMoov, Precious et Glorious Hall.</p>
+        <p class="fact__txt">projets en ligne : Precious, Glorious Hall et EasyTravel.</p>
       </article>
       <article class="fact" data-reveal="up">
         <div class="fact__top mono"><span>Marchés</span><span>CM ⇄ QC</span></div>
@@ -218,7 +218,7 @@
           <li><span>Solutions Architect</span><em>ensuite</em></li>
           <li><span>Data Engineer</span><em>objectif</em></li>
         </ul>
-        <p class="fact__txt">Trois certifications, avec EasyMoov comme terrain d'exercice.</p>
+        <p class="fact__txt">Trois certifications, avec Easy Life comme terrain d'exercice.</p>
       </article>
     </div>
   </section>
@@ -230,9 +230,9 @@
         <div class="work__intro wrap">
           <div>
             <p class="eyebrow mono">Projets choisis</p>
-            <h2 class="h2" data-reveal="words">Du schéma <em>au déploiement.</em><span class="work__count">(04)</span></h2>
+            <h2 class="h2" data-reveal="words">Du schéma <em>au déploiement.</em><span class="work__count">(05)</span></h2>
           </div>
-          <p>Un produit en construction, deux sites clients et ce portfolio, qui sert de laboratoire.</p>
+          <p>Un produit en construction, deux sites clients en ligne et deux projets académiques.</p>
         </div>
 
         <article class="card" data-cursor="Défilez">
@@ -241,7 +241,7 @@
               <svg class="erd" viewBox="0 0 260 180" aria-hidden="true"><rect x="8" y="10" width="70" height="34" rx="4"/><rect x="96" y="40" width="70" height="44" rx="4" class="hot"/><rect x="182" y="10" width="70" height="34" rx="4"/><rect x="40" y="120" width="70" height="34" rx="4"/><rect x="150" y="120" width="70" height="34" rx="4"/><line x1="78" y1="27" x2="96" y2="56"/><line x1="166" y1="56" x2="182" y2="27"/><line x1="131" y1="84" x2="75" y2="120" class="hot"/><line x1="131" y1="84" x2="185" y2="120"/></svg>
               <div class="phone">
                 <div class="em">
-                  <div class="em__top"><span>easy<b>moov</b></span><span class="em__avatar"></span></div>
+                  <div class="em__top"><span>easy<b>life</b></span><span class="em__avatar"></span></div>
                   <p class="em__hello">Où allez-vous ?</p>
                   <div class="em__card">
                     <div class="em__field"><span>Départ</span><b>Douala</b></div>
@@ -251,22 +251,23 @@
                     <div class="em__cta">Rechercher</div>
                   </div>
                   <div class="em__trip"><div><b>07:30</b><span>Douala</span></div><i></i><div><b>11:30</b><span>Yaoundé</span></div></div>
-                  <div class="em__amen"><span>Wi-Fi</span><span>Clim</span><span>Prises</span></div>
+                  <div class="em__amen"><span>Bus</span><span>Taxi</span><span>Moto</span></div>
                 </div>
               </div>
             </div>
           </div>
           <div class="card__body">
             <div class="card__meta mono"><span>Produit</span><span class="on">en construction</span></div>
-            <h3 class="card__title">EasyMoov</h3>
-            <p class="card__desc">Réservation de bus interurbains au Cameroun, avec taxis et programme de fidélité.</p>
+            <h3 class="card__title">Easy Life</h3>
+            <p class="card__desc">Plateforme de transport pour le Cameroun : billets de bus interurbains, taxis et motos sur un seul compte, avec un vrai ERP pour les agences et le paiement Mobile Money.</p>
             <ul class="card__facts">
-              <li>Schéma PostgreSQL de 28 tables et 55+ index</li>
-              <li>28 migrations Laravel ordonnées, générées depuis le schéma</li>
-              <li>Classes de voyage et équipements relationnels</li>
-              <li>Écrans mobile-first, mode clair et sombre</li>
+              <li>52 tables PostgreSQL réparties en 9 schémas</li>
+              <li>24 décisions d'architecture (ADR) consignées</li>
+              <li>Paiement Mobile Money asynchrone : idempotence et relances, sans double débit</li>
+              <li>Environnement Docker avec Laravel Sail</li>
             </ul>
-            <ul class="tags"><li>Laravel</li><li>React</li><li>PostgreSQL</li><li>Redis</li></ul>
+            <ul class="tags"><li>Laravel 13</li><li>PostgreSQL</li><li>Sanctum</li><li>Docker</li></ul>
+            <p class="card__soon mono">Pas encore en ligne</p>
           </div>
         </article>
 
@@ -276,12 +277,12 @@
               <div class="browser">
                 <div class="browser__bar"><i></i><i></i><i></i><span class="browser__url">precious-jus.com</span></div>
                 <div class="pr">
-                  <div class="pr__nav"><b>Precious</b><span>Jus</span><span>Donuts</span><span>Cocktails</span><span>Formations</span></div>
+                  <div class="pr__nav"><b>Precious</b><span>Créations</span><span>Académie</span><span>La maison</span><span>Contact</span></div>
                   <div class="pr__hero">
-                    <div><span class="pr__kick">100 % bio</span><h4>Des jus pressés à partir de matières naturelles</h4><span class="pr__btn">Commander</span></div>
+                    <div><span class="pr__kick">100&nbsp;% bio</span><h4>La Nature dans chaque goutte.</h4><span class="pr__btn">Découvrir</span></div>
                     <div class="pr__bottles"><i class="b1"></i><i class="b2"></i><i class="b3"></i></div>
                   </div>
-                  <div class="pr__tiles"><span>Jus</span><span>Donuts</span><span>Cocktails</span><span>Formations</span></div>
+                  <div class="pr__tiles"><span>Jus</span><span>Donuts</span><span>Cocktails</span><span>Académie</span></div>
                 </div>
               </div>
             </div>
@@ -289,15 +290,17 @@
           <div class="card__body">
             <div class="card__meta mono"><span>Client</span><span class="on">en production</span></div>
             <h3 class="card__title">Precious</h3>
-            <p class="card__desc">Site vitrine d'une marque montréalaise de jus 100 % bio, de donuts artisanaux, de cocktails événementiels et de formations.</p>
+            <p class="card__desc">Site vitrine d'une marque montréalaise : jus 100&nbsp;% bio pressés à la commande, donuts artisanaux, cocktails pour les événements et une académie de formation.</p>
             <ul class="card__facts">
               <li>Maquettes Figma, puis refonte en composants</li>
               <li>Formulaires envoyés côté serveur, domaine authentifié</li>
               <li>Indexé par Google, Search Console et DMARC en place</li>
-              <li>Deux produits vendus via Payhip</li>
+              <li>Formations en présentiel et en ligne présentées dans l'Académie</li>
             </ul>
             <ul class="tags"><li>Vite</li><li>React</li><li>Tailwind</li><li>Prérendu</li></ul>
-            <a class="link-arrow card__link" href="https://precious-jus.com" target="_blank" rel="noopener">precious-jus.com <span aria-hidden="true">↗</span></a>
+            <div class="card__links">
+              <a class="link-arrow" href="https://precious-jus.com/" target="_blank" rel="noopener">precious-jus.com <span aria-hidden="true">↗</span></a>
+            </div>
           </div>
         </article>
 
@@ -305,62 +308,119 @@
           <div class="card__visual">
             <div class="mock v-gh" data-par>
               <div class="browser">
-                <div class="browser__bar"><i></i><i></i><i></i><span class="browser__url">Glorious Hall</span></div>
+                <div class="browser__bar"><i></i><i></i><i></i><span class="browser__url">glorioushall.com</span></div>
                 <div class="gh">
-                  <div class="gh__nav"><b>Glorious Hall</b><span>La salle</span><span>Événements</span><span>Contact</span></div>
-                  <div class="gh__hero"><span class="gh__kick">Bonamoussadi · Douala</span><h4>Une salle pour vos plus beaux événements</h4><span class="gh__btn">Demander une date</span></div>
+                  <div class="gh__nav"><b>Glorious Hall</b><span>Services</span><span>Galerie</span><span>Avis</span><span>Contact</span></div>
+                  <div class="gh__hero"><span class="gh__kick">Bonamoussadi · Douala</span><h4>Le lieu où vos meilleurs souvenirs prennent vie</h4><span class="gh__btn">Réserver maintenant</span></div>
                   <div class="gh__arches"><i></i><i></i><i></i><i></i></div>
                 </div>
               </div>
             </div>
           </div>
           <div class="card__body">
-            <div class="card__meta mono"><span>Client</span><span class="on">site vitrine</span></div>
+            <div class="card__meta mono"><span>Client</span><span class="on">en production</span></div>
             <h3 class="card__title">Glorious Hall</h3>
             <p class="card__desc">Site d'une salle événementielle à Bonamoussadi, Douala, codé à partir de ma propre maquette.</p>
             <ul class="card__facts">
               <li>Composants React typés en TypeScript</li>
               <li>Animations au défilement</li>
-              <li>Prochaine étape : fiche Google et référencement local</li>
+              <li>Galerie photos et vidéos classée par type d'événement</li>
             </ul>
             <ul class="tags"><li>React</li><li>TypeScript</li><li>Tailwind</li></ul>
+            <div class="card__links">
+              <a class="link-arrow" href="https://www.glorioushall.com/" target="_blank" rel="noopener">glorioushall.com <span aria-hidden="true">↗</span></a>
+            </div>
           </div>
         </article>
 
         <article class="card" data-cursor="Défilez">
           <div class="card__visual">
-            <div class="mock v-lab" data-par>
-              <div class="editor">
-                <div class="editor__tabs"><span class="on">hero.js</span><span>formations.js</span></div>
-<pre><span class="c">// chaque symbole = les mêmes panneaux de verre</span>
-<span class="k">const</span> formations = [
-  { sym: <span class="s">'&lt;/&gt;'</span>, nom: <span class="s">'interfaces'</span> },
-  { sym: <span class="s">'{ }'</span>,  nom: <span class="s">'logique métier'</span> },
-  { sym: <span class="s">'&gt;_'</span>,  nom: <span class="s">'outillage'</span> },
-  { sym: <span class="s">'GET /'</span>, nom: <span class="s">'API REST'</span> },
-];
-
-<span class="k">function</span> <span class="f">explose</span>(p, force) {
-  p.position.<span class="f">addScaledVector</span>(p.dir, force * <span class="n">5.2</span>);
-}</pre>
+            <div class="mock v-et" data-par>
+              <div class="browser">
+                <div class="browser__bar"><i></i><i></i><i></i><span class="browser__url">easytravel-front-wine.vercel.app</span></div>
+                <div class="et">
+                  <div class="et__nav"><b>EasyTravel</b><span>Voyages</span><span>Services</span><span>Contact</span><span class="et__login">Connexion</span></div>
+                  <div class="et__hero"><p class="et__kick">Voyagez simplement</p><h4>Douala ⇄ Yaoundé, avec confort et sécurité</h4></div>
+                  <div class="et__search">
+                    <div><span>Départ</span><b>Douala</b></div>
+                    <div><span>Arrivée</span><b>Yaoundé</b></div>
+                    <div><span>Places</span><b>2</b></div>
+                    <div class="et__go">Rechercher</div>
+                  </div>
+                  <div class="et__rows">
+                    <div><b>07:30</b><span>Classique</span><i>Réserver</i></div>
+                    <div><b>10:00</b><span>VIP</span><i>Réserver</i></div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
           <div class="card__body">
-            <div class="card__meta mono"><span>Labo</span><span class="on">ce site</span></div>
-            <h3 class="card__title">Ce portfolio</h3>
-            <p class="card__desc">Un terrain d'essai pour le motion design : des symboles de code en verre qui se recomposent, explosent au clic long et s'électrisent au survol.</p>
+            <div class="card__meta mono"><span>Académique</span><span class="on">en ligne</span></div>
+            <h3 class="card__title">EasyTravel</h3>
+            <p class="card__desc">Réservation de bus entre Douala et Yaoundé : recherche de voyages, réservation, paiement simulé et billets, avec un espace agent pour gérer les départs.</p>
             <ul class="card__facts">
-              <li>Scène Three.js sans modèle importé, tout est généré</li>
-              <li>Animations GSAP synchronisées au défilement Lenis</li>
-              <li>Sons synthétisés en direct avec Web Audio</li>
+              <li>API REST Laravel 12, authentification par jetons Sanctum</li>
+              <li>Rôles client et agent, routes protégées côté front</li>
+              <li>Contrôle des places disponibles et génération de billets</li>
+              <li>Front sur Vercel, API et PostgreSQL sur Railway</li>
             </ul>
-            <ul class="tags"><li>Three.js</li><li>GSAP</li><li>Lenis</li><li>Web Audio</li></ul>
+            <ul class="tags"><li>React</li><li>Laravel</li><li>PostgreSQL</li><li>Tailwind</li></ul>
+            <div class="card__links">
+              <a class="link-arrow" href="https://easytravel-front-wine.vercel.app/" target="_blank" rel="noopener">Voir le site <span aria-hidden="true">↗</span></a>
+              <a class="link-arrow" href="https://github.com/yannsiaka1/easytravel-front" target="_blank" rel="noopener">Code front <span aria-hidden="true">↗</span></a>
+              <a class="link-arrow" href="https://github.com/yannsiaka1/easytravel-back" target="_blank" rel="noopener">Code API <span aria-hidden="true">↗</span></a>
+            </div>
+          </div>
+        </article>
+
+        <article class="card" data-cursor="Défilez">
+          <div class="card__visual">
+            <div class="mock v-erp" data-par>
+              <div class="browser">
+                <div class="browser__bar"><i></i><i></i><i></i><span class="browser__url">ERP · IUT de Douala</span></div>
+                <div class="erp">
+                  <div class="erp__side">
+                    <b>ERP<small>IUT Douala</small></b>
+                    <span class="on">Tableau de bord</span><span>Filières</span><span>Cours</span><span>Valider appels</span><span>Présences</span><span>Notes</span><span>Documents</span>
+                  </div>
+                  <div class="erp__main">
+                    <p class="erp__title">Espace responsable académique</p>
+                    <div class="erp__kpis">
+                      <div><span>Taux de présence</span><b>92 %</b></div>
+                      <div><span>Étudiants</span><b>418</b></div>
+                      <div><span>Cours actifs</span><b>36</b></div>
+                    </div>
+                    <div class="erp__chart"><i style="--h:58%"></i><i style="--h:74%"></i><i style="--h:66%"></i><i style="--h:88%"></i><i style="--h:71%"></i><i style="--h:94%"></i><i style="--h:80%"></i></div>
+                    <div class="erp__table">
+                      <div><span>Génie logiciel · S3</span><em>Notes validées</em></div>
+                      <div><span>Réseaux · S1</span><em class="wait">Appel à valider</em></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card__body">
+            <div class="card__meta mono"><span>Académique</span><span class="on">projet tutoré</span></div>
+            <h3 class="card__title">ERP de l'IUT de Douala</h3>
+            <p class="card__desc">Gestion numérique d'un institut universitaire : notes, requêtes, cours, présences, diplomation et archivage des documents, pour les étudiants, les enseignants et l'administration.</p>
+            <ul class="card__facts">
+              <li>Tableaux de bord par rôle : étudiant, enseignant, responsable académique</li>
+              <li>Appel en classe et suivi des présences par salle</li>
+              <li>API Laravel 12 avec jetons Sanctum, 50 migrations</li>
+              <li>Exports Excel et graphiques de suivi</li>
+            </ul>
+            <ul class="tags"><li>React</li><li>Laravel</li><li>Tailwind</li><li>DaisyUI</li></ul>
+            <div class="card__links">
+              <a class="link-arrow" href="https://github.com/yannsiaka1/projet-tutore-front" target="_blank" rel="noopener">Code front <span aria-hidden="true">↗</span></a>
+              <a class="link-arrow" href="https://github.com/yannsiaka1/projet-tutore-back" target="_blank" rel="noopener">Code API <span aria-hidden="true">↗</span></a>
+            </div>
           </div>
         </article>
         <div class="work__end" aria-hidden="true"></div>
       </div>
-      <div class="work__progress wrap mono" aria-hidden="true"><span>Défilez</span><span class="bar"><i id="workBar"></i></span><span id="workIdx">01 / 04</span></div>
+      <div class="work__progress wrap mono" aria-hidden="true"><span>Défilez</span><span class="bar"><i id="workBar"></i></span><span id="workIdx">01 / 05</span></div>
     </div>
   </section>
 
@@ -411,7 +471,7 @@
             <div class="layer-info" data-info="2">
               <p class="layer-info__k mono">03 · Données</p>
               <h3>Ce qui se souvient <span>· base de données</span></h3>
-              <p>Je modélise avant de coder : schéma DBML, contraintes, index et migrations ordonnées. EasyMoov compte 28 tables documentées.</p>
+              <p>Je modélise avant de coder : schéma DBML, contraintes, index et migrations ordonnées. Easy Life compte 52 tables réparties en 9 schémas.</p>
               <ul class="tags"><li>PostgreSQL</li><li>Redis</li><li>DBML</li><li>Migrations</li></ul>
 <pre class="code"><span class="k">Table</span> trips {
   id bigint [pk]
@@ -497,7 +557,7 @@
       </div>
       <div class="release" data-reveal="up">
         <p class="release__v">[2.1.0]<span>Ajouté</span></p>
-        <div><h3>EasyMoov</h3><p>Première brique de la vision EasyGroup : numériser le transport et la logistique au Cameroun.</p></div>
+        <div><h3>Easy Life</h3><p>Plateforme de transport pour le Cameroun, première brique de la vision EasyGroup : numériser le transport et la logistique.</p></div>
       </div>
       <div class="release" data-reveal="up">
         <p class="release__v">[2.0.0]<span>Changement majeur</span></p>
@@ -568,7 +628,7 @@
     <div>Montréal · <span data-tz="mtl"></span><b data-clock="mtl">--:--:--</b></div>
     <div>Douala · <span data-tz="dla"></span><b data-clock="dla">--:--:--</b></div>
     <div class="footer__links">
-      <a href="https://github.com/" target="_blank" rel="noopener">GitHub ↗</a>
+      <a href="https://github.com/yannsiaka1" target="_blank" rel="noopener">GitHub ↗</a>
       <a href="https://www.linkedin.com/" target="_blank" rel="noopener">LinkedIn ↗</a>
       <a href="#contact">Courriel</a>
     </div>
