@@ -1,4 +1,4 @@
-// Outils de la scène 3D : courbes d'animation, géométrie des panneaux, texture des paquets.
+// Outils de la scène 3D : courbes d'animation et géométrie des panneaux.
 import * as THREE from 'three';
 
 export const TAU = Math.PI * 2;
@@ -23,32 +23,4 @@ export function roundedBox(radius = 0.14, steps = 3) {
   }
   geo.deleteAttribute('uv');
   return geo;
-}
-
-/** Ré-échantillonne une polyligne tous les `step` pour animer son tracé point par point. */
-export function resample(pts, step) {
-  const out = [pts[0].clone()];
-  for (let i = 0; i < pts.length - 1; i++) {
-    const a = pts[i];
-    const b = pts[i + 1];
-    const n = Math.max(1, Math.round(a.distanceTo(b) / step));
-    for (let k = 1; k <= n; k++) out.push(a.clone().lerp(b, k / n));
-  }
-  return out;
-}
-
-/** Point lumineux ambré, dessiné dans un canvas (aucune image à charger). */
-export function dotTexture() {
-  const c = document.createElement('canvas');
-  c.width = c.height = 64;
-  const g = c.getContext('2d');
-  const grd = g.createRadialGradient(32, 32, 0, 32, 32, 32);
-  grd.addColorStop(0, 'rgba(255,255,255,1)');
-  grd.addColorStop(0.25, 'rgba(255,214,140,.9)');
-  grd.addColorStop(1, 'rgba(255,176,0,0)');
-  g.fillStyle = grd;
-  g.fillRect(0, 0, 64, 64);
-  const tx = new THREE.CanvasTexture(c);
-  tx.colorSpace = THREE.SRGBColorSpace;
-  return tx;
 }

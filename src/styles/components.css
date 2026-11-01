@@ -1,0 +1,170 @@
+/* Composants partagés : bouton, lien, statut, liste d'outils, élément à filet. */
+
+/* ---------- bouton : principal (plein) ou secondaire (contour) ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  min-height: var(--target);
+  padding-inline: var(--space-3);
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background-color var(--fast) var(--ease),
+    border-color var(--fast) var(--ease);
+}
+
+.btn--primary {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.btn--primary:hover {
+  background: var(--accent-hover);
+}
+
+.btn--secondary {
+  border-color: var(--line-strong);
+  color: var(--text);
+}
+
+.btn--secondary:hover {
+  border-color: var(--text);
+}
+
+/* ---------- lien texte ---------- */
+.link {
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-decoration-color: var(--line-strong);
+  text-underline-offset: 0.25em;
+  transition: text-decoration-color var(--fast) var(--ease);
+}
+
+.link:hover {
+  text-decoration-color: currentColor;
+}
+
+/* lien isolé (hors d'une phrase) : même hauteur de cible qu'un bouton */
+.link--standalone {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  gap: var(--space-1);
+  min-height: var(--target);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+
+/* flèche des liens externes, toujours accompagnée de « (nouvel onglet) » pour les lecteurs d'écran */
+.ext::after {
+  content: "";
+  flex: none;
+  width: 0.75em;
+  height: 0.75em;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M3.5 1.75h6.75V8.5M10.25 1.75 1.75 10.25' fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M3.5 1.75h6.75V8.5M10.25 1.75 1.75 10.25' fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+/* ---------- statut : une pastille et toujours un texte, jamais la couleur seule ---------- */
+.status {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-1);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-ui);
+  color: var(--text-2);
+}
+
+/* la pastille reste centrée sur la première ligne quand le texte passe à la ligne */
+.status::before {
+  content: "";
+  flex: none;
+  width: var(--dot);
+  height: var(--dot);
+  margin-top: calc((var(--lh-ui) * 1em - var(--dot)) / 2);
+  border-radius: 50%;
+  background: var(--neutral);
+}
+
+.status--live::before {
+  background: var(--live);
+}
+
+.status--progress::before {
+  background: var(--accent);
+}
+
+/* ---------- liste d'outils : texte simple, séparé par des virgules ---------- */
+.tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 0.4em;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--fs-sm);
+  line-height: var(--lh-ui);
+  color: var(--text-2);
+}
+
+.tools li:not(:last-child)::after {
+  content: ",";
+}
+
+/* ---------- élément à filet : compétences, étapes, formation, certifications, autres projets ---------- */
+.items {
+  display: grid;
+  gap: var(--space-4) var(--space-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: grid;
+  align-content: start;
+  gap: var(--space-1);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--line);
+}
+
+.item > p {
+  color: var(--text-2);
+}
+
+.item > .tools {
+  margin-top: var(--space-1);
+}
+
+@media (min-width: 48rem) {
+  .items--2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* étapes numérotées : seulement là où l'ordre compte */
+.steps {
+  counter-reset: step;
+}
+
+.steps > .item {
+  counter-increment: step;
+}
+
+.steps > .item > h4::before {
+  content: counter(step);
+  content: counter(step) / "";
+  display: inline-block;
+  min-width: 1.5em;
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+}
