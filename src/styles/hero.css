@@ -1,4 +1,4 @@
-/* Hero : le nom à gauche, le symbole 3D à droite (au-dessus sur mobile).
+/* Hero : le nom à gauche, le symbole 3D à droite (au-dessus sous 1024 px).
    Le canvas couvre le hero et déborde sous la section suivante, qui le recouvre en remontant :
    les panneaux qui s'écartent au défilement ne sont jamais coupés net. */
 .hero {
@@ -10,13 +10,12 @@
   position: absolute;
   left: 0;
   top: 0;
-  z-index: 0;
   display: block;
   width: 100%;
-  height: calc(100% + 30svh);
+  height: calc(100% + var(--canvas-overflow));
   pointer-events: none;
   opacity: 0;
-  transition: opacity 0.6s var(--ease);
+  transition: opacity var(--slow) var(--ease);
 }
 
 .gl-ready .hero__canvas {
@@ -25,12 +24,12 @@
 
 .hero__inner {
   position: relative;
-  z-index: 1;
+  z-index: var(--z-raised);
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   align-items: center;
   gap: var(--space-4);
-  min-height: calc(100svh - var(--header-h));
+  min-height: var(--hero-min-h);
   padding-block: var(--space-4) var(--space-6);
 }
 
@@ -43,9 +42,9 @@
   display: block;
   font-size: var(--fs-name);
   line-height: var(--lh-name);
-  font-weight: 680;
+  font-weight: var(--fw-name);
   font-stretch: var(--stretch-name);
-  letter-spacing: -0.03em;
+  letter-spacing: var(--ls-name);
 }
 
 .hero__name > span {
@@ -56,11 +55,11 @@
   display: block;
   font-size: var(--fs-lg);
   line-height: var(--lh-title);
-  font-weight: 500;
+  font-weight: var(--fw-medium);
 }
 
 .hero__lede {
-  max-width: 44ch;
+  max-width: var(--measure);
   margin-top: var(--space-3);
   color: var(--text-2);
 }
@@ -80,33 +79,55 @@
 .hero__stage {
   position: relative;
   order: -1;
-  height: clamp(14rem, 34svh, 21rem);
+  height: var(--stage-h);
   touch-action: pan-y;
   user-select: none;
   -webkit-user-select: none;
   -webkit-touch-callout: none;
 }
 
-.hero__hint {
+/* Zone cliquable posée sur le symbole par scene.js : clic, appui long, Entrée ou Espace au clavier. */
+.hero__symbol {
+  position: absolute;
+  border-radius: var(--radius-media);
+  cursor: pointer;
+}
+
+/* Indice et bouton pause, placés par scene.js juste sous le symbole. */
+.hero__controls {
   position: absolute;
   left: 0;
   right: 0;
   bottom: 0;
-  font-size: var(--fs-sm);
-  line-height: var(--lh-ui);
-  color: var(--text-2);
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
   opacity: 0;
-  transition: opacity 0.6s var(--ease);
+  transition: opacity var(--slow) var(--ease);
 }
 
-.gl-ready .hero__hint {
+.gl-ready .hero__controls {
   opacity: 1;
 }
 
-/* Sans WebGL 2 : un symbole dessiné remplace la scène. */
-.hero__fallback {
+.hero__hint {
+  font-size: var(--fs-sm);
+  line-height: var(--lh-ui);
+  color: var(--text-2);
+}
+
+.hero__pause .icon-play,
+.hero__pause.is-paused .icon-pause {
   display: none;
+}
+
+.hero__pause.is-paused .icon-play {
+  display: block;
+}
+
+/* Sans WebGL 2, ou sans JavaScript : un symbole dessiné remplace la scène. */
+.hero__fallback {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -115,11 +136,16 @@
   color: var(--accent);
 }
 
+.js .hero__fallback {
+  display: none;
+}
+
 .no-gl .hero__fallback {
   display: block;
 }
 
-.no-gl .hero__hint {
+.no-gl .hero__controls,
+.no-gl .hero__symbol {
   display: none;
 }
 
@@ -145,6 +171,6 @@
     grid-column: 7 / span 6;
     align-self: stretch;
     height: auto;
-    min-height: 26rem;
+    min-height: var(--stage-min-h);
   }
 }

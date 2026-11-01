@@ -1,32 +1,45 @@
 // Scène 3D du hero : des symboles de code en panneaux de verre.
 // - les mêmes panneaux se recomposent en 7 symboles (formations.js), environ toutes les 7 s
 // - le symbole s'incline vers le pointeur ; sur ordinateur, le panneau survolé s'illumine
-// - clic court : symbole suivant ; clic maintenu : le symbole éclate, puis se reconstruit au relâchement
+// - clic court, toucher, Entrée ou Espace : symbole suivant ; appui maintenu : le symbole éclate,
+//   puis se reconstruit au relâchement
 // - au défilement, les panneaux s'écartent pendant que la section suivante recouvre le hero
+// - le bouton pause (et le réglage « réduire les animations ») fige tout ce qui bouge seul
 //
 // L'écartement passe par une seule valeur, explodeAmt = max(défilement, survol, éclatement, intro) :
 // relâcher à n'importe quel moment inverse donc l'effet.
 // La boîte .hero__stage (CSS) décide où se pose le symbole ; le canvas couvre tout le hero.
+// Les couleurs et l'espacement viennent des jetons de src/styles/tokens.css.
 import * as THREE from 'three';
-import { coarse, reduce, clamp } from '../core/env.js';
+import { coarse, motionQuery, clamp } from '../core/env.js';
 import { signalGlReady } from '../core/state.js';
 import { FORMS, POOL, V } from './formations.js';
 import { TAU, easeInOutCubic, easeOutCubic, roundedBox } from './helpers.js';
 
 const CHARGE = 0.55; // durée de la charge avant l'éclatement (s)
-const CYCLE = 7; // temps passé sur chaque symbole (s) ; aucun passage automatique si le mouvement est réduit
+const CYCLE = 7; // temps passé sur chaque symbole (s)
 const MORPH = 1.35; // durée d'une transition entre symboles (s)
-const CLEAR = 0x121211; // = --bg dans src/styles/tokens.css
 const FIT_W = 0.84; // part de la largeur de la scène occupée par le symbole
 const FIT_H = 0.86; // part de la hauteur restante une fois l'indice placé
-const HINT_GAP = 24; // espace entre le symbole et l'indice (px) = --space-3
+const SYM_W = 3.5; // le symbole tient dans un rectangle d'environ 3,5 × 2,4 unités (formations.js)
+const SYM_H = 2.4;
 
 const HINTS = {
-  mouse: 'Cliquez sur le symbole pour passer au suivant, maintenez le clic pour le faire éclater.',
+  mouse: 'Cliquez sur le symbole pour passer au suivant, maintenez pour le faire éclater.',
   touch: 'Touchez le symbole pour passer au suivant, appuyez longuement pour le faire éclater.',
-  mouseReduced: 'Cliquez sur le symbole pour passer au suivant.',
-  touchReduced: 'Touchez le symbole pour passer au suivant.',
+  mouseStill: 'Cliquez sur le symbole pour passer au suivant.',
+  touchStill: 'Touchez le symbole pour passer au suivant.',
 };
+const PAUSE_LABELS = { run: 'Mettre l’animation en pause', paused: 'Relancer l’animation' };
+
+/** Lit un jeton de tokens.css ; tokenPx convertit rem ou px en pixels. */
+const rootStyle = () => getComputedStyle(document.documentElement);
+const token = (name) => rootStyle().getPropertyValue(name).trim();
+function tokenPx(name) {
+  const value = token(name);
+  const n = parseFloat(value) || 0;
+  return value.endsWith('rem') ? n * (parseFloat(rootStyle().fontSize) || 16) : n;
+}
 
 export function initHero() {
   try {
@@ -41,7 +54,10 @@ function start() {
   const canvas = document.getElementById('gl');
   const hero = document.getElementById('accueil');
   const stage = document.getElementById('heroStage');
+  const symbolBtn = document.getElementById('heroSymbol');
+  const controls = document.getElementById('heroControls');
   const hint = document.getElementById('heroHint');
+  const pauseBtn = document.getElementById('heroPause');
   if (!canvas || !hero || !stage) return signalGlReady(false);
 
   // three.js exige WebGL 2 : on vérifie avant de créer le renderer, pour un repli sans erreur
@@ -61,13 +77,14 @@ function start() {
     return signalGlReady(false);
   }
 
-  if (hint) hint.textContent = HINTS[(coarse ? 'touch' : 'mouse') + (reduce ? 'Reduced' : '')];
+  const BG = new THREE.Color(token('--bg') || '#121211');
+  const ACCENT = new THREE.Color(token('--accent') || '#f2b13a');
 
   // verre réfractif sur ordinateur, métal poli (plus léger) sur mobile
   const small = Math.min(window.innerWidth, window.innerHeight) < 700;
   const hq = !coarse && !small;
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
-  renderer.setClearColor(CLEAR, 1);
+  renderer.setClearColor(BG, 1);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.08;
 
@@ -89,7 +106,7 @@ function start() {
     softbox(10, 2.2, 0xffffff, 3.2, [0, 7, 3]);
     softbox(2.2, 9, 0xffe2b0, 2.4, [-8, 0.5, 2]);
     softbox(2.2, 9, 0xb8cfff, 1.8, [8, -0.5, -1]);
-    softbox(9, 1.4, 0xf2b13a, 2.6, [0, -6, 5]);
+    softbox(9, 1.4, ACCENT, 2.6, [0, -6, 5]);
     softbox(4, 4, 0xffffff, 1.1, [0, 1, 9]);
     scene.environment = pmrem.fromScene(env, 0.035).texture;
     pmrem.dispose();
@@ -98,7 +115,7 @@ function start() {
   const key = new THREE.DirectionalLight(0xffffff, 1.3);
   key.position.set(3, 5, 6);
   scene.add(key);
-  const warm = new THREE.PointLight(0xf2b13a, 16, 16, 2);
+  const warm = new THREE.PointLight(ACCENT, 16, 16, 2);
   warm.position.set(-2.6, -2.4, 3.2);
   scene.add(warm);
 
@@ -118,7 +135,7 @@ function start() {
         envMapIntensity: 1.5,
         attenuationColor: new THREE.Color(0xffd7a0),
         attenuationDistance: 3.2,
-        emissive: new THREE.Color(0xf2b13a),
+        emissive: ACCENT.clone(),
         emissiveIntensity: 0,
       })
     : new THREE.MeshPhysicalMaterial({
@@ -131,7 +148,7 @@ function start() {
         iridescenceIOR: 1.3,
         iridescenceThicknessRange: [140, 520],
         envMapIntensity: 1.8,
-        emissive: new THREE.Color(0xf2b13a),
+        emissive: ACCENT.clone(),
         emissiveIntensity: 0,
       });
   const ENV_BASE = base.envMapIntensity;
@@ -173,11 +190,28 @@ function start() {
   const st = {
     time: 0, cw: 1, ch: 1, heroH: 1, scale: 1, rect: canvas.getBoundingClientRect(),
     form: 0, morphing: false, morphStart: 0, cycleT: 0,
-    rotY: 0, mouse: new THREE.Vector2(), ndc: new THREE.Vector2(), px: -9999, py: -9999, hasPointer: false,
-    symX: 0, symY: 0, symR: 1, overSym: false, hoverAmt: 0, hovered: null, activeMeshes: [],
-    holding: false, holdTime: 0, blasted: false, charge: 0, shake: 0, clickBurst: 0, kick: 0, downX: 0, downY: 0, downAt: 0,
-    introStart: -1, introAmt: reduce ? 0 : 1, scrollP: 0, explodeAmt: 1,
+    rotY: 0, mouse: new THREE.Vector2(), ndc: new THREE.Vector2(), hasPointer: false,
+    onSymbol: false, overSym: false, hoverAmt: 0, hovered: null, activeMeshes: [],
+    holding: false, holdTime: 0, blasted: false, suppressClick: false, charge: 0, shake: 0, clickBurst: 0, kick: 0, downX: 0, downY: 0,
+    introStart: -1, introAmt: 1, scrollP: 0, explodeAmt: 1,
+    paused: false, dirty: true, settling: false, flashing: false,
   };
+
+  /** Rien ne bouge seul : réglage « réduire les animations » ou bouton pause. */
+  const still = () => motionQuery.matches || st.paused;
+
+  function refreshControls() {
+    if (hint) hint.textContent = HINTS[(coarse ? 'touch' : 'mouse') + (still() ? 'Still' : '')];
+    if (pauseBtn) {
+      // avec le réglage système, rien ne bouge seul : le bouton n'a plus d'objet
+      pauseBtn.hidden = motionQuery.matches;
+      const label = st.paused ? PAUSE_LABELS.paused : PAUSE_LABELS.run;
+      pauseBtn.setAttribute('aria-label', label);
+      pauseBtn.title = label;
+      pauseBtn.classList.toggle('is-paused', st.paused);
+    }
+    st.dirty = true;
+  }
 
   /* ---------- formations ---------- */
   function setFormation(idx, instant = false) {
@@ -233,10 +267,11 @@ function start() {
     st.morphing = !instant;
     st.morphStart = st.time;
     st.cycleT = 0;
+    st.dirty = true;
   }
   const nextForm = () => setFormation((st.form + 1) % FORMS.length);
 
-  /* ---------- mise en page : le symbole se centre dans .hero__stage ---------- */
+  /* ---------- mise en page : le symbole se centre dans .hero__stage, l'indice juste dessous ---------- */
   function layout() {
     st.cw = canvas.clientWidth || 1;
     st.ch = canvas.clientHeight || 1;
@@ -246,17 +281,25 @@ function start() {
 
     const cr = canvas.getBoundingClientRect();
     const sr = stage.getBoundingClientRect();
-    const hintH = hint && hint.offsetParent ? hint.offsetHeight : 0;
-    const gap = hintH ? HINT_GAP : 0;
     const upp = (2 * camera.position.z * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2))) / st.ch; // unités 3D par pixel
-    const maxH = Math.max(40, sr.height - hintH - gap);
-    st.scale = Math.min((sr.width * FIT_W * upp) / 3.5, (maxH * FIT_H * upp) / 2.4);
-    // le bloc « symbole + indice » est centré dans la scène, l'indice juste sous le symbole
-    const symH = (2.4 * st.scale) / upp;
-    const top = Math.max(0, (sr.height - symH - gap - hintH) / 2);
-    if (hint) {
-      hint.style.top = `${Math.round(top + symH + gap)}px`;
-      hint.style.bottom = 'auto';
+    const ctrlH = controls && controls.offsetParent ? controls.offsetHeight : 0;
+    const minGap = ctrlH ? tokenPx('--space-5') : 0;
+    st.scale = Math.min((sr.width * FIT_W * upp) / SYM_W, (Math.max(40, sr.height - ctrlH - minGap) * FIT_H * upp) / SYM_H);
+    const symW = (SYM_W * st.scale) / upp; // taille du symbole à l'écran (px)
+    const symH = (SYM_H * st.scale) / upp;
+    // le symbole s'incline et s'écarte au survol : l'indice garde une marge proportionnelle
+    const gap = ctrlH ? Math.max(minGap, symH * 0.14) : 0;
+    const top = Math.max(0, (sr.height - symH - gap - ctrlH) / 2);
+    const left = (sr.width - symW) / 2;
+    if (controls) {
+      controls.style.top = `${Math.round(top + symH + gap)}px`;
+      controls.style.bottom = 'auto';
+    }
+    if (symbolBtn) {
+      symbolBtn.style.left = `${Math.round(left)}px`;
+      symbolBtn.style.top = `${Math.round(top)}px`;
+      symbolBtn.style.width = `${Math.round(symW)}px`;
+      symbolBtn.style.height = `${Math.round(symH)}px`;
     }
     const cx = sr.left + sr.width / 2 - cr.left;
     const cy = sr.top + top + symH / 2 - cr.top;
@@ -264,23 +307,11 @@ function start() {
     group.scale.setScalar(st.scale);
     st.heroH = hero.offsetHeight || st.ch;
     st.rect = cr;
-  }
-
-  const _v = new THREE.Vector3();
-  function projectSymbol() {
-    _v.copy(group.position).project(camera);
-    st.symX = st.rect.left + (_v.x * 0.5 + 0.5) * st.cw;
-    st.symY = st.rect.top + (-_v.y * 0.5 + 0.5) * st.ch;
-    _v.copy(group.position);
-    _v.x += 1.75 * st.scale;
-    _v.project(camera);
-    st.symR = Math.abs(st.rect.left + (_v.x * 0.5 + 0.5) * st.cw - st.symX);
+    st.dirty = true;
   }
 
   /* ---------- interactions ---------- */
   function setPointer(e) {
-    st.px = e.clientX;
-    st.py = e.clientY;
     st.ndc.set(((e.clientX - st.rect.left) / st.cw) * 2 - 1, -((e.clientY - st.rect.top) / st.ch) * 2 + 1);
     st.hasPointer = true;
   }
@@ -296,29 +327,56 @@ function start() {
   document.addEventListener('pointerleave', () => {
     st.hasPointer = false;
   });
-  stage.addEventListener('pointerdown', (e) => {
-    if (e.button > 0 || st.scrollP > 0.15 || st.introAmt > 0.2) return;
-    setPointer(e);
-    if (Math.hypot(e.clientX - st.symX, e.clientY - st.symY) > st.symR * 1.1) return;
-    st.holding = true;
-    st.holdTime = 0;
-    st.blasted = false;
-    st.downX = e.clientX;
-    st.downY = e.clientY;
-    st.downAt = st.time;
-  });
+
+  if (symbolBtn) {
+    symbolBtn.addEventListener('pointerenter', () => {
+      st.onSymbol = true;
+    });
+    symbolBtn.addEventListener('pointerleave', () => {
+      st.onSymbol = false;
+    });
+    symbolBtn.addEventListener('pointerdown', (e) => {
+      if (e.button > 0) return;
+      setPointer(e);
+      st.suppressClick = false;
+      if (still() || st.scrollP > 0.15 || st.introAmt > 0.2) return;
+      st.holding = true;
+      st.holdTime = 0;
+      st.blasted = false;
+      st.downX = e.clientX;
+      st.downY = e.clientY;
+    });
+    // clic, toucher, Entrée ou Espace : symbole suivant (sauf à la fin d'un appui long ;
+    // un clic venu du clavier a detail = 0 et passe toujours)
+    symbolBtn.addEventListener('click', (e) => {
+      if (st.suppressClick && e.detail !== 0) {
+        st.suppressClick = false;
+        return;
+      }
+      st.suppressClick = false;
+      if (!st.morphing) nextForm();
+    });
+    symbolBtn.addEventListener('contextmenu', (e) => {
+      if (st.holding || st.blasted) e.preventDefault();
+    });
+  }
   function release(e, cancelled) {
     if (!st.holding) return;
     st.holding = false;
-    // clic court : symbole suivant
-    if (!st.blasted && !cancelled && st.time - st.downAt < 0.32 && !st.morphing) nextForm();
+    if (st.blasted || cancelled) st.suppressClick = true;
     if (e && e.pointerType !== 'mouse') st.hasPointer = false;
   }
   window.addEventListener('pointerup', (e) => release(e, false));
   window.addEventListener('pointercancel', () => release(null, true));
-  stage.addEventListener('contextmenu', (e) => {
-    if (st.holding || st.blasted) e.preventDefault();
-  });
+
+  if (pauseBtn) {
+    pauseBtn.addEventListener('click', () => {
+      st.paused = !st.paused;
+      refreshControls();
+    });
+  }
+  if (motionQuery.addEventListener) motionQuery.addEventListener('change', refreshControls);
+  else motionQuery.addListener(refreshControls);
 
   /* ---------- boucle ---------- */
   const tmpQ = new THREE.Quaternion();
@@ -328,8 +386,10 @@ function start() {
   function updatePanels(dt, t) {
     const mt = (t - st.morphStart) / MORPH;
     let done = true;
+    let flashing = false;
+    const calm = still();
     const ex = st.explodeAmt;
-    const driftK = reduce ? 0 : 1 - Math.min(1, ex * 3);
+    const driftK = calm ? 0 : 1 - Math.min(1, ex * 3);
     const charge = st.charge;
     for (let i = 0; i < panels.length; i++) {
       const P = panels[i];
@@ -360,31 +420,34 @@ function start() {
       P.mesh.visible = P.cur.s.x > 0.012;
 
       P.flash *= Math.pow(0.92, dt * 60);
+      if (P.flash > 0.01) flashing = true;
       let glow = P.cur.glow;
-      if (P.blink && !st.morphing && !reduce) glow *= Math.sin(t * TAU * 0.9) > -0.15 ? 1 : 0.06;
-      const em = glow * (0.85 + 0.15 * Math.sin(t * 2 + P.phase)) + P.flash * 1.3 + charge * charge * 0.6;
+      if (P.blink && !st.morphing && !calm) glow *= Math.sin(t * TAU * 0.9) > -0.15 ? 1 : 0.06;
+      const pulse = calm ? 1 : 0.85 + 0.15 * Math.sin(t * 2 + P.phase);
+      const em = glow * pulse + P.flash * 1.3 + charge * charge * 0.6;
       P.mat.emissiveIntensity = Math.min(2.6, em);
       P.mat.envMapIntensity = ENV_BASE + P.flash * 1.4 + charge * 0.8;
     }
     if (st.morphing && done) st.morphing = false;
+    st.flashing = flashing;
   }
 
   function update(dt, t) {
+    const calm = still();
     if (st.introStart < 0) st.introStart = t;
-    st.introAmt = reduce ? 0 : 1 - easeOutCubic(clamp((t - st.introStart) / 2.3, 0, 1));
+    st.introAmt = calm ? 0 : 1 - easeOutCubic(clamp((t - st.introStart) / 2.3, 0, 1));
 
-    // le symbole suit le pointeur (pas avec le mouvement réduit)
+    // le symbole suit le pointeur, sauf quand rien ne doit bouger seul
     const mk = Math.min(1, dt * 4);
-    const follow = st.hasPointer && !reduce;
+    const follow = st.hasPointer && !calm;
     st.mouse.x += ((follow ? st.ndc.x : 0) - st.mouse.x) * mk * (follow ? 1 : 0.5);
     st.mouse.y += ((follow ? st.ndc.y : 0) - st.mouse.y) * mk * (follow ? 1 : 0.5);
 
-    projectSymbol();
-    st.overSym = st.hasPointer && !coarse && st.scrollP < 0.1 && Math.hypot(st.px - st.symX, st.py - st.symY) < st.symR;
-    st.hoverAmt += ((st.overSym && !st.holding && !reduce ? 0.07 : 0) - st.hoverAmt) * Math.min(1, dt * 5);
+    st.overSym = st.onSymbol && !coarse && st.scrollP < 0.1;
+    st.hoverAmt += ((st.overSym && !st.holding && !calm ? 0.07 : 0) - st.hoverAmt) * Math.min(1, dt * 5);
 
-    // appui maintenu : charge, puis éclatement (pas avec le mouvement réduit)
-    if (st.holding && !reduce) {
+    // appui maintenu : charge, puis éclatement
+    if (st.holding && !calm) {
       st.holdTime += dt;
       if (st.holdTime < CHARGE) {
         st.charge = st.holdTime / CHARGE;
@@ -405,29 +468,35 @@ function start() {
     }
     st.kick = Math.max(0, st.kick - dt * 2.5);
 
-    const scrollAmt = reduce ? 0 : Math.pow(st.scrollP, 1.15);
+    const scrollAmt = calm ? 0 : Math.pow(st.scrollP, 1.15);
     const burst = st.scrollP < 0.15 ? st.clickBurst : 0;
     st.explodeAmt = Math.max(scrollAmt, st.hoverAmt, burst, st.introAmt);
 
     // passage automatique au symbole suivant, seulement quand rien d'autre ne se passe
-    const idle = !reduce && !st.morphing && !st.holding && st.clickBurst < 0.01 && st.introAmt < 0.03 && st.scrollP < 0.04 && !st.overSym;
+    const idle = !calm && !st.morphing && !st.holding && st.clickBurst < 0.01 && st.introAmt < 0.03 && st.scrollP < 0.04 && !st.overSym;
     if (idle) st.cycleT += dt;
     if (st.cycleT > CYCLE) nextForm();
 
     updatePanels(dt, t);
 
     const f = FORMS[st.form];
-    if (f.spin && !reduce) st.rotY += dt * 0.3;
+    let settling = false;
+    if (f.spin && !calm) st.rotY += dt * 0.3;
     else {
-      // symboles plats : retour de face au tour complet le plus proche
+      // symboles plats, ou rien ne bouge seul : retour de face au tour complet le plus proche
       const k = Math.round(st.rotY / TAU) * TAU;
       st.rotY += (k - st.rotY) * Math.min(1, dt * 2.4);
+      if (Math.abs(k - st.rotY) > 1e-4) settling = true;
     }
-    const sway = f.spin || reduce ? 0 : Math.sin(t * 0.55) * 0.34;
-    const swayX = reduce ? 0 : f.spin ? Math.sin(t * 0.3) * 0.08 : Math.sin(t * 0.42) * 0.1;
+    const sway = f.spin || calm ? 0 : Math.sin(t * 0.55) * 0.34;
+    const swayX = calm ? 0 : f.spin ? Math.sin(t * 0.3) * 0.08 : Math.sin(t * 0.42) * 0.1;
     const kr = Math.min(1, dt * 3.2);
-    group.rotation.x += (swayX - st.mouse.y * 0.3 - group.rotation.x) * kr;
-    group.rotation.y += (st.rotY + sway + st.mouse.x * 0.42 - group.rotation.y) * kr;
+    const targetX = swayX - st.mouse.y * 0.3;
+    const targetY = st.rotY + sway + st.mouse.x * 0.42;
+    group.rotation.x += (targetX - group.rotation.x) * kr;
+    group.rotation.y += (targetY - group.rotation.y) * kr;
+    if (Math.abs(targetX - group.rotation.x) > 1e-4 || Math.abs(targetY - group.rotation.y) > 1e-4 || st.mouse.lengthSq() > 1e-8) settling = true;
+    st.settling = settling;
 
     const shake = st.shake * 0.035 + st.kick * 0.12;
     camera.position.x = (Math.random() - 0.5) * shake;
@@ -447,12 +516,20 @@ function start() {
     } else st.hovered = null;
   }
 
+  /** Quand rien ne bouge seul, on ne redessine que si quelque chose a changé. */
+  const busy = () =>
+    st.dirty || st.morphing || st.holding || st.settling || st.flashing ||
+    st.charge > 1e-3 || st.clickBurst > 1e-3 || st.kick > 1e-3 || st.introAmt > 1e-3 || st.hoverAmt > 1e-3;
+
   function tick(dt) {
     st.time += dt;
     st.rect = canvas.getBoundingClientRect();
     st.scrollP = clamp((window.scrollY || 0) / (st.heroH * 0.85), 0, 1);
     update(dt, st.time);
-    renderer.render(scene, camera);
+    if (!still() || busy()) {
+      renderer.render(scene, camera);
+      st.dirty = false;
+    }
   }
 
   // rendu seulement quand le hero est à l'écran et l'onglet visible
@@ -497,10 +574,14 @@ function start() {
     const ro = new ResizeObserver(queueLayout);
     ro.observe(canvas);
     ro.observe(stage);
+    if (controls) ro.observe(controls);
   } else window.addEventListener('resize', queueLayout);
 
+  if (symbolBtn) symbolBtn.hidden = false;
+  refreshControls();
   layout();
   setFormation(0, true);
+  st.introAmt = still() ? 0 : 1;
   st.explodeAmt = st.introAmt;
   updatePanels(0, 0);
   try {
@@ -508,6 +589,7 @@ function start() {
     renderer.compile(scene, camera);
     renderer.render(scene, camera);
   } catch (err) {
+    if (symbolBtn) symbolBtn.hidden = true;
     return signalGlReady(false);
   }
   signalGlReady(true);

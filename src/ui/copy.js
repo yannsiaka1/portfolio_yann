@@ -4,7 +4,7 @@ import { $$ } from '../core/env.js';
 
 const MESSAGES = {
   copied: 'Adresse copiée.',
-  selected: 'Adresse sélectionnée : copiez-la avec Ctrl+C ou Cmd+C.',
+  selected: 'Adresse sélectionnée\u00a0: copiez-la avec Ctrl+C ou Cmd+C.',
 };
 
 function selectText(el) {

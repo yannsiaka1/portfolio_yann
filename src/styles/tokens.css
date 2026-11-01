@@ -1,32 +1,34 @@
-/* Jetons de design : la seule source des couleurs, tailles, espacements et rayons du site.
+/* Jetons de design : la seule source des valeurs du site (couleurs, texte, espacements, traits,
+   superpositions, durées). Les feuilles et la scène 3D les lisent ; aucune valeur écrite en dur ailleurs,
+   sauf les points de rupture des @media (CSS ne lit pas de variable à cet endroit) et la technique .sr-only.
    Une seule famille (Archivo) : la chasse variable (font-stretch) porte l'identité,
    large pour le nom, semi-large pour les titres, normale pour le texte. */
 :root {
   color-scheme: dark;
 
   /* ---------- couleurs ---------- */
-  --bg: #121211; /* fond de page, identique au fond de la scène 3D */
-  --surface: #1a1a18; /* menu mobile, fond des captures pendant leur chargement */
+  --bg: #121211; /* fond de page, et fond de la scène 3D (lu par scene.js) */
+  --surface: #1a1a18; /* menu mobile, lien d'évitement, fond des captures pendant leur chargement */
   --line: rgb(238 236 230 / 0.12); /* filets entre les éléments */
-  --line-strong: rgb(238 236 230 / 0.28); /* bordure des boutons secondaires et du téléphone */
+  --line-strong: rgb(238 236 230 / 0.4); /* 3,4:1 sur le fond : contour des boutons secondaires et du téléphone */
   --text: #eeece6; /* titres et texte courant : 15,9:1 sur le fond */
   --text-2: #aba79e; /* texte secondaire : 7,8:1 sur le fond */
-  --accent: #f2b13a; /* bouton principal, focus, lueur du symbole */
+  --accent: #f2b13a; /* bouton principal, focus, lueur du symbole (lu par scene.js) : 9,9:1 */
   --accent-hover: #f6c463;
   --on-accent: #17130a; /* texte sur l'accent : 9,8:1 */
-  --live: #7cc48e; /* pastille « en ligne », « obtenu » */
-  --neutral: #8a867e; /* pastille neutre, puces de liste */
+  --live: #7cc48e; /* pastille « en ligne », « obtenu », « disponible » : 9,1:1 */
+  --neutral: #8a867e; /* pastille neutre, puces de liste : 5,2:1 */
   --header-bg: rgb(18 18 17 / 0.88); /* --bg translucide sous la barre collante */
 
   /* ---------- typographie ---------- */
   --font: "Archivo Variable", "Archivo", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --fs-sm: 0.9375rem; /* 15 px : navigation, statuts, outils, boutons, pied de page */
+  --fs-sm: 0.9375rem; /* 15 px : navigation, statuts, outils, boutons, indice, pied de page */
   --fs-md: 1.125rem; /* 18 px : texte courant */
   --fs-lg: 1.3125rem; /* 21 px : titres de niveau 4, rôle et courriel sur mobile */
   --fs-xl: 1.75rem; /* 28 px : titres de niveau 3, rôle et courriel */
   --fs-2xl: 2rem; /* 32 px : titres de section sur mobile */
   --fs-3xl: 2.5rem; /* 40 px : titres de section */
-  --fs-name: clamp(3.25rem, 1.6rem + 6.6vw, 7rem); /* 52 → 112 px : le nom, seul élément fluide */
+  --fs-name: clamp(3.25rem, 1.6rem + 6.6vw, 7rem); /* 52 → 112 px : le nom, seule taille fluide */
 
   --lh-name: 0.95;
   --lh-heading: 1.15;
@@ -35,8 +37,15 @@
   --lh-body: 1.6;
   --measure: 62ch; /* longueur de ligne maximale du texte courant */
 
+  --fw-medium: 500; /* navigation, rôle */
+  --fw-semibold: 600; /* boutons, liens isolés, titres de niveau 4 */
+  --fw-heading: 640; /* titres de niveaux 2 et 3, courriel */
+  --fw-name: 680; /* le nom et le logotype */
   --stretch-name: 125%;
   --stretch-heading: 112%;
+  --ls-name: -0.03em;
+  --ls-heading: -0.015em; /* niveau 2 */
+  --ls-title: -0.01em; /* niveau 3, courriel, logotype */
 
   /* ---------- espacement : base 8 px ---------- */
   --space-1: 0.5rem; /* 8 */
@@ -47,17 +56,44 @@
   --space-6: 4rem; /* 64 */
   --space-7: 6rem; /* 96 */
 
+  /* ---------- traits, focus, listes ---------- */
+  --stroke: 1px; /* filets et bordures */
+  --stroke-strong: 2px; /* anneau de focus, soulignement de la section en cours */
+  --focus-offset: 3px;
+  --radius-focus: 0.25rem; /* 4 px : anneau de focus autour d'un lien */
+  --underline-offset: 0.25em;
+  --underline-offset-nav: 0.45em;
+  --icon: 0.75em; /* flèche des liens externes */
+  --icon-ui: 1rem; /* 16 px : icônes de bouton */
+  --list-indent: 1.25em; /* retrait des listes à puces */
+  --list-number: 1.5em; /* place du numéro des étapes */
+
   /* ---------- mise en page ---------- */
   --container: 75rem; /* 1200 px de contenu */
   --gutter: var(--space-3); /* 24 px, puis 48 px dès 768 px */
   --header-h: 4rem; /* 64 px */
   --target: 3rem; /* 48 px : hauteur de toute cible cliquable */
-  --radius-media: 0.75rem; /* 12 px : captures d'écran */
+  --radius-media: 0.75rem; /* 12 px : captures d'écran, zone du symbole */
   --radius-phone: 1rem; /* 16 px : capture mobile */
   --radius-pill: 999px; /* boutons */
   --dot: 0.5rem; /* 8 px : pastille de statut */
+  --blur: 12px; /* flou sous la barre collante */
+  --z-raised: 1; /* sections et texte du hero, au-dessus de la scène 3D */
+  --z-header: 20;
+  --z-skip: 30;
+
+  /* ---------- hero et médias ---------- */
+  --hero-min-h: calc(100svh - var(--header-h));
+  --stage-h: clamp(14rem, 34svh, 21rem); /* scène au-dessus du nom, sous 1024 px */
+  --stage-min-h: 26rem; /* scène à droite du nom, dès 1024 px */
+  --canvas-overflow: 30svh; /* le canvas déborde sous la section Projets, qui le recouvre */
+  --ratio-shot: 16 / 10; /* captures ordinateur (1440 × 900) */
+  --ratio-phone: 360 / 779; /* captures mobiles (390 × 844) */
+
+  /* ---------- mouvement ---------- */
   --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
-  --fast: 0.18s;
+  --fast: 0.18s; /* survols */
+  --slow: 0.6s; /* apparition de la scène 3D */
 }
 
 @media (min-width: 48rem) {

@@ -2,8 +2,8 @@
 
 export const root = document.documentElement;
 
-/** L'utilisateur a demandé moins d'animations (réglage système). */
-export const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+/** Réglage système « réduire les animations » : lire .matches au moment voulu, il peut changer pendant la visite. */
+export const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
 /** Écran tactile : interactions au toucher, rendu 3D allégé. */
 export const coarse = window.matchMedia('(pointer: coarse)').matches;
 

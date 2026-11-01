@@ -19,9 +19,15 @@ export function initNav() {
 
   if (toggle && nav) {
     toggle.addEventListener('click', () => setOpen(!isOpen()));
-    // un lien choisi referme le menu ; le défilement vers la section suit
+    // un lien choisi referme le menu ; le focus suit vers la section, puisque le lien disparaît avec le menu
     nav.addEventListener('click', (e) => {
-      if (e.target.closest('a')) setOpen(false);
+      const link = e.target.closest('a[href^="#"]');
+      if (!link || !isOpen()) return;
+      setOpen(false);
+      const target = document.querySelector(link.getAttribute('href'));
+      if (!target) return;
+      if (!target.hasAttribute('tabindex')) target.setAttribute('tabindex', '-1');
+      requestAnimationFrame(() => target.focus({ preventScroll: true }));
     });
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && isOpen()) setOpen(false, true);

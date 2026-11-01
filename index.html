@@ -16,12 +16,12 @@
   <script type="module" src="/src/main.js"></script>
 </head>
 <body>
-<a class="skip-link" href="#main">Aller au contenu</a>
+<a class="btn btn--secondary skip-link" href="#main">Aller au contenu</a>
 
 <header class="site-header">
   <div class="container site-header__inner">
     <a class="wordmark" href="#accueil">Yann Siaka</a>
-    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    <button class="btn btn--secondary menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
     <nav class="site-nav" id="site-nav" aria-label="Sections">
       <ul class="site-nav__list" role="list">
         <li><a class="site-nav__link" href="#projets">Projets</a></li>
@@ -41,7 +41,7 @@
     <div class="container hero__inner">
       <div class="hero__text">
         <h1 class="hero__title" id="hero-title">
-          <span class="hero__name"><span>Yann</span> <span>Siaka</span></span><span class="sr-only">, </span>
+          <span class="hero__name"><span>Yann</span> <span>Siaka<span class="sr-only">,</span></span></span>
           <span class="hero__role">Développeur full-stack à Montréal</span>
         </h1>
         <p class="hero__lede">Du pixel à la donnée&nbsp;: je conçois et je code des applications web complètes, de l’interface React à l’API Laravel et à la base PostgreSQL.</p>
@@ -51,9 +51,16 @@
         </div>
         <p class="status status--live hero__availability">Disponible pour un poste ou une mission, à Montréal ou à distance.</p>
       </div>
-      <div class="hero__stage" id="heroStage" aria-hidden="true">
-        <svg class="hero__fallback" viewBox="0 0 120 80" preserveAspectRatio="xMidYMid meet"><path d="M38 18 14 40l24 22M82 18l24 22-24 22M68 10 52 70" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <p class="hero__hint" id="heroHint">Cliquez sur le symbole pour passer au suivant, maintenez le clic pour le faire éclater.</p>
+      <div class="hero__stage" id="heroStage">
+        <svg class="hero__fallback" viewBox="0 0 120 80" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><path d="M38 18 14 40l24 22M82 18l24 22-24 22M68 10 52 70" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <button class="hero__symbol" id="heroSymbol" type="button" aria-label="Afficher le symbole suivant" hidden></button>
+        <div class="hero__controls" id="heroControls">
+          <button class="btn btn--secondary btn--icon hero__pause" id="heroPause" type="button" aria-label="Mettre l’animation en pause" title="Mettre l’animation en pause" hidden>
+            <svg class="icon-pause" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M5.5 3.5v9M10.5 3.5v9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <svg class="icon-play" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M5.5 3.25v9.5L12.75 8z" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          </button>
+          <p class="hero__hint" id="heroHint" aria-hidden="true">Cliquez sur le symbole pour passer au suivant, maintenez pour le faire éclater.</p>
+        </div>
       </div>
     </div>
   </section>
@@ -63,15 +70,15 @@
     <div class="container">
       <div class="section-head">
         <h2 id="projets-title">Projets</h2>
-        <p class="section-head__intro">Deux sites clients en production, deux projets d’études et un produit que je construis en ce moment.</p>
+        <p class="section-head__intro">Deux sites clients en ligne, deux projets d’études et un produit que je construis en ce moment.</p>
       </div>
 
       <ul class="projects" role="list">
         <li>
           <article class="project" aria-labelledby="projet-precious">
             <figure class="project__media">
-              <img class="project__shot" src="./src/assets/projects/precious-desktop-720.webp" srcset="./src/assets/projects/precious-desktop-720.webp 720w, ./src/assets/projects/precious-desktop-1200.webp 1200w" sizes="(min-width: 64rem) 640px, 92vw" width="1200" height="750" alt="Page d’accueil du site Precious sur ordinateur" loading="lazy" decoding="async">
-              <img class="project__phone" src="./src/assets/projects/precious-mobile.webp" width="360" height="779" alt="Page d’accueil du site Precious sur mobile" loading="lazy" decoding="async">
+              <img class="project__shot" src="./src/assets/projects/precious-desktop-720.webp" srcset="./src/assets/projects/precious-desktop-720.webp 720w, ./src/assets/projects/precious-desktop-1200.webp 1200w" sizes="(min-width: 75rem) 610px, (min-width: 64rem) 45vw, 86vw" width="1200" height="750" alt="Page d’accueil du site Precious sur ordinateur" loading="lazy" decoding="async">
+              <img class="project__phone" src="./src/assets/projects/precious-mobile.webp" srcset="./src/assets/projects/precious-mobile.webp 360w, ./src/assets/projects/precious-mobile-720.webp 720w" sizes="(min-width: 75rem) 160px, (min-width: 64rem) 12vw, 22vw" width="360" height="779" alt="Page d’accueil du site Precious sur mobile" loading="lazy" decoding="async">
             </figure>
             <div class="project__body">
               <h3 id="projet-precious">Precious</h3>
@@ -95,8 +102,8 @@
         <li>
           <article class="project" aria-labelledby="projet-glorious-hall">
             <figure class="project__media">
-              <img class="project__shot" src="./src/assets/projects/glorious-hall-desktop-720.webp" srcset="./src/assets/projects/glorious-hall-desktop-720.webp 720w, ./src/assets/projects/glorious-hall-desktop-1200.webp 1200w" sizes="(min-width: 64rem) 640px, 92vw" width="1200" height="750" alt="Page d’accueil du site Glorious Hall sur ordinateur" loading="lazy" decoding="async">
-              <img class="project__phone" src="./src/assets/projects/glorious-hall-mobile.webp" width="360" height="779" alt="Page d’accueil du site Glorious Hall sur mobile" loading="lazy" decoding="async">
+              <img class="project__shot" src="./src/assets/projects/glorious-hall-desktop-720.webp" srcset="./src/assets/projects/glorious-hall-desktop-720.webp 720w, ./src/assets/projects/glorious-hall-desktop-1200.webp 1200w" sizes="(min-width: 75rem) 610px, (min-width: 64rem) 45vw, 86vw" width="1200" height="750" alt="Page d’accueil du site Glorious Hall sur ordinateur" loading="lazy" decoding="async">
+              <img class="project__phone" src="./src/assets/projects/glorious-hall-mobile.webp" srcset="./src/assets/projects/glorious-hall-mobile.webp 360w, ./src/assets/projects/glorious-hall-mobile-720.webp 720w" sizes="(min-width: 75rem) 160px, (min-width: 64rem) 12vw, 22vw" width="360" height="779" alt="Page d’accueil du site Glorious Hall sur mobile" loading="lazy" decoding="async">
             </figure>
             <div class="project__body">
               <h3 id="projet-glorious-hall">Glorious Hall</h3>
@@ -120,8 +127,8 @@
         <li>
           <article class="project" aria-labelledby="projet-easytravel">
             <figure class="project__media">
-              <img class="project__shot" src="./src/assets/projects/easytravel-desktop-720.webp" srcset="./src/assets/projects/easytravel-desktop-720.webp 720w, ./src/assets/projects/easytravel-desktop-1200.webp 1200w" sizes="(min-width: 64rem) 640px, 92vw" width="1200" height="750" alt="Page d’accueil du site EasyTravel sur ordinateur" loading="lazy" decoding="async">
-              <img class="project__phone" src="./src/assets/projects/easytravel-mobile.webp" width="360" height="779" alt="Page d’accueil du site EasyTravel sur mobile" loading="lazy" decoding="async">
+              <img class="project__shot" src="./src/assets/projects/easytravel-desktop-720.webp" srcset="./src/assets/projects/easytravel-desktop-720.webp 720w, ./src/assets/projects/easytravel-desktop-1200.webp 1200w" sizes="(min-width: 75rem) 610px, (min-width: 64rem) 45vw, 86vw" width="1200" height="750" alt="Page d’accueil du site EasyTravel sur ordinateur" loading="lazy" decoding="async">
+              <img class="project__phone" src="./src/assets/projects/easytravel-mobile.webp" srcset="./src/assets/projects/easytravel-mobile.webp 360w, ./src/assets/projects/easytravel-mobile-720.webp 720w" sizes="(min-width: 75rem) 160px, (min-width: 64rem) 12vw, 22vw" width="360" height="779" alt="Page d’accueil du site EasyTravel sur mobile" loading="lazy" decoding="async">
             </figure>
             <div class="project__body">
               <h3 id="projet-easytravel">EasyTravel</h3>
@@ -230,7 +237,7 @@
 
       <div class="subsection">
         <h3>Ma façon de travailler</h3>
-        <ol class="items items--2 steps">
+        <ol class="items items--2 steps" role="list">
           <li class="item">
             <h4>Comprendre le besoin</h4>
             <p>Qui utilise le service, sur quel appareil et avec quelle connexion. Je pars des contraintes réelles.</p>

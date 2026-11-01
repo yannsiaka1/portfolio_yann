@@ -40,6 +40,11 @@ figure {
   margin: 0;
 }
 
+/* l'attribut hidden l'emporte toujours, même sur un composant qui fixe son affichage (.btn) */
+[hidden] {
+  display: none !important;
+}
+
 img {
   display: block;
   max-width: 100%;
@@ -65,32 +70,32 @@ button {
 }
 
 :focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 3px;
-  border-radius: 4px;
+  outline: var(--stroke-strong) solid var(--accent);
+  outline-offset: var(--focus-offset);
+  border-radius: var(--radius-focus);
 }
 
 /* Un niveau de titre = un rôle, partout sur la page. */
 h2 {
   font-size: var(--fs-2xl);
   line-height: var(--lh-heading);
-  font-weight: 640;
+  font-weight: var(--fw-heading);
   font-stretch: var(--stretch-heading);
-  letter-spacing: -0.015em;
+  letter-spacing: var(--ls-heading);
 }
 
 h3 {
   font-size: var(--fs-xl);
   line-height: var(--lh-title);
-  font-weight: 620;
+  font-weight: var(--fw-heading);
   font-stretch: var(--stretch-heading);
-  letter-spacing: -0.01em;
+  letter-spacing: var(--ls-title);
 }
 
 h4 {
   font-size: var(--fs-lg);
   line-height: var(--lh-title);
-  font-weight: 600;
+  font-weight: var(--fw-semibold);
 }
 
 @media (min-width: 48rem) {
@@ -111,21 +116,13 @@ h4 {
   border: 0;
 }
 
+/* Lien d'évitement : l'apparence vient de .btn.btn--secondary, seule sa place est ici. */
 .skip-link {
   position: fixed;
   left: var(--gutter);
   top: var(--space-1);
-  z-index: 30;
-  display: inline-flex;
-  align-items: center;
-  min-height: var(--target);
-  padding-inline: var(--space-3);
-  border-radius: var(--radius-pill);
-  background: var(--accent);
-  color: var(--on-accent);
-  font-size: var(--fs-sm);
-  font-weight: 600;
-  text-decoration: none;
+  z-index: var(--z-skip);
+  background: var(--surface);
   transform: translateY(-200%);
 }
 
@@ -133,6 +130,7 @@ h4 {
   transform: none;
 }
 
-#main:focus {
+/* cibles qui reçoivent le focus par script (contenu principal, section choisie dans le menu) */
+[tabindex="-1"]:focus {
   outline: none;
 }

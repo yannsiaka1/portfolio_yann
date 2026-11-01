@@ -10,11 +10,11 @@
 .site-header {
   position: sticky;
   top: 0;
-  z-index: 20;
+  z-index: var(--z-header);
   background: var(--header-bg);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid transparent;
+  -webkit-backdrop-filter: blur(var(--blur));
+  backdrop-filter: blur(var(--blur));
+  border-bottom: var(--stroke) solid transparent;
   transition: border-color var(--fast) var(--ease);
 }
 
@@ -37,9 +37,9 @@
   align-items: center;
   min-height: var(--target);
   font-size: var(--fs-md);
-  font-weight: 680;
+  font-weight: var(--fw-name);
   font-stretch: var(--stretch-name);
-  letter-spacing: -0.01em;
+  letter-spacing: var(--ls-title);
   text-decoration: none;
 }
 
@@ -59,7 +59,7 @@
   min-height: var(--target);
   padding-inline: var(--space-2);
   font-size: var(--fs-sm);
-  font-weight: 500;
+  font-weight: var(--fw-medium);
   color: var(--text-2);
   text-decoration: none;
   transition: color var(--fast) var(--ease);
@@ -72,29 +72,23 @@
 .site-nav__link[aria-current="true"] {
   color: var(--text);
   text-decoration: underline;
-  text-decoration-thickness: 2px;
-  text-underline-offset: 0.45em;
+  text-decoration-thickness: var(--stroke-strong);
+  text-underline-offset: var(--underline-offset-nav);
 }
 
 .site-nav__cta {
   margin-left: var(--space-2);
 }
 
-.menu-toggle {
+/* Bouton Menu : l'apparence vient de .btn.btn--secondary, seul son affichage est ici. */
+.site-header .menu-toggle {
   display: none;
 }
 
 /* Menu mobile : seulement quand JavaScript est là pour l'ouvrir. */
 @media (max-width: 47.99rem) {
-  .js .menu-toggle {
+  .js .site-header .menu-toggle {
     display: inline-flex;
-    align-items: center;
-    min-height: var(--target);
-    padding-inline: var(--space-3);
-    border: 1px solid var(--line-strong);
-    border-radius: var(--radius-pill);
-    font-size: var(--fs-sm);
-    font-weight: 600;
   }
 
   .js .site-nav {
@@ -105,7 +99,7 @@
     top: 100%;
     padding: var(--space-1) var(--gutter) var(--space-3);
     background: var(--surface);
-    border-bottom: 1px solid var(--line);
+    border-bottom: var(--stroke) solid var(--line);
   }
 
   .js .site-header.is-open .site-nav {
@@ -122,7 +116,7 @@
     padding-inline: 0;
     font-size: var(--fs-lg);
     color: var(--text);
-    border-bottom: 1px solid var(--line);
+    border-bottom: var(--stroke) solid var(--line);
   }
 
   .js .site-nav__cta {
@@ -135,10 +129,10 @@
 /* Opaques et au-dessus du hero : elles recouvrent la scène 3D en remontant. */
 .section {
   position: relative;
-  z-index: 1;
+  z-index: var(--z-raised);
   background: var(--bg);
   padding-block: var(--space-6);
-  border-top: 1px solid var(--line);
+  border-top: var(--stroke) solid var(--line);
 }
 
 .section-head {
@@ -189,9 +183,9 @@
 /* ---------- pied de page ---------- */
 .site-footer {
   position: relative;
-  z-index: 1;
+  z-index: var(--z-raised);
   background: var(--bg);
-  border-top: 1px solid var(--line);
+  border-top: var(--stroke) solid var(--line);
 }
 
 .site-footer__inner {

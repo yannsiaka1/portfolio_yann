@@ -8,11 +8,11 @@
   gap: var(--space-1);
   min-height: var(--target);
   padding-inline: var(--space-3);
-  border: 1px solid transparent;
+  border: var(--stroke) solid transparent;
   border-radius: var(--radius-pill);
   font-size: var(--fs-sm);
-  font-weight: 600;
-  line-height: 1;
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-ui);
   text-decoration: none;
   white-space: nowrap;
   transition:
@@ -38,13 +38,24 @@
   border-color: var(--text);
 }
 
+/* bouton carré à icône seule : toujours un aria-label */
+.btn--icon {
+  width: var(--target);
+  padding-inline: 0;
+}
+
+.btn--icon svg {
+  width: var(--icon-ui);
+  height: var(--icon-ui);
+}
+
 /* ---------- lien texte ---------- */
 .link {
   color: var(--text);
   text-decoration: underline;
-  text-decoration-thickness: 1px;
+  text-decoration-thickness: var(--stroke);
   text-decoration-color: var(--line-strong);
-  text-underline-offset: 0.25em;
+  text-underline-offset: var(--underline-offset);
   transition: text-decoration-color var(--fast) var(--ease);
 }
 
@@ -60,15 +71,15 @@
   gap: var(--space-1);
   min-height: var(--target);
   font-size: var(--fs-sm);
-  font-weight: 600;
+  font-weight: var(--fw-semibold);
 }
 
 /* flèche des liens externes, toujours accompagnée de « (nouvel onglet) » pour les lecteurs d'écran */
 .ext::after {
   content: "";
   flex: none;
-  width: 0.75em;
-  height: 0.75em;
+  width: var(--icon);
+  height: var(--icon);
   background: currentColor;
   -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M3.5 1.75h6.75V8.5M10.25 1.75 1.75 10.25' fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M3.5 1.75h6.75V8.5M10.25 1.75 1.75 10.25' fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
@@ -107,7 +118,6 @@
 .tools {
   display: flex;
   flex-wrap: wrap;
-  gap: 0 0.4em;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -116,8 +126,9 @@
   color: var(--text-2);
 }
 
+/* virgule suivie d'une espace insécable : la liste peut passer à la ligne entre deux outils */
 .tools li:not(:last-child)::after {
-  content: ",";
+  content: ",\00a0";
 }
 
 /* ---------- élément à filet : compétences, étapes, formation, certifications, autres projets ---------- */
@@ -134,10 +145,11 @@
   align-content: start;
   gap: var(--space-1);
   padding-top: var(--space-3);
-  border-top: 1px solid var(--line);
+  border-top: var(--stroke) solid var(--line);
 }
 
 .item > p {
+  max-width: var(--measure);
   color: var(--text-2);
 }
 
@@ -164,7 +176,7 @@
   content: counter(step);
   content: counter(step) / "";
   display: inline-block;
-  min-width: 1.5em;
+  min-width: var(--list-number);
   color: var(--text-2);
   font-variant-numeric: tabular-nums;
 }
