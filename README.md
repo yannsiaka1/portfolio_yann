@@ -1,8 +1,8 @@
-# Portfolio · Yann Siaka
+# Portfolio de Yann Siaka
 
-Portfolio de Yann Siaka, développeur full-stack à Montréal. Le hero met en scène des symboles de code en 3D, et le reste du site raconte le parcours au fil du défilement.
+Portfolio de Yann Siaka, développeur full-stack à Montréal. Une seule page, pensée pour se lire vite : qui il est, ses projets en ligne, son parcours et comment le joindre. Un symbole de code en 3D accueille le visiteur dans le hero ; le reste se lit comme une bonne documentation.
 
-**Stack** : [Vite](https://vite.dev) · [three.js](https://threejs.org) · [GSAP](https://gsap.com) + ScrollTrigger · [Lenis](https://lenis.darkroom.engineering) · Web Audio · polices auto-hébergées ([Fontsource](https://fontsource.org)).
+**Stack** : [Vite](https://vite.dev) · [three.js](https://threejs.org) · police Archivo auto-hébergée ([Fontsource](https://fontsource.org)).
 Aucun framework : HTML, CSS et JavaScript en modules.
 
 ## Démarrer
@@ -19,30 +19,47 @@ npm run preview   # sert dist/ pour vérifier le build
 ## Structure
 
 ```
-index.html                 contenu de toutes les sections, balises de partage
+index.html                 tout le contenu de la page, balises de partage
 public/favicon.svg
 src/
-├── main.js                point d'entrée : styles, polices, interface, puis scène 3D chargée à part
-├── app.js                 assemble l'interface dans le bon ordre
+├── main.js                point d'entrée : police, styles, navigation, copie, puis scène 3D chargée à part
 ├── core/
-│   ├── env.js             préférences de l'appareil (souris, tactile, mouvement réduit) et utilitaires DOM
-│   ├── state.js           état partagé entre l'interface et la scène 3D
-│   ├── gsap.js            GSAP + ScrollTrigger enregistrés une seule fois
-│   ├── scroll.js          défilement doux Lenis synchronisé avec ScrollTrigger
-│   ├── audio.js           sons synthétisés (aucun fichier audio)
-│   └── text.js            découpe de texte et effet de brouillage « terminal »
+│   ├── env.js             préférences de l'appareil (tactile, mouvement réduit) et utilitaires DOM
+│   └── state.js           signale à la page que la scène 3D est prête, ou indisponible
 ├── ui/
-│   ├── loader.js          préchargement (journal de build, compteur, ouverture en bandes)
-│   ├── nav.js             barre « yann@siaka:~/section$ », menu, ancres, bouton son
-│   ├── cursor.js          curseur personnalisé et boutons magnétiques
-│   └── clocks.js          horloges Montréal et Douala
-├── sections/              un fichier par section (hero, révélations, bandeau, projets, expertise…)
+│   ├── nav.js             barre collante, menu mobile, section en cours
+│   └── copy.js            bouton « Copier l'adresse » et son message
 ├── hero/
 │   ├── scene.js           scène three.js : rendu, interactions, boucle d'animation
 │   ├── formations.js      les 7 symboles, décrits panneau par panneau
-│   └── helpers.js         géométrie arrondie, courbes d'animation, textures
-└── styles/                tokens, base, habillage, hero, sections, responsive (importés dans cet ordre)
+│   └── helpers.js         géométrie arrondie, courbes d'animation
+└── styles/                importés dans cet ordre par index.css
+    ├── tokens.css         la seule source des couleurs, tailles, espacements et rayons
+    ├── base.css           remise à zéro, titres, focus, utilitaires
+    ├── layout.css         conteneur, barre de navigation, sections, pied de page
+    ├── components.css     bouton, lien, statut, liste d'outils, élément à filet
+    ├── hero.css           hero et scène 3D
+    └── sections.css       projets, à propos, contact
 ```
+
+## Système de design
+
+Toutes les valeurs viennent de `src/styles/tokens.css` : aucune couleur, taille ou marge écrite en dur ailleurs.
+
+| Jeton | Valeur | Usage |
+| --- | --- | --- |
+| `--bg` | `#121211` | fond de page, identique au fond de la scène 3D |
+| `--surface` | `#1A1A18` | menu mobile, fond des captures pendant leur chargement |
+| `--text` | `#EEECE6` | titres et texte courant (15,9:1 sur le fond) |
+| `--text-2` | `#ABA79E` | texte secondaire (7,8:1) |
+| `--accent` | `#F2B13A` | bouton principal, focus, lueur du symbole (9,9:1) |
+| `--live` / `--neutral` | `#7CC48E` / `#8A867E` | pastilles de statut |
+
+- **Typographie** : Archivo seule. Chasse 125 % pour le nom, 112 % pour les titres, normale pour le texte. Six tailles : 15, 18, 21, 28, 32 ou 40 px (titres de section), et le nom, de 52 à 112 px. Texte courant en 18 px, interligne 1,6, 62 caractères au plus par ligne.
+- **Espacement** : base 8 px (8, 16, 24, 32, 48, 64, 96). Toute cible cliquable fait 48 px de haut.
+- **Composants** (`components.css`) : `.btn` (`--primary`, `--secondary`), `.link` (`--standalone` hors d'une phrase, `.ext` pour un lien externe), `.status` (`--live`, `--progress`, neutre), `.tools`, `.items` et `.item` (élément à filet).
+- **Règles** : un seul bouton principal par vue ; un statut a toujours un texte, jamais la couleur seule ; un lien externe ouvre un nouvel onglet et le dit aux lecteurs d'écran ; casse de phrase partout, sans sur-titres ni capitales.
+- **Titres** : un seul `h1` (le nom et le rôle), un `h2` par section, `h3` pour un projet principal ou une sous-section, `h4` pour un élément de liste.
 
 ## Le hero 3D
 
@@ -60,62 +77,56 @@ Les mêmes panneaux de verre se recomposent en sept symboles, environ toutes les
 
 **Interactions**
 
-- **Survol** : le symbole s'incline vers le curseur et le panneau survolé s'illumine.
-- **Clic court** : symbole suivant.
-- **Clic long** (appui long au doigt) : la page tremble, le symbole explose (« casser la prod »), puis se reconstruit au relâchement (« rollback »).
-- **Pistes du circuit** : les survoler, ou les toucher sur mobile, lance des étincelles et envoie des paquets de données vers le symbole.
-- **Son** : coupé par défaut, activable avec le bouton « Son » de la barre de navigation.
+- **Survol** (souris) : le symbole s'incline vers le curseur et le panneau survolé s'illumine.
+- **Clic court** ou toucher : symbole suivant.
+- **Clic maintenu** ou appui long : le symbole éclate, puis se reconstruit au relâchement.
+- **Défilement** : les panneaux s'écartent pendant que la section Projets recouvre le hero.
+- **Pause** : le bouton placé à côté de l'indice fige l'animation, puis la relance.
 
-**Ajouter un symbole** : dans `src/hero/formations.js`, écrire une fonction qui renvoie une liste de panneaux (avec `bar`, `splitBar`, `cube` ou `slab`), puis l'ajouter au tableau `FORMS` avec son libellé. Le nombre de panneaux s'adapte tout seul au plus grand symbole.
+**Placement** : la boîte `.hero__stage` (CSS) décide où se pose le symbole : à droite du nom sur ordinateur, au-dessus sur mobile. Déplacer cette boîte suffit, la scène suit.
+
+**Ajouter un symbole** : dans `src/hero/formations.js`, écrire une fonction qui renvoie une liste de panneaux (avec `bar`, `splitBar`, `cube` ou `slab`), puis l'ajouter au tableau `FORMS`. Le nombre de panneaux s'adapte tout seul au plus grand symbole.
 
 ## Sections
 
-| Section | Animation | Fichier |
-| --- | --- | --- |
-| Préchargement | journal de build, compteur à rouleaux, ouverture en 10 bandes | `ui/loader.js` |
-| Hero | titre qui sort du flou lettre par lettre, scène 3D | `sections/hero.js`, `hero/` |
-| À propos | le paragraphe s'éclaire mot par mot au défilement | `sections/reveals.js` |
-| Bandeau | défilement infini qui accélère avec le scroll | `sections/marquee.js` |
-| Repères | compteurs à rouleaux, horloges Montréal / Douala | `sections/reveals.js`, `ui/clocks.js` |
-| Projets | défilement horizontal épinglé (> 900 px), maquettes en parallaxe | `sections/work.js` |
-| Expertise | pile qui s'écarte et s'allume couche par couche (> 900 px) | `sections/stack.js` |
-| Méthode | graphe `git log` avec une branche, tracé au défilement | `sections/method.js` |
-| Contact | la requête JSON s'écrit pendant la saisie, validation côté client | `sections/contact.js` |
-| Pied de page | signature à graisse variable, une note par lettre | `sections/footer.js` |
+| Section | Contenu |
+| --- | --- |
+| Hero | nom, rôle, phrase d'accroche, « Voir les projets », GitHub, disponibilité, symbole 3D |
+| Projets | trois projets en ligne avec captures (même gabarit), puis Easy Life et l'ERP de l'IUT |
+| À propos | présentation, compétences (interface, API, données, mise en ligne), méthode en quatre étapes |
+| Parcours | formation et certifications, avec liens de vérification |
+| Contact | courriel, bouton de copie, lien d'envoi, GitHub |
 
 ## Projets présentés
 
-Les cartes de la section Projets sont dans `index.html`.
-
-- **Projets en ligne** (Precious, Glorious Hall, EasyTravel) : vraies captures dans `src/assets/projects/`, sur ordinateur (1440 × 900) dans un cadre de navigateur et sur mobile (390 × 844) dans un téléphone.
-- **Projets pas encore en ligne** (Easy Life, ERP de l'IUT) : maquettes dessinées en CSS (classes `v-em` et `v-erp` dans `src/styles/sections.css`).
+- **Projets en ligne** (Precious, Glorious Hall, EasyTravel) : vraies captures dans `src/assets/projects/`, sur ordinateur (1440 × 900) et sur mobile (390 × 844).
+- **Projets pas encore en ligne** (Easy Life, ERP de l'IUT) : présentés en texte seulement, sans maquette inventée.
 
 Pour rafraîchir une capture : construire le site depuis son dépôt (`npm run build`, puis `npm run preview`), capturer la page d'accueil aux deux formats, puis convertir en WebP : 720 et 1200 px de large pour l'ordinateur, 360 px pour le mobile. Garder les mêmes noms de fichiers.
 
 | Projet | Nature | Lien |
 | --- | --- | --- |
-| Easy Life | produit en construction | pas encore en ligne |
 | Precious | site client | [precious-jus.com](https://precious-jus.com/) |
 | Glorious Hall | site client | [glorioushall.com](https://www.glorioushall.com/) |
-| EasyTravel | projet académique | [site](https://easytravel-front-wine.vercel.app/) · [front](https://github.com/yannsiaka1/easytravel-front) · [API](https://github.com/yannsiaka1/easytravel-back) |
-| ERP de l'IUT de Douala | projet tutoré | [front](https://github.com/yannsiaka1/projet-tutore-front) · [API](https://github.com/yannsiaka1/projet-tutore-back) |
+| EasyTravel | projet d'études | [site](https://easytravel-front-wine.vercel.app/) · [interface](https://github.com/yannsiaka1/easytravel-front) · [API](https://github.com/yannsiaka1/easytravel-back) |
+| Easy Life | produit en construction | pas encore en ligne |
+| ERP de l'IUT de Douala | projet tutoré | [interface](https://github.com/yannsiaka1/projet-tutore-front) · [API](https://github.com/yannsiaka1/projet-tutore-back) |
 
 ## Accessibilité et performance
 
-- **Mouvement réduit** (réglage système) : pas de préchargement, pas de défilement doux ni d'épinglage, contenu visible immédiatement.
-- **Sans WebGL 2** : un symbole `</>` en contour remplace la scène, le reste du site fonctionne.
+- **Objectif WCAG 2.1 AA** : texte à 7:1 au moins, focus visible sur toute cible, navigation complète au clavier, lien d'évitement, cibles de 48 px, page lisible à 320 px de large sans défilement horizontal.
+- **Mouvement réduit** (réglage système) : symbole immobile, pas de passage automatique, pas d'éclatement, défilement sans animation.
+- **Sans WebGL 2** : un symbole `</>` dessiné en SVG remplace la scène, le reste du site fonctionne.
 - **Mobile** : matériau métal à la place du verre réfractif, résolution limitée, interactions au toucher.
-- three.js (≈ 140 ko gzip) est chargé à part : le premier fichier JS pèse ≈ 58 ko gzip.
-- Le rendu 3D se met en pause quand le hero sort de l'écran ou que l'onglet est caché.
-- Le menu rend la page inerte tant qu'il est ouvert ; Échap le referme.
+- three.js (≈ 138 ko gzip) est chargé à part : le premier fichier JS pèse ≈ 2 ko gzip et la feuille de style ≈ 4 ko.
+- Le rendu 3D s'arrête quand le hero sort de l'écran ou que l'onglet est caché.
 
 ## À remplacer avant la mise en ligne
 
-- **Courriel** `bonjour@yannsiaka.dev` (section Contact, menu) : adresse provisoire.
-- **Lien LinkedIn** (menu et pied de page) : pointe vers la page d'accueil de LinkedIn.
-- **Démo de l'ERP de l'IUT** : le projet Vercel n'a pas encore de déploiement de production ; la carte renvoie au code sur GitHub en attendant.
-- **Formulaire de contact** : aucun envoi réel pour l'instant (`src/sections/contact.js`), à brancher sur un endpoint (Laravel, Formspree…).
-- **Versions du changelog** (section Parcours) : à ajuster à ton vrai parcours.
+- **Courriel** `bonjour@yannsiaka.dev` (section Contact) : adresse provisoire.
+- **LinkedIn** : pas affiché tant qu'il n'y a pas d'adresse de profil ; à ajouter dans Contact et le pied de page.
+- **Démo de l'ERP de l'IUT** : le projet Vercel n'a pas encore de déploiement de production ; la page renvoie au code sur GitHub.
+- **Années du parcours** : la section Parcours n'affiche pas de dates ; à ajouter si souhaité.
 - **Image de partage** (`og:image`) : à créer, pour un bel aperçu sur LinkedIn.
 
 ## Déploiement
