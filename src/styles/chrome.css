@@ -178,3 +178,50 @@
 .cursor.is-out {
   opacity: 0;
 }
+
+/* ---------- grain de pellicule (première version) : texture fixe, qui frémit seulement à la souris ----------
+   Il s'arrête avec « réduire les animations » et avec le bouton pause, comme tout ce qui bouge seul. */
+.grain {
+  position: fixed;
+  inset: -60%;
+  z-index: var(--z-grain);
+  pointer-events: none;
+  opacity: var(--grain-opacity);
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .grain {
+    animation: grain var(--grain-step) steps(5) infinite;
+  }
+
+  .is-paused .grain {
+    animation: none;
+  }
+}
+
+@keyframes grain {
+  0% {
+    transform: translate(0, 0);
+  }
+
+  20% {
+    transform: translate(-4%, 3%);
+  }
+
+  40% {
+    transform: translate(3%, -5%);
+  }
+
+  60% {
+    transform: translate(-6%, -2%);
+  }
+
+  80% {
+    transform: translate(5%, 4%);
+  }
+
+  100% {
+    transform: translate(0, 0);
+  }
+}

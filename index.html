@@ -28,6 +28,7 @@
 </head>
 <body>
 <a class="btn btn--secondary skip-link" href="#main">Aller au contenu</a>
+<div class="grain" aria-hidden="true"></div>
 
 <!-- ============ INTRO ============ -->
 <div class="loader" id="loader" aria-hidden="true">
@@ -126,171 +127,211 @@
   </div>
 
   <!-- ============ PROJETS ============ -->
-  <section class="section" id="projets" data-path="~/projets" aria-labelledby="projets-title">
-    <div class="container">
-      <div class="section-head">
-        <h2 id="projets-title" data-reveal="words">Projets</h2>
-        <p class="section-head__intro">Deux sites clients en ligne, deux projets d’études et un produit que je construis en ce moment.</p>
-      </div>
-
-      <ul class="projects" role="list">
-        <li>
-          <article class="project" aria-labelledby="projet-precious">
-            <figure class="project__media">
-              <img class="project__shot" src="./src/assets/projects/precious-desktop-720.webp" srcset="./src/assets/projects/precious-desktop-720.webp 720w, ./src/assets/projects/precious-desktop-1200.webp 1200w" sizes="(min-width: 90rem) 760px, (min-width: 64rem) 52vw, 92vw" width="1200" height="750" alt="Page d’accueil du site Precious sur ordinateur" loading="lazy" decoding="async">
-              <img class="project__phone" src="./src/assets/projects/precious-mobile.webp" srcset="./src/assets/projects/precious-mobile.webp 360w, ./src/assets/projects/precious-mobile-720.webp 720w" sizes="(min-width: 90rem) 200px, (min-width: 64rem) 14vw, 24vw" width="360" height="779" alt="Page d’accueil du site Precious sur mobile" loading="lazy" decoding="async">
-            </figure>
-            <div class="project__body">
-              <h3 id="projet-precious">Precious</h3>
-              <p class="status status--live">Site client en ligne</p>
-              <p class="project__desc">Site vitrine d’une marque montréalaise&nbsp;: jus 100&nbsp;% bio pressés à la commande, donuts artisanaux, cocktails pour les événements et une académie de formation.</p>
-              <ul class="project__points">
-                <li>Maquettes Figma, puis intégration en composants React</li>
-                <li>Formulaires envoyés côté serveur depuis un domaine authentifié (Resend)</li>
-                <li>Parcours de formation et paiement intégrés (Payhip)</li>
-                <li>Indexé par Google, avec Search Console et DMARC en place</li>
-              </ul>
-              <ul class="tools" role="list" aria-label="Outils">
-                <li>Vite</li><li>React</li><li>Tailwind</li><li>Vercel</li><li>Resend</li>
-              </ul>
-              <div class="project__links">
-                <a class="btn btn--secondary ext magnetic" href="https://precious-jus.com/" target="_blank" rel="noopener">Voir le site<span class="sr-only"> Precious (nouvel onglet)</span></a>
-              </div>
+  <!-- Grand écran : la section s'épingle, chaque projet arrive par la droite et le précédent bascule à gauche.
+       Ailleurs, ou si une carte ne tient pas dans la hauteur de l'écran, les cartes s'empilent (src/sections/projects.js). -->
+  <section class="section section--projects" id="projets" data-path="~/projets" aria-labelledby="projets-label">
+    <div class="projects" id="projects">
+      <div class="projects__viewport">
+        <div class="projects__panel projects__intro">
+          <div class="container">
+            <div class="section-head">
+              <p class="eyebrow" id="projets-label">Projets</p>
+              <h2 id="projets-title" data-reveal="words">Du schéma <em>au déploiement.</em><span class="count" aria-hidden="true">(05)</span></h2>
+              <p class="section-head__intro">Cinq projets&nbsp;: deux sites clients en ligne, deux projets d’études et le produit que je construis en ce moment.</p>
             </div>
-          </article>
-        </li>
+          </div>
+        </div>
 
-        <li>
-          <article class="project" aria-labelledby="projet-glorious-hall">
-            <figure class="project__media">
-              <img class="project__shot" src="./src/assets/projects/glorious-hall-desktop-720.webp" srcset="./src/assets/projects/glorious-hall-desktop-720.webp 720w, ./src/assets/projects/glorious-hall-desktop-1200.webp 1200w" sizes="(min-width: 90rem) 760px, (min-width: 64rem) 52vw, 92vw" width="1200" height="750" alt="Page d’accueil du site Glorious Hall sur ordinateur" loading="lazy" decoding="async">
-              <img class="project__phone" src="./src/assets/projects/glorious-hall-mobile.webp" srcset="./src/assets/projects/glorious-hall-mobile.webp 360w, ./src/assets/projects/glorious-hall-mobile-720.webp 720w" sizes="(min-width: 90rem) 200px, (min-width: 64rem) 14vw, 24vw" width="360" height="779" alt="Page d’accueil du site Glorious Hall sur mobile" loading="lazy" decoding="async">
-            </figure>
-            <div class="project__body">
-              <h3 id="projet-glorious-hall">Glorious Hall</h3>
-              <p class="status status--live">Site client en ligne</p>
-              <p class="project__desc">Site d’une salle événementielle à Bonamoussadi, Douala, codé à partir de ma propre maquette.</p>
-              <ul class="project__points">
-                <li>Composants React typés en TypeScript</li>
-                <li>Galerie photos et vidéos classée par type d’événement</li>
-                <li>Animations au défilement</li>
-              </ul>
-              <ul class="tools" role="list" aria-label="Outils">
-                <li>React</li><li>TypeScript</li><li>Tailwind</li>
-              </ul>
-              <div class="project__links">
-                <a class="btn btn--secondary ext magnetic" href="https://www.glorioushall.com/" target="_blank" rel="noopener">Voir le site<span class="sr-only"> Glorious Hall (nouvel onglet)</span></a>
+        <ul class="projects__list" role="list">
+          <li class="projects__panel">
+            <article class="card card--precious" aria-labelledby="projet-precious">
+              <figure class="card__visual">
+                <div class="card__stage" data-par>
+                  <div class="browser">
+                    <p class="browser__bar" aria-hidden="true"><i></i><i></i><i></i><span class="browser__url">precious-jus.com</span></p>
+                    <img class="browser__shot" src="./src/assets/projects/precious-desktop-720.webp" srcset="./src/assets/projects/precious-desktop-720.webp 720w, ./src/assets/projects/precious-desktop-1200.webp 1200w" sizes="(min-width: 64rem) 40vw, 80vw" width="1200" height="750" alt="Page d’accueil du site Precious sur ordinateur" loading="lazy" decoding="async">
+                  </div>
+                  <div class="device"><img src="./src/assets/projects/precious-mobile.webp" srcset="./src/assets/projects/precious-mobile.webp 360w, ./src/assets/projects/precious-mobile-720.webp 720w" sizes="(min-width: 64rem) 10vw, 22vw" width="360" height="779" alt="Page d’accueil du site Precious sur mobile" loading="lazy" decoding="async"></div>
+                </div>
+              </figure>
+              <div class="card__body">
+                <h3 class="card__title" id="projet-precious">Precious</h3>
+                <p class="status status--live">Site client en ligne</p>
+                <p class="card__desc">Site vitrine d’une marque montréalaise&nbsp;: jus 100&nbsp;% bio pressés à la commande, donuts artisanaux, cocktails pour les événements et une académie de formation.</p>
+                <ul class="card__facts">
+                  <li>Maquettes Figma, puis intégration en composants React</li>
+                  <li>Formulaires envoyés côté serveur depuis un domaine authentifié (Resend)</li>
+                  <li>Parcours de formation et paiement intégrés (Payhip)</li>
+                  <li>Indexé par Google, avec Search Console et DMARC en place</li>
+                </ul>
+                <ul class="tools" role="list" aria-label="Outils">
+                  <li>Vite</li><li>React</li><li>Tailwind</li><li>Vercel</li><li>Resend</li>
+                </ul>
+                <div class="card__links">
+                  <a class="btn btn--secondary ext magnetic" href="https://precious-jus.com/" target="_blank" rel="noopener">Voir le site<span class="sr-only"> Precious (nouvel onglet)</span></a>
+                </div>
               </div>
-            </div>
-          </article>
-        </li>
+            </article>
+          </li>
 
-        <li>
-          <article class="project" aria-labelledby="projet-easytravel">
-            <figure class="project__media">
-              <img class="project__shot" src="./src/assets/projects/easytravel-desktop-720.webp" srcset="./src/assets/projects/easytravel-desktop-720.webp 720w, ./src/assets/projects/easytravel-desktop-1200.webp 1200w" sizes="(min-width: 90rem) 760px, (min-width: 64rem) 52vw, 92vw" width="1200" height="750" alt="Page d’accueil du site EasyTravel sur ordinateur" loading="lazy" decoding="async">
-              <img class="project__phone" src="./src/assets/projects/easytravel-mobile.webp" srcset="./src/assets/projects/easytravel-mobile.webp 360w, ./src/assets/projects/easytravel-mobile-720.webp 720w" sizes="(min-width: 90rem) 200px, (min-width: 64rem) 14vw, 24vw" width="360" height="779" alt="Page d’accueil du site EasyTravel sur mobile" loading="lazy" decoding="async">
-            </figure>
-            <div class="project__body">
-              <h3 id="projet-easytravel">EasyTravel</h3>
-              <p class="status status--live">Projet d’études en ligne</p>
-              <p class="project__desc">Réservation de bus entre Douala et Yaoundé&nbsp;: recherche de voyages, réservation, paiement simulé et billets, avec un espace agent pour gérer les départs.</p>
-              <ul class="project__points">
-                <li>API REST Laravel&nbsp;12, authentification par jetons Sanctum</li>
-                <li>Rôles client et agent, routes protégées côté interface</li>
-                <li>Contrôle des places disponibles et génération des billets</li>
-                <li>Interface sur Vercel, API et PostgreSQL sur Railway</li>
-              </ul>
-              <ul class="tools" role="list" aria-label="Outils">
-                <li>React</li><li>Vite</li><li>Laravel</li><li>PostgreSQL</li><li>Tailwind</li>
-              </ul>
-              <div class="project__links">
-                <a class="btn btn--secondary ext magnetic" href="https://easytravel-front-wine.vercel.app/" target="_blank" rel="noopener">Voir le site<span class="sr-only"> EasyTravel (nouvel onglet)</span></a>
-                <a class="link link--standalone ext" href="https://github.com/yannsiaka1/easytravel-front" target="_blank" rel="noopener">Code de l’interface<span class="sr-only"> EasyTravel (nouvel onglet)</span></a>
-                <a class="link link--standalone ext" href="https://github.com/yannsiaka1/easytravel-back" target="_blank" rel="noopener">Code de l’API<span class="sr-only"> EasyTravel (nouvel onglet)</span></a>
+          <li class="projects__panel">
+            <article class="card card--glorious" aria-labelledby="projet-glorious-hall">
+              <figure class="card__visual">
+                <div class="card__stage" data-par>
+                  <div class="browser">
+                    <p class="browser__bar" aria-hidden="true"><i></i><i></i><i></i><span class="browser__url">glorious-hall-4wah.vercel.app</span></p>
+                    <img class="browser__shot" src="./src/assets/projects/glorious-hall-desktop-720.webp" srcset="./src/assets/projects/glorious-hall-desktop-720.webp 720w, ./src/assets/projects/glorious-hall-desktop-1200.webp 1200w" sizes="(min-width: 64rem) 40vw, 80vw" width="1200" height="750" alt="Page d’accueil du site Glorious Hall sur ordinateur" loading="lazy" decoding="async">
+                  </div>
+                  <div class="device"><img src="./src/assets/projects/glorious-hall-mobile.webp" srcset="./src/assets/projects/glorious-hall-mobile.webp 360w, ./src/assets/projects/glorious-hall-mobile-720.webp 720w" sizes="(min-width: 64rem) 10vw, 22vw" width="360" height="779" alt="Page d’accueil du site Glorious Hall sur mobile" loading="lazy" decoding="async"></div>
+                </div>
+              </figure>
+              <div class="card__body">
+                <h3 class="card__title" id="projet-glorious-hall">Glorious Hall</h3>
+                <p class="status status--live">Site client en ligne</p>
+                <p class="card__desc">Site d’une salle événementielle à Bonamoussadi, Douala, codé à partir de ma propre maquette.</p>
+                <ul class="card__facts">
+                  <li>Composants React typés en TypeScript</li>
+                  <li>Animations au défilement&nbsp;: chaque section glisse et vient recouvrir la précédente</li>
+                  <li>Galerie photos et vidéos classée par type d’événement</li>
+                </ul>
+                <ul class="tools" role="list" aria-label="Outils">
+                  <li>React</li><li>TypeScript</li><li>Tailwind</li><li>Vercel</li>
+                </ul>
+                <div class="card__links">
+                  <a class="btn btn--secondary ext magnetic" href="https://glorious-hall-4wah.vercel.app/" target="_blank" rel="noopener">Voir le site<span class="sr-only"> Glorious Hall (nouvel onglet)</span></a>
+                </div>
               </div>
-            </div>
-          </article>
-        </li>
+            </article>
+          </li>
 
-        <li>
-          <article class="project" aria-labelledby="projet-easy-life">
-            <figure class="project__media project__media--schema" aria-hidden="true">
-              <div class="schema">
-                <svg class="schema__links" viewBox="0 0 100 100" preserveAspectRatio="none" focusable="false">
-                  <path d="M16.7 16.7H50"/><path d="M83.3 16.7H50"/><path class="is-hot" d="M50 16.7V50"/><path d="M16.7 83.3 50 50"/><path class="is-hot" d="M83.3 83.3 50 50"/>
-                </svg>
-                <ul class="schema__tables">
-                  <li class="schema__table" style="grid-area: a"><code>routes</code></li>
-                  <li class="schema__table" style="grid-area: b"><code>trips</code></li>
-                  <li class="schema__table" style="grid-area: c"><code>travel_classes</code></li>
-                  <li class="schema__table schema__table--hot" style="grid-area: d"><code>bookings</code></li>
-                  <li class="schema__table" style="grid-area: e"><code>users</code></li>
-                  <li class="schema__table" style="grid-area: f"><code>seats</code></li>
+          <li class="projects__panel">
+            <article class="card card--easytravel" aria-labelledby="projet-easytravel">
+              <figure class="card__visual">
+                <div class="card__stage" data-par>
+                  <div class="browser">
+                    <p class="browser__bar" aria-hidden="true"><i></i><i></i><i></i><span class="browser__url">easytravel-front-wine.vercel.app</span></p>
+                    <img class="browser__shot" src="./src/assets/projects/easytravel-desktop-720.webp" srcset="./src/assets/projects/easytravel-desktop-720.webp 720w, ./src/assets/projects/easytravel-desktop-1200.webp 1200w" sizes="(min-width: 64rem) 40vw, 80vw" width="1200" height="750" alt="Page d’accueil du site EasyTravel sur ordinateur" loading="lazy" decoding="async">
+                  </div>
+                  <div class="device"><img src="./src/assets/projects/easytravel-mobile.webp" srcset="./src/assets/projects/easytravel-mobile.webp 360w, ./src/assets/projects/easytravel-mobile-720.webp 720w" sizes="(min-width: 64rem) 10vw, 22vw" width="360" height="779" alt="Page d’accueil du site EasyTravel sur mobile" loading="lazy" decoding="async"></div>
+                </div>
+              </figure>
+              <div class="card__body">
+                <h3 class="card__title" id="projet-easytravel">EasyTravel</h3>
+                <p class="status status--live">Projet d’études en ligne</p>
+                <p class="card__desc">Réservation de bus entre Douala et Yaoundé&nbsp;: recherche de voyages, réservation, paiement simulé et billets, avec un espace agent pour gérer les départs.</p>
+                <ul class="card__facts">
+                  <li>API REST Laravel&nbsp;12, authentification par jetons Sanctum</li>
+                  <li>Rôles client et agent, routes protégées côté interface</li>
+                  <li>Contrôle des places disponibles et génération des billets</li>
+                  <li>Interface sur Vercel, API et PostgreSQL sur Railway</li>
+                </ul>
+                <ul class="tools" role="list" aria-label="Outils">
+                  <li>React</li><li>Vite</li><li>Laravel</li><li>PostgreSQL</li><li>Tailwind</li>
+                </ul>
+                <div class="card__links">
+                  <a class="btn btn--secondary ext magnetic" href="https://easytravel-front-wine.vercel.app/" target="_blank" rel="noopener">Voir le site<span class="sr-only"> EasyTravel (nouvel onglet)</span></a>
+                  <a class="link link--standalone ext" href="https://github.com/yannsiaka1/easytravel-front" target="_blank" rel="noopener">Code de l’interface<span class="sr-only"> EasyTravel (nouvel onglet)</span></a>
+                  <a class="link link--standalone ext" href="https://github.com/yannsiaka1/easytravel-back" target="_blank" rel="noopener">Code de l’API<span class="sr-only"> EasyTravel (nouvel onglet)</span></a>
+                </div>
+              </div>
+            </article>
+          </li>
+
+          <li class="projects__panel">
+            <article class="card card--easylife" aria-labelledby="projet-easy-life">
+              <figure class="card__visual">
+                <div class="card__stage" data-par>
+                  <svg class="erd" viewBox="0 0 320 220" aria-hidden="true" focusable="false">
+                    <path d="M74 34H112M182 34H214M147 50V93M84 177 104 125M226 177 190 125"/>
+                    <path class="is-hot" d="M147 50V93M226 177 190 125"/>
+                    <g><rect x="4" y="18" width="70" height="32" rx="6"/><text x="39" y="34">routes</text></g>
+                    <g><rect x="112" y="18" width="70" height="32" rx="6"/><text x="147" y="34">trips</text></g>
+                    <g><rect x="214" y="18" width="102" height="32" rx="6"/><text x="265" y="34">travel_classes</text></g>
+                    <g class="is-hot"><rect x="104" y="93" width="86" height="32" rx="6"/><text x="147" y="109">bookings</text></g>
+                    <g><rect x="14" y="177" width="70" height="32" rx="6"/><text x="49" y="193">users</text></g>
+                    <g><rect x="226" y="177" width="70" height="32" rx="6"/><text x="261" y="193">seats</text></g>
+                  </svg>
+                  <div class="device device--hero"><img src="./src/assets/projects/easylife-mobile.webp" srcset="./src/assets/projects/easylife-mobile.webp 360w, ./src/assets/projects/easylife-mobile-720.webp 720w" sizes="(min-width: 64rem) 14vw, 34vw" width="360" height="780" alt="Prototype mobile d’Easy Life, écran d’accueil : recherche d’un billet de bus (départ, arrivée, date, places), réservation d’un taxi ou d’une moto et voyages populaires" loading="lazy" decoding="async"></div>
+                </div>
+              </figure>
+              <div class="card__body">
+                <h3 class="card__title" id="projet-easy-life">Easy Life</h3>
+                <p class="status status--progress">Produit en construction, dépôt privé</p>
+                <p class="card__desc">Plateforme de transport pour le Cameroun&nbsp;: bus interurbains, taxis et motos sur un seul compte et un seul portefeuille, avec un ERP pour les agences et le paiement Mobile Money.</p>
+                <ul class="milestones" role="list">
+                  <li><p class="status status--live">Jalon 1 scellé</p><p>Modèle de données&nbsp;: 52 tables PostgreSQL en 9 schémas, 24 décisions d’architecture, conventions vérifiées par des tests.</p></li>
+                  <li><p class="status status--progress">Jalon 2 en cours</p><p>Socle Laravel&nbsp;13&nbsp;: authentification, réservation, paiement et e-billet QR.</p></li>
+                </ul>
+                <ul class="card__facts">
+                  <li>Organisé sur GitHub Projects&nbsp;: Kanban, jalons, revue avant chaque livraison</li>
+                  <li>Mobile Money asynchrone&nbsp;: idempotence et relances, sans double débit</li>
+                  <li>Prototype Figma&nbsp;: de la recherche au billet, en thème clair et sombre</li>
+                </ul>
+                <ul class="tools" role="list" aria-label="Outils">
+                  <li>Laravel 13</li><li>PostgreSQL</li><li>Redis</li><li>Docker</li><li>Figma</li><li>GitHub Projects</li>
                 </ul>
               </div>
-            </figure>
-            <div class="project__body">
-              <h3 id="projet-easy-life">Easy Life</h3>
-              <p class="status status--progress">Produit en construction</p>
-              <p class="project__desc">Plateforme de transport pour le Cameroun&nbsp;: billets de bus interurbains, taxis et motos sur un seul compte et un seul portefeuille, avec un vrai ERP pour les agences et le paiement Mobile Money.</p>
-              <ul class="milestones" role="list">
-                <li><p class="status status--live">Jalon 1 scellé</p><p>Modèle de données&nbsp;: 52 tables PostgreSQL en 9 schémas, 93 clés étrangères, 24 décisions d’architecture (ADR).</p></li>
-                <li><p class="status status--progress">Jalon 2 en cours</p><p>Socle back-end Laravel&nbsp;13&nbsp;: authentification, réservation, paiement et e-billet QR.</p></li>
-              </ul>
-              <ul class="project__points">
-                <li>Paiement Mobile Money asynchrone&nbsp;: idempotence et relances, sans double débit</li>
-                <li>16 conventions de base de données vérifiées par des tests automatisés</li>
-                <li>Travail organisé sur GitHub Projects&nbsp;: tableau Kanban, jalons et revue avant chaque livraison</li>
-                <li>Environnement Docker avec Laravel Sail</li>
-              </ul>
-              <ul class="tools" role="list" aria-label="Outils">
-                <li>Laravel 13</li><li>PostgreSQL</li><li>PostGIS</li><li>Redis</li><li>Sanctum</li><li>Docker</li><li>GitHub Projects</li>
-              </ul>
-              <p class="project__note">Dépôt privé&nbsp;: le code n’est pas public.</p>
-            </div>
-          </article>
-        </li>
-      </ul>
+            </article>
+          </li>
 
-      <div class="subsection">
-        <h3>Projet tutoré</h3>
-        <ul class="items" role="list">
-          <li class="item">
-            <h4>ERP de l’IUT de Douala</h4>
-            <p class="status">Projet d’études, code sur GitHub</p>
-            <p class="project__desc">Gestion numérique d’un institut universitaire&nbsp;: notes, requêtes, cours, présences, diplomation et archivage des documents, pour les étudiants, les enseignants et l’administration.</p>
-            <ul class="project__points">
-              <li>Tableaux de bord par rôle&nbsp;: étudiant, enseignant, responsable académique</li>
-              <li>Appel en classe et suivi des présences par salle</li>
-              <li>API Laravel&nbsp;12 avec jetons Sanctum, 50 migrations</li>
-              <li>Exports Excel et graphiques de suivi</li>
-            </ul>
-            <ul class="tools" role="list" aria-label="Outils">
-              <li>React</li><li>Laravel</li><li>Tailwind</li><li>DaisyUI</li>
-            </ul>
-            <div class="project__links">
-              <a class="link link--standalone ext" href="https://github.com/yannsiaka1/projet-tutore-front" target="_blank" rel="noopener">Code de l’interface<span class="sr-only"> de l’ERP (nouvel onglet)</span></a>
-              <a class="link link--standalone ext" href="https://github.com/yannsiaka1/projet-tutore-back" target="_blank" rel="noopener">Code de l’API<span class="sr-only"> de l’ERP (nouvel onglet)</span></a>
-            </div>
+          <li class="projects__panel">
+            <article class="card card--erp" aria-labelledby="projet-erp">
+              <figure class="card__visual">
+                <div class="card__stage" data-par>
+                  <div class="browser">
+                    <p class="browser__bar" aria-hidden="true"><i></i><i></i><i></i><span class="browser__url">Prototype Figma, espace étudiant</span></p>
+                    <video class="browser__shot" id="erpVideo" controls muted loop playsinline preload="none" width="1320" height="932" poster="./src/assets/projects/erp-prototype-poster.webp">
+                      <source src="./src/assets/projects/erp-prototype.mp4" type="video/mp4">
+                    </video>
+                  </div>
+                </div>
+                <figcaption class="sr-only">Vidéo sans son du prototype Figma de l’espace étudiant&nbsp;: tableau de bord, liste des cours, puis relevé de notes.</figcaption>
+                <button class="btn btn--secondary btn--icon card__play" id="erpPlay" type="button" aria-label="Lire la vidéo" title="Lire la vidéo" hidden>
+                  <svg class="icon-pause" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M5.5 3.5v9M10.5 3.5v9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                  <svg class="icon-play" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M5.5 3.25v9.5L12.75 8z" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+                </button>
+              </figure>
+              <div class="card__body">
+                <h3 class="card__title" id="projet-erp">ERP de l’IUT de Douala</h3>
+                <p class="status status--live">Projet tutoré en ligne</p>
+                <p class="card__desc">Gestion numérique d’un institut universitaire&nbsp;: notes, requêtes, cours, présences, diplomation et archivage des documents, pour les étudiants, les enseignants et l’administration.</p>
+                <ul class="card__facts">
+                  <li>Tableaux de bord par rôle&nbsp;: étudiant, enseignant, responsable académique</li>
+                  <li>Appel en classe et suivi des présences par salle</li>
+                  <li>API Laravel&nbsp;12 avec jetons Sanctum, 50 migrations</li>
+                  <li>Exports Excel et graphiques de suivi</li>
+                </ul>
+                <ul class="tools" role="list" aria-label="Outils">
+                  <li>React</li><li>Laravel</li><li>Tailwind</li><li>DaisyUI</li><li>Figma</li>
+                </ul>
+                <div class="card__links">
+                  <a class="btn btn--secondary ext magnetic" href="https://projet-tutore-front.vercel.app/" target="_blank" rel="noopener">Voir le site<span class="sr-only"> de l’ERP (nouvel onglet)</span></a>
+                  <a class="link link--standalone ext" href="https://github.com/yannsiaka1/projet-tutore-front" target="_blank" rel="noopener">Code de l’interface<span class="sr-only"> de l’ERP (nouvel onglet)</span></a>
+                  <a class="link link--standalone ext" href="https://github.com/yannsiaka1/projet-tutore-back" target="_blank" rel="noopener">Code de l’API<span class="sr-only"> de l’ERP (nouvel onglet)</span></a>
+                </div>
+              </div>
+            </article>
           </li>
         </ul>
       </div>
+      <p class="projects__progress container" aria-hidden="true"><span>Défilez</span><span class="projects__bar"><i id="projectsBar"></i></span><span class="projects__count" id="projectsCount">01 / 05</span></p>
     </div>
   </section>
 
   <!-- ============ À PROPOS ============ -->
-  <section class="section" id="a-propos" data-path="~/a-propos" aria-labelledby="a-propos-title">
+  <section class="section" id="a-propos" data-path="~/a-propos" aria-labelledby="a-propos-label">
     <div class="container">
       <div class="section-head">
-        <h2 id="a-propos-title" data-reveal="words">À propos</h2>
+        <p class="eyebrow" id="a-propos-label">À propos</p>
+        <h2 id="a-propos-title" data-reveal="words">Je m’appelle <em>Yann.</em></h2>
       </div>
-      <p class="statement" id="statement">Je m’appelle Yann. Diplômé en génie logiciel, je construis des produits web complets, de l’écran qu’on touche jusqu’à la base de données qui se souvient.</p>
+      <p class="statement" id="statement">Diplômé en génie logiciel, je construis des produits web complets, de l’écran qu’on touche jusqu’à la base de données qui se souvient. Je numérise des services du quotidien, du <em>transport interurbain au Cameroun</em> aux <em>commerces de Montréal</em>.</p>
       <div class="prose about__prose">
         <p>Développeur full-stack junior, j’ai une expérience pratique en Laravel, React et Python&nbsp;: applications web et API REST, modélisation de bases de données, tests, Git et GitHub, mise en ligne. J’aime surtout le back-end, l’architecture applicative et la qualité du code.</p>
-        <p>Je numérise des services du quotidien, du transport interurbain au Cameroun aux commerces de Montréal. En ce moment, je construis Easy Life et je prépare la certification GitHub Foundations.</p>
+        <p>En ce moment, je construis Easy Life et je termine la préparation de la certification GitHub Foundations.</p>
         <p>Français, langue maternelle. Anglais, niveau B2.</p>
       </div>
+      <h3 class="stats__title">Le travail, <em>en chiffres.</em></h3>
       <ul class="stats" role="list">
         <li class="stat">
           <p class="stat__num"><span data-odo>3</span></p>
@@ -320,11 +361,12 @@
   </section>
 
   <!-- ============ COMPÉTENCES ============ -->
-  <section class="section" id="competences" data-path="~/competences" aria-labelledby="competences-title">
+  <section class="section" id="competences" data-path="~/competences" aria-labelledby="competences-label">
     <div class="container">
       <div class="section-head">
-        <h2 id="competences-title" data-reveal="words">Compétences</h2>
-        <p class="section-head__intro">Ce que je sais faire, couche par couche, avec les outils que j’utilise vraiment. Langages&nbsp;: PHP, JavaScript, Python, SQL, HTML et CSS.</p>
+        <p class="eyebrow" id="competences-label">Compétences</p>
+        <h2 id="competences-title" data-reveal="words">Toute la pile, <em>couche par couche.</em></h2>
+        <p class="section-head__intro">Ce que je sais faire à chaque couche, avec les outils que j’utilise vraiment. Langages&nbsp;: PHP, JavaScript, Python, SQL, HTML et CSS.</p>
       </div>
       <div class="skills">
         <div class="iso" aria-hidden="true">
@@ -431,11 +473,12 @@
   </section>
 
   <!-- ============ MÉTHODE ============ -->
-  <section class="section" id="methode" data-path="~/methode" aria-labelledby="methode-title">
+  <section class="section" id="methode" data-path="~/methode" aria-labelledby="methode-label">
     <div class="container">
       <div class="section-head">
-        <h2 id="methode-title" data-reveal="words">Méthode</h2>
-        <p class="section-head__intro">De l’idée au déploiement, lue comme un historique Git.</p>
+        <p class="eyebrow" id="methode-label">Méthode</p>
+        <h2 id="methode-title" data-reveal="words">De l’idée <em>au déploiement.</em></h2>
+        <p class="section-head__intro">Ma façon de travailler, lue comme un historique Git.</p>
       </div>
       <p class="cmd"><code><span aria-hidden="true">$ </span>git log --oneline --graph --reverse</code></p>
       <div class="gitlog" id="gitlog">
@@ -487,10 +530,11 @@
   </section>
 
   <!-- ============ PARCOURS ============ -->
-  <section class="section" id="parcours" data-path="~/parcours" aria-labelledby="parcours-title">
+  <section class="section" id="parcours" data-path="~/parcours" aria-labelledby="parcours-label">
     <div class="container">
       <div class="section-head">
-        <h2 id="parcours-title" data-reveal="words">Parcours</h2>
+        <p class="eyebrow" id="parcours-label">Parcours</p>
+        <h2 id="parcours-title" data-reveal="words">Mon parcours, <em>versionné.</em></h2>
         <p class="section-head__intro">Deux diplômes à Douala, deux stages, une équivalence à Montréal et des certifications qui continuent.</p>
       </div>
       <div class="columns">
@@ -549,7 +593,9 @@
             <li class="item">
               <h4>Développement web</h4>
               <p class="status status--live">Obtenue en 2025</p>
-              <p>Organisation internationale de la Francophonie, programme D-CLIC, avec IncH Class et Simplon&nbsp;: 720 heures en présentiel. Maquettage, interfaces statiques et dynamiques, base de données, back-end.</p>
+              <p>Organisation internationale de la Francophonie, programme D-CLIC, avec IncH Class et Simplon&nbsp;: 720 heures en présentiel, de janvier à mai 2025. Maquettage, interfaces statiques et dynamiques, base de données, back-end.</p>
+              <p class="item__code">Code de l’attestation&nbsp;: <code>C03riDduB5</code></p>
+              <a class="link link--standalone ext" href="https://dclic.francophonie.org/mod/customcert/verify_certificate.php?code=C03riDduB5&amp;qrcode=1" target="_blank" rel="noopener">Vérifier l’attestation<span class="sr-only"> D-CLIC (nouvel onglet)</span></a>
             </li>
             <li class="item">
               <h4>Claude 101</h4>
@@ -565,7 +611,7 @@
             </li>
             <li class="item">
               <h4>AWS Cloud Practitioner</h4>
-              <p class="status">Prévue ensuite</p>
+              <p class="status">Prévue après GitHub Foundations</p>
               <p>Amazon Web Services, puis Solutions Architect et Data Engineer.</p>
             </li>
           </ul>
@@ -575,10 +621,11 @@
   </section>
 
   <!-- ============ CONTACT ============ -->
-  <section class="section" id="contact" data-path="~/contact" aria-labelledby="contact-title">
+  <section class="section" id="contact" data-path="~/contact" aria-labelledby="contact-label">
     <div class="container">
       <div class="section-head">
-        <h2 id="contact-title" data-reveal="words">Contact</h2>
+        <p class="eyebrow" id="contact-label">Contact</p>
+        <h2 id="contact-title" data-reveal="words">Construisons <em>la suite.</em></h2>
         <p class="section-head__intro">Un poste, une mission ou un projet en tête? Décrivez votre besoin en quelques lignes&nbsp;: votre logiciel de courriel s’ouvrira avec le message prêt à partir.</p>
       </div>
       <div class="contact">

@@ -22,6 +22,8 @@ export function initScroll() {
       document.addEventListener('focusin', (e) => {
         const el = e.target;
         if (!(el instanceof Element) || el === document.body || el.closest('.site-header')) return;
+        // projets épinglés : src/sections/projects.js amène la carte entière à l'écran
+        if (el.closest('.section--projects.is-deck')) return;
         const r = el.getBoundingClientRect();
         const header = document.querySelector('.site-header');
         const top = (header ? header.offsetHeight : 0) + tokenPx('--space-3');
@@ -55,6 +57,12 @@ export function pauseScroll() {
 
 export function resumeScroll() {
   if (lenis) lenis.start();
+}
+
+/** Défile jusqu'à une position précise de la page (projets épinglés : carte suivante, carte qui reçoit le focus). */
+export function scrollToY(y, duration = 0.6) {
+  if (lenis) lenis.scrollTo(y, { duration, easing: (t) => 1 - Math.pow(1 - t, 3) });
+  else window.scrollTo({ top: y, behavior: reduced() ? 'auto' : 'smooth' });
 }
 
 /** Défile jusqu'à une position (nombre) ou un élément, sous la barre collante. */

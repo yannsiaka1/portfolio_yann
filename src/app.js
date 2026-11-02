@@ -10,6 +10,7 @@ import { initCursor, initMagnetic } from './ui/cursor.js';
 import { runLoader } from './ui/loader.js';
 import { prepareHero, initHeroIntro } from './sections/hero.js';
 import { initReveals } from './sections/reveals.js';
+import { initProjects } from './sections/projects.js';
 import { initMarquee, measureMarquee } from './sections/marquee.js';
 import { initSkills } from './sections/skills.js';
 import { initMethod, buildGitGraph } from './sections/method.js';
@@ -51,6 +52,7 @@ export function initApp() {
   prepareHero();
   initHeroIntro();
   initReveals();
+  initProjects();
   initMarquee();
   initSkills();
   initMethod();

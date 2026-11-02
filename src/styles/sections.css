@@ -66,205 +66,419 @@
   color: var(--accent);
 }
 
-/* ---------- projets : capture (ou schéma) à gauche, texte à droite, même gabarit pour les quatre ---------- */
-.projects {
+/* ---------- projets : une carte par projet, maquette à gauche, texte à droite (codes de la première version) ----------
+   Sans JavaScript, sur mobile, avec « réduire les animations » ou si une carte dépasse la hauteur de l'écran :
+   les cartes s'empilent. Sur grand écran, .is-deck les superpose dans une fenêtre épinglée (src/sections/projects.js). */
+.projects__list {
   display: grid;
-  gap: var(--space-7);
+  gap: var(--space-4);
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.project {
-  display: grid;
-  gap: var(--space-4);
-  align-items: center;
-}
-
-.project__media {
-  position: relative;
-  padding: 0 8% 10% 0;
-}
-
-.project__shot {
+.projects__list > .projects__panel {
   width: 100%;
-  aspect-ratio: var(--ratio-shot);
-  object-fit: cover;
-  object-position: top;
+  max-width: var(--container);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.projects__progress {
+  display: none;
+}
+
+.card {
+  display: grid;
+  overflow: hidden;
   border: var(--stroke) solid var(--line);
-  border-radius: var(--radius-media);
+  border-radius: var(--radius-card);
   background: var(--surface);
-  transition: transform var(--slow) var(--ease-expo);
+  transition: border-color var(--slow) var(--ease);
 }
 
-.project__phone {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  width: 24%;
-  aspect-ratio: var(--ratio-phone);
-  object-fit: cover;
-  object-position: top;
-  border: var(--stroke) solid var(--line-strong);
-  border-radius: var(--radius-phone);
-  background: var(--surface);
-}
-
-@media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  .project:hover .project__shot {
-    transform: scale(var(--hover-zoom));
+@media (hover: hover) {
+  .card:hover {
+    border-color: var(--line-strong);
   }
 }
 
-.project__body {
-  display: grid;
-  align-content: start;
-  gap: var(--space-2);
+/* le visuel : la vraie capture dans un navigateur, la version mobile dans un téléphone, sur la lueur de la marque */
+.card__visual {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  aspect-ratio: var(--ratio-visual);
+  font-size: var(--mock-unit);
+  border-bottom: var(--stroke) solid var(--line);
+  background: radial-gradient(90% 80% at 80% 15%, var(--tint), transparent 60%), var(--surface-2);
 }
 
-.project__desc {
+.card--precious {
+  --tint: var(--tint-precious);
+}
+
+.card--glorious {
+  --tint: var(--tint-glorious);
+}
+
+.card--easytravel {
+  --tint: var(--tint-easytravel);
+}
+
+.card--easylife {
+  --tint: var(--tint-easylife);
+}
+
+.card--erp {
+  --tint: var(--tint-erp);
+}
+
+.card__stage {
+  position: absolute;
+  inset: 0;
+}
+
+.browser {
+  position: absolute;
+  left: 6%;
+  right: 15%;
+  top: 50%;
+  overflow: hidden;
+  border: var(--stroke) solid var(--line);
+  border-radius: 1em;
+  background: var(--chrome);
+  box-shadow: var(--shadow-mock);
+  transform: translateY(-50%);
+}
+
+/* la barre du navigateur est décorative : le lien du projet est dans le texte de la carte */
+.browser__bar {
+  display: flex;
+  align-items: center;
+  gap: 0.45em;
+  padding: 0.7em 0.9em;
+  background: var(--chrome);
+}
+
+.browser__bar i {
+  flex: none;
+  width: 0.65em;
+  height: 0.65em;
+  border-radius: 50%;
+  background: var(--chrome-dot);
+}
+
+.browser__url {
+  flex: 1;
+  min-width: 0;
+  max-width: 24em;
+  margin-left: 0.8em;
+  padding: 0.3em 0.8em;
+  overflow: hidden;
+  border-radius: var(--radius-pill);
+  background: var(--bg);
+  color: var(--text-2);
+  font-family: var(--font-code);
+  font-size: 0.9em;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.browser__shot {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  object-position: top;
+  background: var(--surface);
+}
+
+img.browser__shot {
+  aspect-ratio: var(--ratio-shot);
+}
+
+video.browser__shot {
+  aspect-ratio: var(--ratio-video);
+  background: var(--bezel-screen);
+}
+
+.device {
+  position: absolute;
+  right: 5%;
+  bottom: 8%;
+  width: 21%;
+  aspect-ratio: var(--ratio-phone);
+  overflow: hidden;
+  border: 0.32em solid var(--bezel);
+  border-radius: 1.4em;
+  background: var(--bezel-screen);
+  box-shadow: var(--shadow-device);
+}
+
+.device img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+}
+
+/* Easy Life : le téléphone seul, incliné, à côté du schéma de données */
+.device--hero {
+  right: 10%;
+  top: 50%;
+  bottom: auto;
+  width: 30%;
+  transform: translateY(-50%) rotate(4deg);
+}
+
+.erd {
+  position: absolute;
+  left: 5%;
+  top: 50%;
+  width: 56%;
+  overflow: visible;
+  transform: translateY(-50%);
+}
+
+.erd path {
+  fill: none;
+  stroke: var(--line-strong);
+  stroke-width: 1.2;
+}
+
+.erd path.is-hot {
+  stroke: var(--accent);
+}
+
+.erd rect {
+  fill: var(--bg);
+  stroke: var(--line-strong);
+}
+
+.erd .is-hot rect {
+  stroke: var(--accent);
+}
+
+.erd text {
+  fill: var(--text-2);
+  font-family: var(--font-code);
+  font-size: 11px;
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+
+.erd .is-hot text {
+  fill: var(--text);
+}
+
+/* lecture et pause de la vidéo du prototype */
+.card__play {
+  position: absolute;
+  right: var(--space-2);
+  bottom: var(--space-2);
+  z-index: var(--z-raised);
+}
+
+.card__play .icon-pause,
+.card__play.is-playing .icon-play {
+  display: none;
+}
+
+.card__play.is-playing .icon-pause {
+  display: block;
+}
+
+/* le texte : statut au-dessus du nom (le nom vient d'abord dans le code), description, faits, outils, liens */
+.card__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+  padding: var(--space-4) var(--space-3);
+}
+
+.card__body > .status {
+  order: -1;
+}
+
+.card__title {
+  font-size: var(--fs-card-title);
+  line-height: var(--lh-display);
+  font-weight: var(--fw-medium);
+  letter-spacing: var(--ls-card-title);
+}
+
+.card__desc {
   max-width: var(--measure);
 }
 
-.project__points {
+.card__facts {
   display: grid;
   gap: var(--space-1);
   max-width: var(--measure);
   margin: 0;
-  padding-left: var(--list-indent);
-  list-style: disc;
+  padding: 0;
+  list-style: none;
+  font-size: var(--fs-sm);
+  line-height: var(--lh-ui);
   color: var(--text-2);
 }
 
-.project__points li::marker {
-  color: var(--neutral);
+.card__facts li {
+  display: grid;
+  grid-template-columns: var(--list-indent) minmax(0, 1fr);
 }
 
-.project__links {
+/* flèche décorative de la première version, tue pour les lecteurs d'écran */
+.card__facts li::before {
+  content: "→";
+  content: "→" / "";
+  font-family: var(--font-code);
+  color: var(--accent);
+}
+
+.card__body > .tools,
+.card__links {
+  margin-top: var(--space-1);
+}
+
+.card__links {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 0 var(--space-3);
-  margin-top: var(--space-2);
-}
-
-.project__note {
-  font-size: var(--fs-sm);
-  color: var(--text-2);
-}
-
-/* projet tutoré en élément à filet : même rythme et même couleur de description que les projets principaux */
-.item > .project__desc {
-  color: var(--text);
-}
-
-.item > .project__points {
-  margin-top: var(--space-1);
-}
-
-.item > .project__links {
-  margin-top: var(--space-3);
 }
 
 /* jalons d'un produit en construction */
 .milestones {
   display: grid;
-  gap: var(--space-2);
+  gap: var(--space-1);
   max-width: var(--measure);
-  margin: var(--space-1) 0;
-  padding: var(--space-2) var(--space-3);
+  margin: 0;
+  padding: var(--space-2);
   list-style: none;
   border: var(--stroke) solid var(--line);
   border-radius: var(--radius-code);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-ui);
 }
 
 .milestones li {
   display: grid;
-  gap: var(--space-1);
 }
 
 .milestones li + li {
-  padding-top: var(--space-2);
+  padding-top: var(--space-1);
   border-top: var(--stroke) solid var(--line);
 }
 
-/* schéma de données d'Easy Life : six tables reliées, en lieu et place d'une capture */
-.project__media--schema {
-  padding: 0;
-}
-
-.schema {
-  position: relative;
-  aspect-ratio: var(--ratio-shot);
-  padding: var(--space-3);
-  border: var(--stroke) solid var(--line);
-  border-radius: var(--radius-media);
-  background: var(--surface);
-}
-
-.schema__links {
-  position: absolute;
-  inset: var(--space-3);
-  width: calc(100% - 2 * var(--space-3));
-  height: calc(100% - 2 * var(--space-3));
-  overflow: visible;
-}
-
-.schema__links path {
-  fill: none;
-  stroke: var(--line-strong);
-  stroke-width: var(--stroke);
-  vector-effect: non-scaling-stroke;
-}
-
-.schema__links .is-hot {
-  stroke: var(--accent);
-}
-
-.schema__tables {
-  position: relative;
-  display: grid;
-  grid-template-areas:
-    "a b c"
-    ". d ."
-    "e . f";
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  grid-template-rows: repeat(3, minmax(0, 1fr));
-  gap: var(--space-2);
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.schema__table {
-  display: grid;
-  align-content: center;
-  justify-items: center;
-  gap: var(--space-1);
-  padding: var(--space-1);
-  border: var(--stroke) solid var(--line-strong);
-  border-radius: var(--radius-code);
-  background: var(--bg);
-  text-align: center;
-}
-
-.schema__table code {
-  font-family: var(--font-code);
-  font-size: var(--fs-sm);
-  color: var(--text);
-  overflow-wrap: anywhere;
-}
-
-.schema__table--hot {
-  border-color: var(--accent);
+.milestones li > p:last-child {
+  color: var(--text-2);
 }
 
 @media (min-width: 64rem) {
-  .project {
-    grid-template-columns: 7fr 5fr;
-    gap: var(--space-6);
+  .card {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
   }
+
+  .card__visual {
+    aspect-ratio: auto;
+    min-height: var(--visual-min-h);
+    border-bottom: 0;
+    border-right: var(--stroke) solid var(--line);
+  }
+
+  .card__body {
+    justify-content: center;
+    padding: var(--space-5);
+  }
+}
+
+/* ---------- projets épinglés (grand écran) : une carte à la fois, le précédent bascule à gauche ---------- */
+.section--projects.is-deck {
+  padding-block: 0;
+}
+
+.is-deck .projects__viewport {
+  position: relative;
+  height: var(--deck-h);
+  overflow: clip;
+  perspective: var(--deck-perspective);
+}
+
+.is-deck .projects__panel {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  padding-block: var(--space-2) 0;
+}
+
+.is-deck .projects__intro > .container {
+  width: 100%;
+}
+
+.is-deck .projects__intro .section-head {
+  margin-bottom: 0;
+}
+
+.is-deck .projects__panel > .card {
+  height: 100%;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.is-deck .card__visual {
+  min-height: 0;
+}
+
+/* plus serré qu'empilé : la carte doit tenir dans la hauteur de l'écran, sinon les cartes s'empilent */
+.is-deck .card__body {
+  overflow: hidden;
+  padding: var(--space-4) var(--space-5);
+}
+
+.is-deck .card__body > .tools,
+.is-deck .card__links {
+  margin-top: 0;
+}
+
+/* pendant la mesure (src/sections/projects.js), le texte part du haut : un dépassement se voit en entier */
+.is-measuring .card__body {
+  justify-content: flex-start;
+}
+
+.is-deck .projects__progress {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: var(--space-5);
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--text-2);
+}
+
+.projects__bar {
+  position: relative;
+  flex: 1;
+  max-width: 17.5rem;
+  height: var(--stroke-strong);
+  overflow: hidden;
+  background: var(--line-strong);
+}
+
+.projects__bar i {
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.projects__count {
+  font-family: var(--font-code);
+  font-variant-numeric: tabular-nums;
 }
 
 /* ---------- à propos ---------- */
@@ -273,8 +487,8 @@
   font-size: var(--fs-statement);
   line-height: var(--lh-heading);
   font-weight: var(--fw-regular);
-  font-stretch: var(--stretch-heading);
   letter-spacing: var(--ls-heading);
+  text-wrap: pretty;
 }
 
 .prose {
@@ -288,11 +502,15 @@
   color: var(--text-2);
 }
 
-/* repères : quatre chiffres tirés des projets eux-mêmes */
+/* repères : quatre chiffres tirés des projets eux-mêmes, en cartes comme dans la première version */
+.stats__title {
+  margin-top: var(--space-7);
+}
+
 .stats {
   display: grid;
-  gap: var(--space-5) var(--space-4);
-  margin: var(--space-7) 0 0;
+  gap: var(--space-2);
+  margin: var(--space-4) 0 0;
   padding: 0;
   list-style: none;
 }
@@ -301,8 +519,10 @@
   display: grid;
   align-content: start;
   gap: var(--space-1);
-  padding-top: var(--space-3);
-  border-top: var(--stroke) solid var(--line);
+  padding: var(--space-3);
+  border: var(--stroke) solid var(--line);
+  border-radius: var(--radius-card);
+  background: var(--surface);
 }
 
 .stat__num {

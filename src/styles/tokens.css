@@ -2,8 +2,9 @@
    superpositions, durées). Les feuilles et la scène 3D les lisent ; aucune valeur écrite en dur ailleurs,
    sauf les points de rupture des @media (CSS ne lit pas de variable à cet endroit) et la technique .sr-only.
    Archivo pour tout le texte : la chasse variable (font-stretch) porte l'identité, large pour le nom,
-   semi-large pour les titres, normale pour le texte. JetBrains Mono seulement pour ce qui est du code
-   (extraits, invite de commande, empreintes de commit, aperçu JSON). */
+   semi-large pour les titres, normale pour le texte. JetBrains Mono pour le code (extraits, invite de commande,
+   empreintes de commit, aperçu JSON) et les petites étiquettes techniques : sur-titres, outils, compteurs.
+   Newsreader en italique pour les mots d'accent des titres, comme dans la première version. */
 :root {
   color-scheme: dark;
 
@@ -21,25 +22,44 @@
   --live: #7cc48e; /* pastille « en ligne », « obtenu », « disponible » : 9,1:1 */
   --neutral: #8a867e; /* pastille neutre, puces de liste : 5,2:1 */
   --danger: #ff8a73; /* erreurs de saisie : 8,2:1 sur le fond, 7,6:1 sur --surface */
+  --surface-2: #201f1c; /* fond des visuels de projet, sous les captures */
+
+  /* maquettes des projets : navigateur et téléphone autour des vraies captures */
+  --chrome: #1d1c19; /* barre du navigateur */
+  --chrome-dot: #3a3934; /* ses trois pastilles */
+  --bezel: #23252c; /* contour du téléphone */
+  --bezel-screen: #05070d; /* écran du téléphone pendant le chargement de la capture */
+  --shadow-mock: 0 2.4em 5em rgb(0 0 0 / 0.55);
+  --shadow-device: 0 1.6em 3.2em rgb(0 0 0 / 0.6);
+  /* lueur de chaque visuel, dans la couleur de la marque du projet */
+  --tint-precious: rgb(46 160 80 / 0.18);
+  --tint-glorious: rgb(205 167 94 / 0.16);
+  --tint-easytravel: rgb(212 175 55 / 0.14);
+  --tint-easylife: rgb(255 199 44 / 0.13);
+  --tint-erp: rgb(26 92 220 / 0.2);
 
   /* ---------- typographie ---------- */
   --font: "Archivo Variable", "Archivo", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-code: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  /* l'italique des mots d'accent, repris de la première version : titres, phrase d'accroche, nom du hero */
+  --font-accent: "Newsreader Variable", "Newsreader", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
   --fs-sm: 0.9375rem; /* 15 px : navigation, statuts, outils, boutons, indice, pied de page */
   --fs-md: 1.125rem; /* 18 px : texte courant */
   --fs-lg: 1.3125rem; /* 21 px : titres de niveau 4, rôle et courriel sur mobile */
   --fs-xl: 1.75rem; /* 28 px : titres de niveau 3, rôle et courriel */
-  --fs-2xl: 2rem; /* 32 px : titres de section sur mobile */
-  --fs-3xl: 2.5rem; /* 40 px : titres de section */
+  --fs-h2: clamp(2.5rem, 0.9rem + 5.6vw, 6.25rem); /* 40 → 100 px : titres de section, grands comme dans la première version */
   --fs-name: clamp(3.25rem, 1.6rem + 6.6vw, 7rem); /* 52 → 112 px : le nom */
-  --fs-statement: clamp(1.75rem, 1.1rem + 2.2vw, 3rem); /* 28 → 48 px : la phrase d'accroche d'À propos */
+  --fs-statement: clamp(1.75rem, 0.9rem + 3.2vw, 3.625rem); /* 28 → 58 px : la phrase d'accroche d'À propos */
   --fs-stat: clamp(3.5rem, 2.4rem + 3.6vw, 6rem); /* 56 → 96 px : chiffres des repères */
   --fs-marquee: clamp(3rem, 1rem + 8vw, 8.5rem); /* 48 → 136 px : bandeau défilant */
   --fs-signature: clamp(4rem, 1rem + 13vw, 15rem); /* 64 → 240 px : signature du pied de page */
+  --fs-card-title: clamp(2rem, 1rem + 2.2vw, 3.25rem); /* 32 → 52 px : nom d'un projet */
+  --mock-unit: clamp(0.4375rem, 0.92vw, 0.8125rem); /* 7 → 13 px : l'unité em des maquettes, qui suivent la largeur */
 
   --lh-name: 0.95;
   --lh-display: 1; /* bandeau, chiffres, signature */
-  --lh-heading: 1.15;
+  --lh-h2: 0.95; /* titres de section, serrés */
+  --lh-heading: 1.12; /* phrase d'accroche */
   --lh-title: 1.25;
   --lh-ui: 1.5;
   --lh-body: 1.6;
@@ -54,8 +74,11 @@
   --stretch-name: 125%;
   --stretch-heading: 112%;
   --ls-name: -0.03em;
-  --ls-heading: -0.015em; /* niveau 2 */
+  --ls-h2: -0.045em; /* titres de section */
+  --ls-heading: -0.03em; /* phrase d'accroche */
   --ls-title: -0.01em; /* niveau 3, courriel, logotype */
+  --ls-card-title: -0.035em; /* nom d'un projet, serré comme dans la première version */
+  --ls-accent: -0.02em; /* mots en italique */
 
   /* ---------- espacement : base 8 px ---------- */
   --space-1: 0.5rem; /* 8 */
@@ -96,10 +119,12 @@
   --radius-phone: 1rem; /* 16 px : capture mobile, couches de la pile */
   --radius-code: 0.5rem; /* 8 px : extraits de code, champs */
   --radius-pill: 999px; /* boutons */
+  --radius-card: 1.5rem; /* 24 px : cartes des projets et des repères */
   --dot: 0.5rem; /* 8 px : pastille de statut */
   --z-raised: 1; /* sections et texte du hero, au-dessus de la scène 3D */
   --z-header: 20;
   --z-skip: 30;
+  --z-grain: 35; /* grain de la pellicule, au-dessus de tout sauf du curseur et de l'intro */
   --z-cursor: 40;
   --z-loader: 50;
 
@@ -110,6 +135,11 @@
   --canvas-overflow: 30svh; /* le canvas déborde sous la section Projets, qui le recouvre */
   --ratio-shot: 16 / 10; /* captures ordinateur (1440 × 900) */
   --ratio-phone: 360 / 779; /* captures mobiles (390 × 844) */
+  --ratio-video: 1320 / 932; /* vidéo du prototype de l'ERP */
+  --ratio-visual: 4 / 3; /* visuel d'un projet quand la carte est en colonne */
+  --visual-min-h: 26rem; /* visuel d'un projet à côté du texte */
+  --deck-h: calc(100svh - var(--header-h) - var(--space-5)); /* fenêtre des projets épinglés, sous la barre et au-dessus de la progression */
+  --deck-perspective: 100rem;
 
   /* ---------- pile isométrique, phrase d'accroche, signature ---------- */
   --iso-size: 30rem; /* pile des compétences dès 1024 px */
@@ -134,6 +164,8 @@
   --fast: 0.18s; /* survols */
   --slow: 0.6s; /* apparition de la scène 3D, changement d'onglet */
   --blink: 1.1s; /* curseur de l'invite */
+  --grain-opacity: 0.055;
+  --grain-step: 1.1s; /* le grain change cinq fois par cycle */
 }
 
 @media (min-width: 48rem) {

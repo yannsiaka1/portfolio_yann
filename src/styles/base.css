@@ -94,11 +94,11 @@ button {
 
 /* Un niveau de titre = un rôle, partout sur la page. */
 h2 {
-  font-size: var(--fs-2xl);
-  line-height: var(--lh-heading);
-  font-weight: var(--fw-heading);
-  font-stretch: var(--stretch-heading);
-  letter-spacing: var(--ls-heading);
+  font-size: var(--fs-h2);
+  line-height: var(--lh-h2);
+  font-weight: var(--fw-medium);
+  letter-spacing: var(--ls-h2);
+  text-wrap: balance;
 }
 
 h3 {
@@ -115,11 +115,19 @@ h4 {
   font-weight: var(--fw-semibold);
 }
 
-@media (min-width: 48rem) {
-  h2 {
-    font-size: var(--fs-3xl);
-  }
+/* Mots d'accent en italique, repris de la première version : la fin d'un titre, un passage de la phrase d'accroche. */
+h1 em,
+h2 em,
+h3 em,
+.statement em {
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-weight: var(--fw-light);
+  font-stretch: normal;
+  letter-spacing: var(--ls-accent);
+  color: var(--accent);
 }
+
 
 .sr-only {
   position: absolute;

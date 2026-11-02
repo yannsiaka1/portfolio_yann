@@ -1,4 +1,4 @@
-// Révélations au défilement : titres masqués mot par mot, blocs qui montent, captures qui se dévoilent,
+// Révélations au défilement : titres masqués mot par mot, blocs qui montent,
 // phrase d'À propos qui s'éclaire au fil du défilement, compteurs à rouleaux des repères.
 // Avec « réduire les animations », tout reste visible et immobile.
 // Les blocs partent d'une opacité nulle mais restent focalisables (jamais visibility: hidden) : un utilisateur
@@ -52,7 +52,7 @@ export function initReveals() {
   });
 
   const pending = new Set();
-  const ups = $$('.section-head__intro, .about__prose, .stat, .project__body, .skills__main, .iso, .item, .release, .commit, .form, .contact__side, .subsection > h3, .column > h3, .cmd');
+  const ups = $$('.eyebrow, .section-head__intro, .about__prose, .stat, .skills__main, .iso, .item, .release, .commit, .form, .contact__side, .subsection > h3, .column > h3, .stats__title, .cmd');
   ups.forEach((el) => {
     pending.add(el);
     gsap.from(el, {
@@ -71,20 +71,6 @@ export function initReveals() {
       gsap.killTweensOf(el);
       gsap.set(el, { opacity: 1, y: 0 });
     });
-  });
-
-  // les captures se dévoilent de bas en haut, l'image se pose
-  $$('.project__media').forEach((media) => {
-    const tl = gsap.timeline({ scrollTrigger: { trigger: media, start: 'top 85%', once: true } });
-    tl.from(media, { clipPath: 'inset(100% 0% 0% 0%)', duration: 1.2, ease: 'expo.inOut' });
-    const shot = $('.project__shot', media) || $('.schema', media);
-    if (shot) tl.from(shot, { scale: 1.08, duration: 1.4, ease: 'expo.out' }, '<0.2');
-    const phone = $('.project__phone', media);
-    if (phone) {
-      tl.from(phone, { yPercent: 18, opacity: 0, duration: 1, ease: 'expo.out' }, '<0.35');
-      // léger parallaxe du téléphone pendant le défilement
-      gsap.to(phone, { yPercent: -10, ease: 'none', scrollTrigger: { trigger: media, start: 'top bottom', end: 'bottom top', scrub: true } });
-    }
   });
 
   // la phrase d'À propos s'éclaire mot après mot
