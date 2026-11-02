@@ -26,9 +26,9 @@ const SYM_H = 2.4;
 
 const HINTS = {
   mouse: 'Cliquez sur le symbole pour passer au suivant, maintenez pour le faire éclater.',
-  touch: 'Touchez le symbole pour passer au suivant, appuyez longuement pour le faire éclater.',
+  touch: 'Touchez le symbole pour le changer, appui long pour le faire éclater.',
   mouseStill: 'Cliquez sur le symbole pour passer au suivant.',
-  touchStill: 'Touchez le symbole pour passer au suivant.',
+  touchStill: 'Touchez le symbole pour le changer.',
 };
 const PAUSE_LABELS = { run: 'Mettre l’animation en pause', paused: 'Relancer l’animation' };
 
@@ -77,8 +77,9 @@ function start() {
     return signalGlReady(false);
   }
 
-  const BG = new THREE.Color(token('--bg') || '#121211');
-  const ACCENT = new THREE.Color(token('--accent') || '#f2b13a');
+  // pas de valeur de repli : un jeton renommé doit se voir, pas retomber sur une ancienne couleur
+  const BG = new THREE.Color(token('--bg'));
+  const ACCENT = new THREE.Color(token('--accent'));
 
   // verre réfractif sur ordinateur, métal poli (plus léger) sur mobile
   const small = Math.min(window.innerWidth, window.innerHeight) < 700;

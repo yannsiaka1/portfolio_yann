@@ -7,13 +7,13 @@
 }
 
 /* ---------- barre de navigation ---------- */
+/* Collante sous l'encoche du téléphone (viewport-fit=cover) ; la bande au-dessus est peinte par body::before.
+   Fond opaque : les liens gardent leur contraste quand une capture claire passe dessous. */
 .site-header {
   position: sticky;
-  top: 0;
+  top: env(safe-area-inset-top, 0px);
   z-index: var(--z-header);
-  background: var(--header-bg);
-  -webkit-backdrop-filter: blur(var(--blur));
-  backdrop-filter: blur(var(--blur));
+  background: var(--bg);
   border-bottom: var(--stroke) solid transparent;
   transition: border-color var(--fast) var(--ease);
 }

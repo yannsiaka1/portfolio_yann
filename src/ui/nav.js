@@ -35,6 +35,10 @@ export function initNav() {
     document.addEventListener('click', (e) => {
       if (isOpen() && !header.contains(e.target)) setOpen(false);
     });
+    // le focus quitte la barre (Tab après le dernier lien) : le menu se referme au lieu de masquer la page
+    header.addEventListener('focusout', (e) => {
+      if (isOpen() && e.relatedTarget && !header.contains(e.relatedTarget)) setOpen(false);
+    });
     wide.addEventListener('change', () => setOpen(false));
   }
 

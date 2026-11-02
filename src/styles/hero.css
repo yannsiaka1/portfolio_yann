@@ -1,4 +1,4 @@
-/* Hero : le nom à gauche, le symbole 3D à droite (au-dessus sous 1024 px).
+/* Hero : le nom à gauche, le symbole 3D à droite (dessous sous 1024 px : l'ordre visuel suit l'ordre du clavier).
    Le canvas couvre le hero et déborde sous la section suivante, qui le recouvre en remontant :
    les panneaux qui s'écartent au défilement ne sont jamais coupés net. */
 .hero {
@@ -78,7 +78,6 @@
 /* La scène : sa boîte décide où se pose le symbole (lue par src/hero/scene.js). */
 .hero__stage {
   position: relative;
-  order: -1;
   height: var(--stage-h);
   touch-action: pan-y;
   user-select: none;
@@ -167,7 +166,6 @@
   }
 
   .hero__stage {
-    order: 0;
     grid-column: 7 / span 6;
     align-self: stretch;
     height: auto;

@@ -19,6 +19,16 @@ html {
   }
 }
 
+/* bande de la zone sûre en haut du téléphone : rien ne défile visiblement au-dessus de la barre */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0 0 auto;
+  height: env(safe-area-inset-top, 0px);
+  z-index: var(--z-header);
+  background: var(--bg);
+}
+
 body {
   margin: 0;
   background: var(--bg);
@@ -119,10 +129,9 @@ h4 {
 /* Lien d'évitement : l'apparence vient de .btn.btn--secondary, seule sa place est ici. */
 .skip-link {
   position: fixed;
-  left: var(--gutter);
-  top: var(--space-1);
+  left: max(var(--gutter), env(safe-area-inset-left, 0px));
+  top: calc(var(--space-1) + env(safe-area-inset-top, 0px));
   z-index: var(--z-skip);
-  background: var(--surface);
   transform: translateY(-200%);
 }
 
