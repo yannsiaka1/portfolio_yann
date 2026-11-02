@@ -1,4 +1,4 @@
-/* Composants partagés : bouton, lien, statut, liste d'outils, élément à filet. */
+/* Composants partagés : bouton, lien, statut, liste d'outils, élément à filet, code, onglets, formulaire, progression. */
 
 /* ---------- bouton : principal (plein) ou secondaire (contour) ---------- */
 .btn {
@@ -182,4 +182,279 @@
   min-width: var(--list-number);
   color: var(--text-2);
   font-variant-numeric: tabular-nums;
+}
+
+/* ---------- liste de capacités : ce que je sais faire, une coche par ligne ---------- */
+.checks {
+  display: grid;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.checks li {
+  display: grid;
+  grid-template-columns: var(--list-indent) minmax(0, 1fr);
+  max-width: var(--measure);
+}
+
+.checks li::before {
+  content: "";
+  width: var(--dot);
+  height: var(--dot);
+  margin-top: calc((var(--lh-body) * 1em - var(--dot)) / 2);
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+/* ---------- code : extraits, invite de commande, aperçu JSON ---------- */
+.code {
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  overflow-x: auto;
+  border: var(--stroke) solid var(--line);
+  border-radius: var(--radius-code);
+  background: var(--surface);
+  color: var(--text);
+  font-family: var(--font-code);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-body);
+  white-space: pre;
+  tab-size: 2;
+}
+
+.code .k,
+.preview__body .k {
+  color: var(--accent);
+}
+
+.code .f {
+  color: var(--live);
+}
+
+.code .s,
+.preview__body .s {
+  color: var(--text-2);
+}
+
+.code .c {
+  color: var(--text-2);
+  font-weight: var(--fw-semibold);
+}
+
+.cmd {
+  display: inline-flex;
+  max-width: 100%;
+  overflow-x: auto;
+  margin-bottom: var(--space-4);
+  padding: var(--space-1) var(--space-2);
+  border: var(--stroke) solid var(--line);
+  border-radius: var(--radius-code);
+  font-family: var(--font-code);
+  font-size: var(--fs-sm);
+  color: var(--text-2);
+  white-space: nowrap;
+}
+
+/* ---------- onglets (Compétences) : sans JavaScript, tous les panneaux restent visibles ---------- */
+.tabs {
+  display: none;
+}
+
+.js .tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--space-3);
+  margin-bottom: var(--space-4);
+  border-bottom: var(--stroke) solid var(--line);
+}
+
+.tabs__tab {
+  min-height: var(--target);
+  margin-bottom: calc(var(--stroke) * -1);
+  border-bottom: var(--stroke-strong) solid transparent;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--text-2);
+  transition:
+    color var(--fast) var(--ease),
+    border-color var(--fast) var(--ease);
+}
+
+.tabs__tab:hover {
+  color: var(--text);
+}
+
+.tabs__tab[aria-selected="true"] {
+  color: var(--text);
+  border-bottom-color: var(--accent);
+}
+
+.tabs__panel {
+  display: grid;
+  gap: var(--space-3);
+  align-content: start;
+}
+
+.tabs__panel + .tabs__panel {
+  margin-top: var(--space-6);
+}
+
+.js .tabs__panel + .tabs__panel {
+  margin-top: 0;
+}
+
+.tabs__lead {
+  max-width: var(--measure);
+  color: var(--text-2);
+}
+
+/* ---------- formulaire ---------- */
+.field {
+  display: grid;
+  gap: var(--space-1);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.field__label {
+  padding: 0;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+}
+
+.field__input {
+  width: 100%;
+  min-height: var(--target);
+  padding: var(--space-1) var(--space-2);
+  border: var(--stroke) solid var(--line-strong);
+  border-radius: var(--radius-code);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  transition: border-color var(--fast) var(--ease);
+}
+
+textarea.field__input {
+  resize: vertical;
+}
+
+.field__input:hover {
+  border-color: var(--text-2);
+}
+
+.field__input:focus-visible {
+  border-color: var(--accent);
+}
+
+.field__input[aria-invalid="true"] {
+  border-color: var(--danger);
+}
+
+.field__hint,
+.field__error {
+  font-size: var(--fs-sm);
+  line-height: var(--lh-ui);
+  color: var(--text-2);
+}
+
+.field__error {
+  color: var(--danger);
+}
+
+.field__error:empty {
+  display: none;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.chip {
+  position: relative;
+}
+
+.chip input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.chip span {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target);
+  padding-inline: var(--space-2);
+  border: var(--stroke) solid var(--line-strong);
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  color: var(--text-2);
+  transition:
+    color var(--fast) var(--ease),
+    border-color var(--fast) var(--ease),
+    background-color var(--fast) var(--ease);
+}
+
+.chip input:checked + span {
+  border-color: var(--text);
+  background: var(--text);
+  color: var(--bg);
+}
+
+.chip input:focus-visible + span {
+  outline: var(--stroke-strong) solid var(--accent);
+  outline-offset: var(--focus-offset);
+}
+
+/* ---------- progression d'une préparation ---------- */
+.progress {
+  display: grid;
+  gap: var(--space-1);
+  color: var(--text-2);
+}
+
+.progress progress {
+  appearance: none;
+  width: 100%;
+  height: var(--dot);
+  overflow: hidden;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--line);
+  color: var(--accent);
+}
+
+.progress progress::-webkit-progress-bar {
+  background: var(--line);
+}
+
+.progress progress::-webkit-progress-value {
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+}
+
+.progress progress::-moz-progress-bar {
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+}
+
+/* ---------- titres révélés mot par mot (src/sections/reveals.js) ---------- */
+.reveal-mask .w {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  padding-bottom: var(--mask-pad);
+  margin-bottom: calc(var(--mask-pad) * -1);
+}
+
+.reveal-mask .wi {
+  display: inline-block;
+  will-change: transform;
 }

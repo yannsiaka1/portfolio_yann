@@ -1,13 +1,13 @@
-// Point d'entrée : police et styles, navigation, bouton de copie, puis scène 3D chargée à part.
+// Point d'entrée : polices et styles, interface, puis scène 3D chargée à part.
+import 'lenis/dist/lenis.css';
 import '@fontsource-variable/archivo/wdth.css'; // graisse et chasse variables
+import '@fontsource-variable/jetbrains-mono'; // le code seulement
 import './styles/index.css';
 
-import { initNav } from './ui/nav.js';
-import { initCopy } from './ui/copy.js';
+import { initApp } from './app.js';
 import { signalGlReady } from './core/state.js';
 
-initNav();
-initCopy();
+initApp();
 
 // three.js arrive dans un fichier séparé : la page est lisible et utilisable avant lui,
 // et reste complète si WebGL est indisponible.

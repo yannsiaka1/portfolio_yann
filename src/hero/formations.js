@@ -147,7 +147,7 @@ function stack() {
   return out;
 }
 
-/** sym et name décrivent chaque symbole (repris dans le README) ; rot = rotation de présentation. */
+/** sym et name s'affichent sous le symbole (« 01 / 07 </> Interfaces ») ; rot = rotation de présentation. */
 export const FORMS = [
   { sym: '</>', name: 'interfaces', els: code(), rot: [0, 0, 0], spin: false },
   { sym: '{ }', name: 'logique métier', els: braces(), rot: [0, 0, 0], spin: false },
@@ -168,3 +168,12 @@ FORMS.forEach((f) => {
 });
 
 export const POOL = Math.max(...FORMS.map((f) => f.els.length));
+
+/** Pistes de circuit derrière le symbole, en coordonnées du symbole (z = profondeur).
+ *  La piste de gauche descend tôt : elle reste dans la colonne de la scène, jamais sous le texte du hero. */
+export const ZTR = -0.9;
+export const TRACE_DEFS = [
+  [V(-0.95, 0.12, ZTR), V(-1.6, 0.12, ZTR), V(-2.0, -0.28, ZTR), V(-2.0, -15, ZTR)],
+  [V(0.95, 0.42, ZTR), V(2.05, 0.42, ZTR), V(2.55, 0.92, ZTR), V(17, 0.92, ZTR)],
+  [V(0.18, -0.95, ZTR), V(0.18, -1.95, ZTR), V(-0.32, -2.45, ZTR), V(-0.32, -15, ZTR)],
+];

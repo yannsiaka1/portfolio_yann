@@ -1,5 +1,5 @@
 /* Hero : le nom à gauche, le symbole 3D à droite (dessous sous 1024 px : l'ordre visuel suit l'ordre du clavier).
-   Le canvas couvre le hero et déborde sous la section suivante, qui le recouvre en remontant :
+   Le canvas couvre le hero et déborde sous le bandeau, qui le recouvre en remontant :
    les panneaux qui s'écartent au défilement ne sont jamais coupés net. */
 .hero {
   position: relative;
@@ -47,8 +47,12 @@
   letter-spacing: var(--ls-name);
 }
 
-.hero__name > span {
+.hero__name-line {
   display: block;
+}
+
+.hero__name .ch {
+  display: inline-block;
 }
 
 .hero__role {
@@ -92,16 +96,19 @@
   cursor: pointer;
 }
 
-/* Indice et bouton pause, placés par scene.js juste sous le symbole. */
+.has-cursor .hero__symbol {
+  cursor: none;
+}
+
+/* Légende du symbole, indice et bouton pause, placés par scene.js juste sous le symbole. */
 .hero__controls {
   position: absolute;
   left: 0;
   right: 0;
   bottom: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2);
+  display: grid;
+  justify-items: center;
+  gap: var(--space-1);
   opacity: 0;
   transition: opacity var(--slow) var(--ease);
 }
@@ -110,10 +117,102 @@
   opacity: 1;
 }
 
+.hero__fig {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1) var(--space-2);
+  font-size: var(--fs-sm);
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.hero__fig-sym {
+  min-width: var(--fig-sym-w);
+  font-family: var(--font-code);
+  color: var(--accent);
+  text-align: center;
+}
+
+.hero__fig-name {
+  min-width: var(--fig-name-w);
+  color: var(--text);
+}
+
+.hero__fig-bar {
+  position: relative;
+  width: var(--space-6);
+  height: var(--stroke-strong);
+  overflow: hidden;
+  background: var(--line-strong);
+}
+
+.hero__fig-bar i {
+  position: absolute;
+  inset: 0;
+  background: var(--text);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.hero__hint-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+}
+
 .hero__hint {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
   font-size: var(--fs-sm);
   line-height: var(--lh-ui);
   color: var(--text-2);
+}
+
+.hero__hint b {
+  font-weight: var(--fw-semibold);
+  color: var(--text);
+}
+
+.hero__hint[data-state="blast"] b,
+.hero__hint[data-state="rollback"] b {
+  color: var(--accent);
+}
+
+.hero__hint code {
+  font-family: var(--font-code);
+  color: var(--accent);
+}
+
+/* jauge de l'appui maintenu (absente quand rien ne bouge seul : pas d'appui long possible) */
+.is-paused .hero__meter {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__meter {
+    display: none;
+  }
+}
+
+.hero__meter {
+  position: relative;
+  flex: none;
+  width: var(--space-5);
+  height: var(--stroke-strong);
+  overflow: hidden;
+  background: var(--line-strong);
+}
+
+.hero__meter i {
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  transform: scaleX(var(--charge, 0));
+  transform-origin: left;
 }
 
 .hero__pause .icon-play,
@@ -123,6 +222,24 @@
 
 .hero__pause.is-paused .icon-play {
   display: block;
+}
+
+/* étiquette posée par la scène au bout d'une piste du circuit */
+.trace-tag {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: var(--z-raised);
+  font-size: var(--fs-sm);
+  color: var(--accent);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--slow) var(--ease);
+}
+
+.trace-tag.is-on {
+  opacity: 1;
 }
 
 /* Sans WebGL 2, ou sans JavaScript : un symbole dessiné remplace la scène. */
@@ -143,9 +260,15 @@
   display: block;
 }
 
-.no-gl .hero__controls,
-.no-gl .hero__symbol {
+.no-gl .hero__fig,
+.no-gl .hero__hint,
+.no-gl .hero__symbol,
+.no-gl .trace-tag {
   display: none;
+}
+
+.no-gl .hero__controls {
+  opacity: 1;
 }
 
 @media (min-width: 48rem) {

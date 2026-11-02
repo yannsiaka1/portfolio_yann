@@ -1,4 +1,4 @@
-/* Mise en page : conteneur, barre de navigation, sections, pied de page. */
+/* Mise en page : conteneur, barre de navigation (invite de commande), sections, pied de page. */
 .container {
   width: 100%;
   max-width: calc(var(--container) + 2 * var(--gutter));
@@ -32,15 +32,55 @@
   min-height: var(--header-h);
 }
 
-.wordmark {
+/* Invite « yann@siaka:~/section$ » : le chemin suit la section lue (src/ui/nav.js). */
+.prompt {
   display: inline-flex;
   align-items: center;
   min-height: var(--target);
-  font-size: var(--fs-md);
-  font-weight: var(--fw-name);
-  font-stretch: var(--stretch-name);
-  letter-spacing: var(--ls-title);
+  font-family: var(--font-code);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  color: var(--text);
   text-decoration: none;
+  white-space: nowrap;
+}
+
+.prompt__sep {
+  color: var(--text-2);
+}
+
+.prompt__path {
+  color: var(--accent);
+}
+
+.prompt__caret {
+  width: var(--caret-w);
+  height: var(--caret-h);
+  margin-left: var(--caret-gap);
+  background: var(--accent);
+  animation: caret var(--blink) steps(1) infinite;
+}
+
+@keyframes caret {
+  50% {
+    opacity: 0;
+  }
+}
+
+.is-paused .prompt__caret {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .prompt__caret {
+    animation: none;
+  }
+}
+
+@media (max-width: 23.5rem) {
+  .prompt__host {
+    display: none;
+  }
 }
 
 .site-nav__list {
@@ -85,8 +125,8 @@
   display: none;
 }
 
-/* Menu mobile : seulement quand JavaScript est là pour l'ouvrir. */
-@media (max-width: 47.99rem) {
+/* Menu mobile, jusqu'à 1024 px : seulement quand JavaScript est là pour l'ouvrir. */
+@media (max-width: 63.99rem) {
   .js .site-header .menu-toggle {
     display: inline-flex;
   }
@@ -97,13 +137,14 @@
     left: 0;
     right: 0;
     top: 100%;
-    padding: var(--space-1) var(--gutter) var(--space-3);
+    padding: var(--space-1) max(var(--gutter), env(safe-area-inset-right, 0px)) var(--space-3) max(var(--gutter), env(safe-area-inset-left, 0px));
     background: var(--surface);
     border-bottom: var(--stroke) solid var(--line);
   }
 
   .js .site-header.is-open .site-nav {
     display: block;
+    animation: menu-in var(--slow) var(--ease-expo);
   }
 
   .js .site-nav__list {
@@ -125,13 +166,28 @@
   }
 }
 
+@keyframes menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(calc(var(--space-2) * -1));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js .site-header.is-open .site-nav {
+    animation: none;
+  }
+}
+
 /* ---------- sections ---------- */
-/* Opaques et au-dessus du hero : elles recouvrent la scène 3D en remontant. */
+/* Opaques et au-dessus du hero : elles recouvrent la scène 3D en remontant.
+   overflow-x: clip retient la pile 3D des compétences sans créer de conteneur de défilement (sticky intact). */
 .section {
   position: relative;
   z-index: var(--z-raised);
+  overflow-x: clip;
   background: var(--bg);
-  padding-block: var(--space-6);
+  padding-block: var(--space-7);
   border-top: var(--stroke) solid var(--line);
 }
 
@@ -146,7 +202,7 @@
 }
 
 .subsection {
-  margin-top: var(--space-6);
+  margin-top: var(--space-7);
 }
 
 .subsection > h3,
@@ -157,18 +213,12 @@
 /* deux colonnes côte à côte dès 1024 px (Parcours) */
 .columns {
   display: grid;
-  gap: var(--space-6);
-}
-
-@media (min-width: 64rem) {
-  .columns {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+  gap: var(--space-7);
 }
 
 @media (min-width: 48rem) {
   .section {
-    padding-block: var(--space-7);
+    padding-block: var(--space-8);
   }
 
   .section-head {
@@ -176,7 +226,14 @@
   }
 
   .subsection {
-    margin-top: var(--space-7);
+    margin-top: var(--space-8);
+  }
+}
+
+@media (min-width: 64rem) {
+  .columns {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-6);
   }
 }
 
@@ -184,6 +241,7 @@
 .site-footer {
   position: relative;
   z-index: var(--z-raised);
+  overflow: hidden;
   background: var(--bg);
   border-top: var(--stroke) solid var(--line);
 }
@@ -195,8 +253,15 @@
   justify-content: space-between;
   gap: 0 var(--space-4);
   padding-block: var(--space-3);
+  border-top: var(--stroke) solid var(--line);
   font-size: var(--fs-sm);
   color: var(--text-2);
+}
+
+.site-footer__clock time {
+  margin-left: var(--space-1);
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
 }
 
 .site-footer__links {
@@ -206,4 +271,10 @@
   margin: 0;
   padding: 0;
   list-style: none;
+}
+
+.site-footer__fine {
+  padding-bottom: var(--space-4);
+  font-size: var(--fs-sm);
+  color: var(--text-2);
 }

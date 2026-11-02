@@ -1,0 +1,180 @@
+/* Habillage : intro (une fois par visite) et curseur personnalisé (souris seulement). */
+
+/* ---------- intro ---------- */
+.loader {
+  display: none;
+}
+
+.is-loading {
+  overflow: hidden;
+}
+
+.is-loading .loader {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-loader);
+  display: grid;
+  place-items: center;
+  padding: env(safe-area-inset-top, 0px) max(var(--gutter), env(safe-area-inset-right, 0px)) env(safe-area-inset-bottom, 0px) max(var(--gutter), env(safe-area-inset-left, 0px));
+}
+
+/* huit bandes qui s'ouvrent l'une après l'autre sur la page */
+.loader__belts {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+}
+
+.loader__belts i {
+  background: var(--surface);
+  transform-origin: top;
+}
+
+.loader__inner {
+  position: relative;
+  display: grid;
+  gap: var(--space-4);
+  width: min(100%, var(--measure));
+}
+
+.loader__log {
+  display: grid;
+  gap: var(--space-1);
+  font-size: var(--fs-sm);
+  color: var(--text-2);
+}
+
+.loader__log code {
+  font-family: var(--font-code);
+  color: var(--text);
+}
+
+.loader__log p {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+  opacity: 0;
+  transition: opacity var(--fast) var(--ease);
+}
+
+.loader__log p.is-on,
+.loader__log p:first-child {
+  opacity: 1;
+}
+
+.loader__log b {
+  font-family: var(--font-code);
+  font-weight: var(--fw-regular);
+  color: var(--live);
+}
+
+.loader__count {
+  font-size: var(--fs-stat);
+  line-height: var(--lh-display);
+  font-weight: var(--fw-light);
+  font-stretch: var(--stretch-heading);
+  letter-spacing: var(--ls-name);
+  font-variant-numeric: tabular-nums;
+}
+
+.loader__name {
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-name);
+  font-stretch: var(--stretch-name);
+}
+
+/* ---------- curseur ---------- */
+.cursor {
+  display: none;
+}
+
+.has-cursor .cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: var(--z-cursor);
+  display: block;
+  pointer-events: none;
+}
+
+.has-cursor,
+.has-cursor body {
+  cursor: none;
+}
+
+.has-cursor a,
+.has-cursor button,
+.has-cursor label,
+.has-cursor input,
+.has-cursor textarea {
+  cursor: none;
+}
+
+.cursor__dot,
+.cursor__ring {
+  position: absolute;
+  left: 0;
+  top: 0;
+  border-radius: 50%;
+  translate: -50% -50%;
+}
+
+.cursor__dot {
+  width: var(--cursor-dot);
+  height: var(--cursor-dot);
+  background: var(--accent);
+}
+
+.cursor__ring {
+  width: var(--cursor-ring);
+  height: var(--cursor-ring);
+  border: var(--stroke) solid var(--line-strong);
+  transition:
+    width var(--slow) var(--ease-expo),
+    height var(--slow) var(--ease-expo),
+    border-color var(--fast) var(--ease),
+    opacity var(--fast) var(--ease);
+}
+
+.cursor__ring svg {
+  position: absolute;
+  inset: calc(var(--stroke) * -1);
+  width: calc(100% + 2 * var(--stroke));
+  height: calc(100% + 2 * var(--stroke));
+  overflow: visible;
+  rotate: var(--ring-start);
+}
+
+.cursor__track,
+.cursor__prog {
+  fill: none;
+  stroke-width: var(--stroke-strong);
+  vector-effect: non-scaling-stroke;
+}
+
+.cursor__track {
+  stroke: transparent;
+}
+
+.cursor__prog {
+  stroke: var(--accent);
+  stroke-dasharray: var(--ring-length);
+  stroke-dashoffset: var(--ring-length);
+}
+
+.cursor.is-link .cursor__ring {
+  width: var(--cursor-ring-hover);
+  height: var(--cursor-ring-hover);
+  border-color: var(--text);
+}
+
+.cursor.is-hold .cursor__ring {
+  width: var(--cursor-ring-hover);
+  height: var(--cursor-ring-hover);
+  border-color: var(--line-strong);
+}
+
+.cursor.is-out {
+  opacity: 0;
+}

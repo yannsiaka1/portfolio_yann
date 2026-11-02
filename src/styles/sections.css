@@ -1,9 +1,75 @@
-/* Sections : projets, à propos, contact. Les éléments à filet sont dans components.css. */
+/* Sections : bandeau, projets, à propos (phrase, repères), compétences (pile), méthode (historique Git),
+   parcours (journal des versions), contact, signature du pied de page. */
 
-/* ---------- projets principaux : capture à gauche, texte à droite, même gabarit pour les trois ---------- */
+/* ---------- bandeau défilant ---------- */
+.marquee {
+  position: relative;
+  z-index: var(--z-raised);
+  display: grid;
+  gap: var(--space-2);
+  overflow: hidden;
+  padding-block: var(--space-4);
+  background: var(--bg);
+  border-top: var(--stroke) solid var(--line);
+}
+
+.marquee__row {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+}
+
+.marquee__set {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+}
+
+.marquee__word {
+  display: inline-flex;
+  align-items: center;
+  padding-right: var(--space-5);
+  font-size: var(--fs-marquee);
+  line-height: var(--lh-display);
+  font-weight: var(--fw-heading);
+  font-stretch: var(--stretch-heading);
+  letter-spacing: var(--ls-name);
+}
+
+.marquee__word--outline {
+  color: transparent;
+  -webkit-text-stroke: var(--outline-text) var(--text);
+}
+
+.marquee__word code {
+  margin-left: var(--space-4);
+  font-family: var(--font-code);
+  font-size: var(--fs-xl);
+  font-weight: var(--fw-regular);
+  letter-spacing: 0;
+  color: var(--accent);
+  -webkit-text-stroke: 0;
+}
+
+.marquee__tool {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding-right: var(--space-3);
+  font-size: var(--fs-lg);
+  color: var(--text-2);
+}
+
+.marquee__tool i {
+  font-family: var(--font-code);
+  font-style: normal;
+  color: var(--accent);
+}
+
+/* ---------- projets : capture (ou schéma) à gauche, texte à droite, même gabarit pour les quatre ---------- */
 .projects {
   display: grid;
-  gap: var(--space-6);
+  gap: var(--space-7);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -28,6 +94,7 @@
   border: var(--stroke) solid var(--line);
   border-radius: var(--radius-media);
   background: var(--surface);
+  transition: transform var(--slow) var(--ease-expo);
 }
 
 .project__phone {
@@ -41,6 +108,12 @@
   border: var(--stroke) solid var(--line-strong);
   border-radius: var(--radius-phone);
   background: var(--surface);
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .project:hover .project__shot {
+    transform: scale(1.015);
+  }
 }
 
 .project__body {
@@ -74,20 +147,113 @@
   margin-top: var(--space-2);
 }
 
-/* ---------- autres projets : deux éléments à filet, sans capture ----------
-   La description d'un projet garde la couleur du texte courant, comme celle des projets principaux. */
-.item > .project__desc {
+.project__note {
+  font-size: var(--fs-sm);
+  color: var(--text-2);
+}
+
+/* jalons d'un produit en construction */
+.milestones {
+  display: grid;
+  gap: var(--space-2);
+  margin: var(--space-1) 0;
+  padding: var(--space-2) var(--space-3);
+  list-style: none;
+  border: var(--stroke) solid var(--line);
+  border-radius: var(--radius-code);
+}
+
+.milestones li {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.milestones li + li {
+  padding-top: var(--space-2);
+  border-top: var(--stroke) solid var(--line);
+}
+
+/* schéma de données d'Easy Life : six tables reliées, en lieu et place d'une capture */
+.project__media--schema {
+  padding: 0;
+}
+
+.schema {
+  position: relative;
+  aspect-ratio: var(--ratio-shot);
+  padding: var(--space-3);
+  border: var(--stroke) solid var(--line);
+  border-radius: var(--radius-media);
+  background: var(--surface);
+}
+
+.schema__links {
+  position: absolute;
+  inset: var(--space-3);
+  width: calc(100% - 2 * var(--space-3));
+  height: calc(100% - 2 * var(--space-3));
+  overflow: visible;
+}
+
+.schema__links path {
+  fill: none;
+  stroke: var(--line-strong);
+  stroke-width: var(--stroke);
+  vector-effect: non-scaling-stroke;
+}
+
+.schema__links .is-hot {
+  stroke: var(--accent);
+}
+
+.schema__tables {
+  position: relative;
+  display: grid;
+  grid-template-areas:
+    "a b c"
+    ". d ."
+    "e . f";
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(3, minmax(0, 1fr));
+  gap: var(--space-2);
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.schema__table {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1);
+  border: var(--stroke) solid var(--line-strong);
+  border-radius: var(--radius-code);
+  background: var(--bg);
+  text-align: center;
+}
+
+.schema__table code {
+  font-family: var(--font-code);
+  font-size: var(--fs-sm);
   color: var(--text);
+  overflow-wrap: anywhere;
 }
 
-.item > .project__points,
-.item > .project__links {
-  margin-top: var(--space-1);
+.schema__table span {
+  font-family: var(--font-code);
+  font-size: var(--fs-sm);
+  color: var(--text-2);
 }
 
-@media (min-width: 48rem) {
-  .projects {
-    gap: var(--space-7);
+.schema__table--hot {
+  border-color: var(--accent);
+}
+
+@media (max-width: 47.99rem) {
+  .schema__table span {
+    display: none;
   }
 }
 
@@ -99,14 +265,456 @@
 }
 
 /* ---------- à propos ---------- */
+.statement {
+  max-width: var(--statement-measure);
+  font-size: var(--fs-statement);
+  line-height: var(--lh-heading);
+  font-weight: var(--fw-regular);
+  letter-spacing: var(--ls-heading);
+}
+
 .prose {
   display: grid;
   gap: var(--space-2);
   max-width: var(--measure);
 }
 
-/* ---------- contact ----------
-   Le courriel prend le style d'un titre de niveau 3 sans en être un : c'est une donnée, pas une rubrique. */
+.about__prose {
+  margin-top: var(--space-6);
+  color: var(--text-2);
+}
+
+/* repères : quatre chiffres tirés des projets eux-mêmes */
+.stats {
+  display: grid;
+  gap: var(--space-5) var(--space-4);
+  margin: var(--space-7) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stat {
+  display: grid;
+  align-content: start;
+  gap: var(--space-1);
+  padding-top: var(--space-3);
+  border-top: var(--stroke) solid var(--line);
+}
+
+.stat__num {
+  display: flex;
+  align-items: flex-start;
+  font-size: var(--fs-stat);
+  line-height: var(--lh-display);
+  font-weight: var(--fw-light);
+  font-stretch: var(--stretch-heading);
+  letter-spacing: var(--ls-name);
+  font-variant-numeric: tabular-nums;
+}
+
+.stat__unit {
+  margin-left: var(--space-1);
+  font-size: var(--fs-xl);
+  color: var(--accent);
+}
+
+.stat__label {
+  font-weight: var(--fw-semibold);
+}
+
+.stat__detail {
+  font-size: var(--fs-sm);
+  color: var(--text-2);
+}
+
+.clocks {
+  display: grid;
+  gap: var(--space-1);
+  font-size: var(--fs-sm);
+  color: var(--text-2);
+}
+
+.clocks p {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.clocks time {
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+/* compteurs à rouleaux : chaque chiffre est une bande de 0 à 9 (deux fois) qui défile */
+.odo {
+  display: inline-flex;
+}
+
+.reel {
+  display: inline-block;
+  height: 1em;
+  overflow: hidden;
+}
+
+.reel__strip {
+  display: flex;
+  flex-direction: column;
+}
+
+.reel__strip span {
+  height: 1em;
+  line-height: var(--lh-display);
+}
+
+@media (min-width: 48rem) {
+  .stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 64rem) {
+  .stats {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* ---------- compétences : la pile interface → API → données → mise en ligne ---------- */
+.skills {
+  display: grid;
+  gap: var(--space-5);
+  align-items: start;
+}
+
+.skills__main {
+  min-width: 0;
+}
+
+.iso {
+  position: relative;
+  width: min(100%, var(--iso-size));
+  aspect-ratio: 1;
+  margin-inline: auto;
+  perspective: var(--iso-perspective);
+}
+
+.iso__scene {
+  --gap: var(--space-6);
+  position: absolute;
+  inset: 0;
+  transform: var(--iso-tilt);
+  transform-style: preserve-3d;
+}
+
+.iso__layer {
+  position: absolute;
+  inset: 15%;
+  transform: translateZ(calc((var(--z) - 1.5) * var(--gap)));
+  border: var(--stroke) solid var(--line-strong);
+  border-radius: var(--radius-phone);
+  background-color: var(--surface);
+  background-image:
+    linear-gradient(var(--line) var(--stroke), transparent var(--stroke)),
+    linear-gradient(90deg, var(--line) var(--stroke), transparent var(--stroke));
+  background-size: var(--space-3) var(--space-3);
+  cursor: pointer;
+  transition:
+    border-color var(--slow) var(--ease),
+    box-shadow var(--slow) var(--ease),
+    transform var(--slow) var(--ease-expo);
+}
+
+.iso__layer.is-active {
+  border-color: var(--accent);
+  box-shadow: 0 0 var(--space-7) var(--accent-glow);
+}
+
+.iso__label {
+  position: absolute;
+  left: 9%;
+  bottom: 9%;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--text-2);
+  transition: color var(--slow) var(--ease);
+}
+
+.iso__layer.is-active .iso__label {
+  color: var(--accent);
+}
+
+@media (max-width: 63.99rem) {
+  .iso {
+    width: min(100%, var(--iso-size-sm));
+  }
+}
+
+@media (min-width: 64rem) {
+  .skills {
+    grid-template-columns: 5fr 7fr;
+    gap: var(--space-6);
+  }
+
+  .iso {
+    position: sticky;
+    top: calc(var(--header-h) + var(--space-5));
+  }
+}
+
+/* ---------- méthode : historique Git tracé au défilement ---------- */
+.gitlog {
+  position: relative;
+}
+
+.gitlog__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gitlog__svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.gitlog__svg path {
+  fill: none;
+  stroke-width: var(--stroke-strong);
+}
+
+.gitlog__base {
+  stroke: var(--line-strong);
+}
+
+.gitlog__prog {
+  stroke: var(--accent);
+}
+
+.commit {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--space-6) minmax(0, 1fr);
+  gap: var(--space-1) var(--space-3);
+  padding-block: var(--space-4);
+  border-bottom: var(--stroke) solid var(--line);
+}
+
+.commit__dot {
+  position: relative;
+  z-index: var(--z-raised);
+  grid-row: span 2;
+  width: var(--space-2);
+  height: var(--space-2);
+  margin: var(--space-1) 0 0 var(--space-2);
+  border: var(--stroke-strong) solid var(--line-strong);
+  border-radius: 50%;
+  background: var(--bg);
+  transition:
+    background-color var(--slow) var(--ease),
+    border-color var(--slow) var(--ease),
+    box-shadow var(--slow) var(--ease);
+}
+
+.commit--branch .commit__dot {
+  margin-left: var(--space-4);
+}
+
+.commit.is-lit .commit__dot {
+  border-color: var(--accent);
+  background: var(--accent);
+  box-shadow: 0 0 0 var(--space-1) var(--accent-glow);
+}
+
+.commit__head {
+  display: grid;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.commit__line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-2);
+  font-family: var(--font-code);
+  font-size: var(--fs-sm);
+}
+
+.commit__hash {
+  color: var(--accent);
+}
+
+.commit__type {
+  color: var(--text-2);
+}
+
+.commit__ref {
+  padding-inline: var(--space-1);
+  border: var(--stroke) solid var(--accent);
+  border-radius: var(--radius-focus);
+  color: var(--accent);
+}
+
+.commit__text {
+  max-width: var(--measure);
+  color: var(--text-2);
+}
+
+@media (min-width: 64rem) {
+  .commit {
+    grid-template-columns: var(--space-7) minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .commit__dot {
+    grid-row: auto;
+  }
+
+  .commit--branch .commit__dot {
+    margin-left: var(--space-6);
+  }
+}
+
+/* ---------- parcours : journal des versions, du plus récent au plus ancien ---------- */
+.changelog {
+  border: var(--stroke) solid var(--line);
+  border-radius: var(--radius-media);
+}
+
+.changelog__bar {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-bottom: var(--stroke) solid var(--line);
+  font-size: var(--fs-sm);
+  color: var(--text-2);
+}
+
+.changelog__bar code {
+  font-family: var(--font-code);
+  color: var(--text);
+}
+
+.changelog__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.release {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-3);
+}
+
+.release + .release {
+  border-top: var(--stroke) solid var(--line);
+}
+
+.release__tag {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--fs-sm);
+  color: var(--text-2);
+}
+
+.release__tag code {
+  font-family: var(--font-code);
+  color: var(--accent);
+}
+
+.release--next .release__tag code {
+  color: var(--text-2);
+}
+
+.release__meta {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--text);
+}
+
+.release__text {
+  max-width: var(--measure);
+  color: var(--text-2);
+}
+
+/* ---------- contact ---------- */
+.contact {
+  display: grid;
+  gap: var(--space-6);
+  align-items: start;
+}
+
+.form {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.form__foot {
+  margin-top: var(--space-1);
+}
+
+.form__status {
+  min-height: calc(var(--lh-ui) * 1em);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-ui);
+  color: var(--text-2);
+}
+
+.contact__side {
+  display: grid;
+  gap: var(--space-5);
+  min-width: 0;
+}
+
+.preview {
+  min-width: 0;
+  border: var(--stroke) solid var(--line);
+  border-radius: var(--radius-media);
+  background: var(--surface);
+}
+
+.preview__bar {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-bottom: var(--stroke) solid var(--line);
+  font-size: var(--fs-sm);
+  color: var(--text-2);
+}
+
+.preview__bar code {
+  font-family: var(--font-code);
+  color: var(--text);
+}
+
+.preview__body {
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  overflow-x: auto;
+  font-family: var(--font-code);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-body);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.contact__direct {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.contact__direct-title {
+  color: var(--text-2);
+}
+
+/* Le courriel prend le style d'un titre de niveau 3 sans en être un : c'est une donnée, pas une rubrique. */
 .contact__email {
   font-size: var(--fs-lg);
   line-height: var(--lh-title);
@@ -120,12 +728,10 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
-  margin-top: var(--space-4);
 }
 
 .contact__feedback {
   min-height: calc(var(--lh-ui) * 1em);
-  margin-top: var(--space-2);
   font-size: var(--fs-sm);
   line-height: var(--lh-ui);
   color: var(--text-2);
@@ -135,4 +741,43 @@
   .contact__email {
     font-size: var(--fs-xl);
   }
+}
+
+@media (min-width: 64rem) {
+  .contact {
+    grid-template-columns: 7fr 5fr;
+  }
+}
+
+/* ---------- signature du pied de page : graisse et chasse suivent le curseur ---------- */
+.signature {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--signature-gap);
+  padding-block: var(--space-6) var(--space-4);
+  font-size: var(--fs-signature);
+  line-height: var(--lh-name);
+  font-weight: var(--fw-heading);
+  font-stretch: var(--stretch-heading);
+  letter-spacing: var(--ls-name);
+  user-select: none;
+}
+
+.signature__word {
+  display: inline-flex;
+  white-space: nowrap;
+}
+
+.signature .ch {
+  display: inline-block;
+  font-weight: var(--w, var(--fw-heading));
+  font-stretch: var(--wd, var(--stretch-heading));
+  transition:
+    font-weight var(--slow) var(--ease-expo),
+    font-stretch var(--slow) var(--ease-expo),
+    color var(--fast) var(--ease);
+}
+
+.signature .ch.is-hot {
+  color: var(--accent);
 }
