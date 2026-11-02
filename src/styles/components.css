@@ -207,6 +207,32 @@
   color: var(--text);
 }
 
+/* pièce justificative : extrait d'un document officiel, agrandissable */
+.proof {
+  display: grid;
+  gap: var(--space-1);
+  max-width: var(--measure);
+  margin: var(--space-1) 0 0;
+}
+
+.proof__link {
+  display: block;
+  border-radius: var(--radius-code);
+}
+
+.proof img {
+  width: 100%;
+  border: var(--stroke) solid var(--line);
+  border-radius: var(--radius-code);
+  background: var(--text);
+}
+
+.proof figcaption {
+  font-size: var(--fs-sm);
+  line-height: var(--lh-ui);
+  color: var(--text-2);
+}
+
 @media (min-width: 48rem) {
   .items--2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));

@@ -224,13 +224,35 @@ video.browser__shot {
   object-position: top;
 }
 
-/* Easy Life : le téléphone seul, incliné, à côté du schéma de données */
-.device--hero {
-  right: 10%;
+.device video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+}
+
+/* Easy Life : le prototype en thème clair et en thème sombre, deux téléphones inclinés devant le schéma de données */
+.device--light,
+.device--dark {
   top: 50%;
   bottom: auto;
-  width: 30%;
-  transform: translateY(-50%) rotate(var(--device-tilt));
+  width: 25%;
+}
+
+.device--light {
+  right: 33%;
+  transform: translateY(-53%) rotate(calc(var(--device-tilt) * -0.75));
+}
+
+.device--dark {
+  right: 6%;
+  transform: translateY(-45%) rotate(var(--device-tilt));
+}
+
+.card--easylife .erd {
+  left: 3%;
+  width: 40%;
 }
 
 .erd {
@@ -339,6 +361,27 @@ video.browser__shot {
   color: var(--accent);
 }
 
+/* les faits en deux groupes : technique, puis design et expérience */
+.card__groups {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.card__group {
+  display: grid;
+  align-content: start;
+  gap: var(--space-1);
+}
+
+.card__group-title {
+  font-family: var(--font-code);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-ui);
+  letter-spacing: 0;
+  color: var(--text-2);
+}
+
 .card__body > .tools,
 .card__links {
   margin-top: var(--space-1);
@@ -425,8 +468,9 @@ video.browser__shot {
 }
 
 .is-deck .projects__panel > .card {
+  width: 100%;
   height: 100%;
-  grid-template-columns: minmax(0, 9fr) minmax(0, 11fr);
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
 }
 
 .is-deck .card__visual {
@@ -442,6 +486,12 @@ video.browser__shot {
 .is-deck .card__body > .tools,
 .is-deck .card__links {
   margin-top: 0;
+}
+
+/* les deux groupes de faits côte à côte quand la carte est épinglée */
+.is-deck .card__groups {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
 }
 
 /* les deux jalons côte à côte : la carte du produit en construction tient sur un écran d'ordinateur portable */
@@ -658,10 +708,12 @@ video.browser__shot {
   transform-style: preserve-3d;
 }
 
+/* La pile s'ouvre autour de la couche choisie : celles du dessus montent, celles du dessous descendent
+   (--active-z est posé par src/sections/skills.js), la couche choisie garde sa place et son étiquette reste lisible. */
 .iso__layer {
   position: absolute;
   inset: 15%;
-  transform: translateZ(calc((var(--z) - var(--iso-mid)) * var(--gap)));
+  transform: translateZ(calc((var(--z) - var(--iso-mid)) * var(--gap) + clamp(-1, (var(--z) - var(--active-z, var(--z))) * 100, 1) * var(--iso-spread)));
   border: var(--stroke) solid var(--line-strong);
   border-radius: var(--radius-phone);
   background-color: var(--surface);

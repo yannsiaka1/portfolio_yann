@@ -58,29 +58,41 @@ export function initNav() {
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
-  /* ---------- section en cours : celle qui traverse le milieu de l'écran ---------- */
+  /* ---------- section en cours : celle qui contient le milieu de l'écran ----------
+     Mesurée à chaque défilement (une fois par image) plutôt qu'avec un IntersectionObserver : les sections
+     épinglées (projets, compétences) restent ainsi reconnues pendant tout leur épinglage. */
   const links = $$('.site-nav__link');
   const pathEl = $('#navPath');
   const sections = $$('[data-path]');
-  if (!('IntersectionObserver' in window)) return;
-  let currentPath = '~';
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        const id = `#${entry.target.id}`;
-        links.forEach((a) => {
-          if (a.getAttribute('href') === id) a.setAttribute('aria-current', 'true');
-          else a.removeAttribute('aria-current');
-        });
-        const path = entry.target.dataset.path || '~';
-        if (path !== currentPath) {
-          currentPath = path;
-          scramble(pathEl, path, 0.45);
-        }
-      });
-    },
-    { rootMargin: '-45% 0px -50% 0px' },
-  );
-  sections.forEach((section) => observer.observe(section));
+  let currentPath = null;
+  let queued = false;
+  const update = () => {
+    queued = false;
+    const mid = window.innerHeight * 0.47;
+    const section = sections.find((el) => {
+      const r = el.getBoundingClientRect();
+      return r.top <= mid && r.bottom > mid;
+    });
+    if (!section) return; // bandeau entre le hero et les projets : on garde la section précédente
+    const id = `#${section.id}`;
+    links.forEach((a) => {
+      if (a.getAttribute('href') === id) a.setAttribute('aria-current', 'true');
+      else a.removeAttribute('aria-current');
+    });
+    const path = section.dataset.path || '~';
+    if (path !== currentPath) {
+      const first = currentPath === null;
+      currentPath = path;
+      if (first) pathEl.textContent = path;
+      else scramble(pathEl, path, 0.45);
+    }
+  };
+  const queue = () => {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(update);
+  };
+  window.addEventListener('scroll', queue, { passive: true });
+  window.addEventListener('resize', queue);
+  update();
 }

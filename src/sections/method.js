@@ -1,4 +1,4 @@
-// Méthode : graphe « git log » tracé en SVG, avec une branche feature, qui se dessine au défilement.
+// Méthode : graphe « git log » tracé en SVG, avec une branche feature (le commit .commit--branch), qui se dessine au défilement.
 import { gsap, ScrollTrigger } from '../core/gsap.js';
 import { $, $$, reduced } from '../core/env.js';
 
@@ -8,7 +8,9 @@ export function buildGitGraph() {
   if (!wrap) return;
   const svg = $('#gitSvg');
   const dots = $$('.commit__dot', wrap);
-  if (dots.length < 5) return;
+  const commits = $$('.commit', wrap);
+  const k = commits.findIndex((c) => c.classList.contains('commit--branch'));
+  if (dots.length < 3 || k < 1 || k > dots.length - 2) return;
   const box = wrap.getBoundingClientRect();
   const pts = dots.map((d) => {
     const r = d.getBoundingClientRect();
@@ -16,8 +18,9 @@ export function buildGitGraph() {
   });
   svg.setAttribute('viewBox', `0 0 ${Math.round(box.width)} ${Math.round(box.height)}`);
   const x0 = pts[0].x;
-  const [, a, b, c] = pts;
-  const main = `M ${x0} ${Math.max(0, pts[0].y - 40)} L ${x0} ${pts[4].y}`;
+  // la branche part du commit qui précède le commit de branche et revient au suivant
+  const [a, b, c] = [pts[k - 1], pts[k], pts[k + 1]];
+  const main = `M ${x0} ${Math.max(0, pts[0].y - 40)} L ${x0} ${pts[pts.length - 1].y}`;
   const branch = `M ${x0} ${a.y} C ${x0} ${a.y + 50}, ${b.x} ${b.y - 70}, ${b.x} ${b.y} C ${b.x} ${b.y + 70}, ${x0} ${c.y - 50}, ${x0} ${c.y}`;
   $('#gitBaseMain').setAttribute('d', main);
   $('#gitProgMain').setAttribute('d', main);
@@ -38,7 +41,10 @@ export function initMethod() {
   const progBranch = $('#gitProgBranch');
   gsap.set([progMain, progBranch], { strokeDasharray: 1, strokeDashoffset: 1 });
   gsap.to(progMain, { strokeDashoffset: 0, ease: 'none', scrollTrigger: { trigger: wrap, start: 'top 72%', end: 'bottom 72%', scrub: true } });
-  gsap.to(progBranch, { strokeDashoffset: 0, ease: 'none', scrollTrigger: { trigger: commits[1], start: 'top 72%', endTrigger: commits[3], end: 'top 72%', scrub: true } });
+  const k = commits.findIndex((c) => c.classList.contains('commit--branch'));
+  if (k > 0 && k < commits.length - 1) {
+    gsap.to(progBranch, { strokeDashoffset: 0, ease: 'none', scrollTrigger: { trigger: commits[k - 1], start: 'top 72%', endTrigger: commits[k + 1], end: 'top 72%', scrub: true } });
+  }
   commits.forEach((c) =>
     ScrollTrigger.create({
       trigger: c,

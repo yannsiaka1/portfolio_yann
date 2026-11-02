@@ -6,7 +6,7 @@
 //   entrant et repart à gauche en sortant, et reste immobile pendant qu'on la lit ;
 // - « static » (« réduire les animations ») : les cartes empilées, immobiles.
 // Dans tous les cas, tout le contenu reste dans la page et au clavier : la carte qui reçoit le focus est amenée
-// à l'écran. La vidéo de l'ERP ne joue que visible, s'arrête avec la pause générale et a son propre bouton.
+// à l'écran. Les vidéos des prototypes ne jouent que visibles, s'arrêtent avec la pause générale et ont leur bouton.
 import { gsap, ScrollTrigger } from '../core/gsap.js';
 import { $, $$, reduced, motionQuery } from '../core/env.js';
 import { scrollToY, focusVisible } from '../core/scroll.js';
@@ -34,58 +34,77 @@ export function initProjects() {
   let deck = null; // { st, tl, rest, period }
   let active = 0; // panneau au repos (0 : l'introduction)
 
-  /* ---------- vidéo du prototype de l'ERP ---------- */
-  const video = $('#erpVideo');
-  const playBtn = $('#erpPlay');
-  const videoPanel = video ? panels.indexOf(video.closest('.projects__panel')) : -1;
-  let videoSeen = false; // visible à l'écran (mode empilé)
-  let userChoice = null; // true : lecture demandée, false : pause demandée, null : lecture automatique
+  /* ---------- vidéos des prototypes : l'ERP, et Easy Life en thème clair et sombre côte à côte ----------
+     Une carte = un lecteur (une ou plusieurs vidéos, un bouton). Les vidéos ne jouent que visibles, s'arrêtent
+     avec la pause générale, ne partent jamais seules avec « réduire les animations », et le bouton de la carte
+     décide en dernier. Deux vidéos côte à côte repartent ensemble à chaque tour, pour rester synchrones. */
+  const players = $$('.card__visual', root)
+    .map((visual) => {
+      const videos = $$('video', visual);
+      const btn = $('.card__play', visual);
+      if (!videos.length || !btn) return null;
+      return { visual, videos, btn, panel: panels.indexOf(visual.closest('.projects__panel')), seen: false, choice: null };
+    })
+    .filter(Boolean);
 
-  function videoVisible() {
-    if (mode === 'deck') return !!deck && deck.st.isActive && active === videoPanel;
-    return videoSeen;
-  }
+  const isPlaying = (p) => !p.videos[0].paused;
+  const start = (p) => p.videos.forEach((v) => v.play().catch(() => {}));
+  const stop = (p) => p.videos.forEach((v) => v.pause());
+  const visible = (p) => (mode === 'deck' ? !!deck && deck.st.isActive && active === p.panel : p.seen);
 
-  function applyVideo() {
-    if (!video) return;
+  function apply(p) {
     const auto = !reduced() && !state.paused;
-    const play = videoVisible() && (userChoice === true || (userChoice === null && auto));
-    if (play && video.paused) video.play().catch(() => {});
-    else if (!play && !video.paused) video.pause();
+    const want = visible(p) && (p.choice === true || (p.choice === null && auto));
+    if (want && !isPlaying(p)) start(p);
+    else if (!want && isPlaying(p)) stop(p);
+  }
+  const applyVideo = () => players.forEach(apply);
+
+  function syncButton(p) {
+    const many = p.videos.length > 1;
+    const label = isPlaying(p) ? (many ? 'Mettre les vidéos en pause' : 'Mettre la vidéo en pause') : many ? 'Lire les vidéos' : 'Lire la vidéo';
+    p.btn.classList.toggle('is-playing', isPlaying(p));
+    p.btn.setAttribute('aria-label', label);
+    p.btn.title = label;
   }
 
-  function syncPlayButton() {
-    const playing = !video.paused;
-    const label = playing ? 'Mettre la vidéo en pause' : 'Lire la vidéo';
-    playBtn.classList.toggle('is-playing', playing);
-    playBtn.setAttribute('aria-label', label);
-    playBtn.title = label;
-  }
-
-  if (video && playBtn) {
-    // le bouton maison remplace les commandes natives, gardées pour une visite sans JavaScript
-    video.removeAttribute('controls');
-    playBtn.hidden = false;
-    video.addEventListener('play', syncPlayButton);
-    video.addEventListener('pause', syncPlayButton);
-    playBtn.addEventListener('click', () => {
-      userChoice = video.paused;
-      if (video.paused) video.play().catch(() => {});
-      else video.pause();
+  players.forEach((p) => {
+    p.videos.forEach((v) => {
+      // le bouton de la carte remplace les commandes natives, gardées pour une visite sans JavaScript
+      v.removeAttribute('controls');
+      v.addEventListener('play', () => syncButton(p));
+      v.addEventListener('pause', () => syncButton(p));
+    });
+    if (p.videos.length > 1) {
+      p.videos.forEach((v) => v.removeAttribute('loop'));
+      p.videos[0].addEventListener('ended', () => {
+        p.videos.forEach((v) => {
+          v.currentTime = 0;
+        });
+        start(p);
+      });
+    }
+    p.btn.hidden = false;
+    p.btn.addEventListener('click', () => {
+      p.choice = !isPlaying(p);
+      if (p.choice) start(p);
+      else stop(p);
     });
     new IntersectionObserver(
       ([entry]) => {
-        videoSeen = entry.isIntersecting;
-        applyVideo();
+        p.seen = entry.isIntersecting;
+        apply(p);
       },
       { threshold: 0.4 },
-    ).observe(video);
-    window.addEventListener(EVT_PAUSE, () => {
-      userChoice = null;
-      applyVideo();
+    ).observe(p.visual);
+  });
+  window.addEventListener(EVT_PAUSE, () => {
+    players.forEach((p) => {
+      p.choice = null;
     });
-    motionQuery.addEventListener('change', applyVideo);
-  }
+    applyVideo();
+  });
+  motionQuery.addEventListener('change', applyVideo);
 
   /* ---------- barre et compteur (mode épinglé) ---------- */
   function sync() {

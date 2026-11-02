@@ -109,16 +109,16 @@ Les mêmes panneaux de verre se recomposent en sept symboles, environ toutes les
 | Bandeau | verbes et outils | défilement infini qui suit la vitesse du scroll |
 | Projets | cinq cartes : Precious, Glorious Hall, EasyTravel, Easy Life (prototype, schéma, jalons), l'ERP de l'IUT (vidéo du prototype) | grand écran : section épinglée, chaque projet arrive par la droite pendant que le précédent bascule à gauche ; ailleurs, cartes empilées qui arrivent par la droite et repartent à gauche |
 | À propos | titre, phrase d'accroche avec mots d'accent, présentation, langues, quatre repères en cartes | phrase éclairée mot par mot, compteurs à rouleaux |
-| Compétences | quatre couches en onglets : ce que je sais faire, outils, extrait de code | pile isométrique qui s'écarte |
-| Méthode | cinq étapes lues comme un historique Git | graphe tracé au défilement |
-| Parcours | journal des versions (diplômes, stages, équivalence WES) et certifications | blocs qui montent |
+| Compétences | cinq couches, du design et de l'expérience à la mise en ligne : ce que je sais faire, outils, extrait de code | grand écran : section épinglée, le défilement passe d'une couche à l'autre et la pile s'ouvre autour d'elle ; ailleurs, onglets |
+| Méthode | sept étapes, du besoin à la maintenance, lues comme un historique Git (le design et le prototypage avant le développement) | graphe tracé au défilement |
+| Parcours | journal des versions (diplômes, stages, équivalence WES), équivalence avec un extrait du rapport, certifications | blocs qui montent |
 | Contact | formulaire qui prépare un courriel, aperçu JSON, courriel direct | aperçu mis à jour à la saisie |
 | Pied de page | signature, horloges Montréal et Douala | graisse et chasse qui suivent le curseur |
 
 ## Projets présentés
 
 - **Projets en ligne** (Precious, Glorious Hall, EasyTravel) : vraies captures dans `src/assets/projects/`, sur ordinateur (1440 × 900) et sur mobile (390 × 844).
-- **Easy Life** : capture de l'écran d'accueil du prototype mobile (Figma), à côté d'un schéma de six tables tirées de son modèle de données (le dépôt est privé).
+- **Easy Life** : deux boucles de 11 s du prototype mobile (Figma), les mêmes écrans en thème clair et en thème sombre (`easylife-clair.mp4`, `easylife-sombre.mp4`), devant un schéma de six tables tirées de son modèle de données (le dépôt est privé). Elles viennent d'un enregistrement d'écran : bouton flottant d'iOS effacé avec un modèle mesuré sur deux fonds connus, écrans choisis et alignés d'un thème à l'autre.
 - **ERP de l'IUT** : vidéo du prototype Figma de l'espace étudiant (`erp-prototype.mp4`, 15 s, sans son, avec son affiche WebP). Elle vient d'un enregistrement d'écran sur téléphone : recadrée sur le prototype, bandes noires remplacées par le prolongement de l'écran, bouton flottant d'iOS retiré (la zone du tableau de bord vient d'une capture propre), coupée avant que le bouton ne s'allume et que le centre de contrôle s'ouvre, dernière image prolongée deux secondes pour boucler calmement.
 
 Pour rafraîchir une capture : construire le site depuis son dépôt (`npm run build`, puis `npm run preview`), capturer la page d'accueil aux deux formats, puis convertir en WebP : 720 et 1200 px de large pour l'ordinateur, 360 px pour le mobile. Garder les mêmes noms de fichiers.
@@ -128,8 +128,8 @@ Pour rafraîchir une capture : construire le site depuis son dépôt (`npm run b
 | Precious | site client | [precious-jus.com](https://precious-jus.com/) |
 | Glorious Hall | site client | [glorious-hall-4wah.vercel.app](https://glorious-hall-4wah.vercel.app/) (le domaine principal, glorioushall.com, est momentanément indisponible) |
 | EasyTravel | projet d'études | [site](https://easytravel-front-wine.vercel.app/) · [interface](https://github.com/yannsiaka1/easytravel-front) · [API](https://github.com/yannsiaka1/easytravel-back) |
-| Easy Life | produit en construction | pas encore en ligne |
-| ERP de l'IUT de Douala | projet tutoré | [site](https://projet-tutore-front.vercel.app/) · [interface](https://github.com/yannsiaka1/projet-tutore-front) · [API](https://github.com/yannsiaka1/projet-tutore-back) |
+| Easy Life | produit en construction | [prototype Figma](https://www.figma.com/proto/pEI2qiDReAIOHKae9uUPMA?node-id=381-786&starting-point-node-id=497%3A854) |
+| ERP de l'IUT de Douala | projet tutoré | [site](https://projet-tutore-front.vercel.app/) · [prototype Figma](https://www.figma.com/proto/7nfi85vIzlb9tWb1Ba9PSs?node-id=26-330&starting-point-node-id=8%3A2) · [interface](https://github.com/yannsiaka1/projet-tutore-front) · [API](https://github.com/yannsiaka1/projet-tutore-back) |
 
 ## Accessibilité et performance
 
@@ -149,6 +149,8 @@ Pour rafraîchir une capture : construire le site depuis son dépôt (`npm run b
 - **LinkedIn** : pas affiché tant qu'il n'y a pas d'adresse de profil ; à ajouter dans Contact et le pied de page.
 - **Formulaire de contact** : il ouvre le logiciel de courriel du visiteur (lien mailto:). Pour un envoi direct depuis le site, le brancher sur un service (Formspree, Resend…).
 - **Glorious Hall** : remettre `glorioushall.com` (lien et barre de la maquette) quand le domaine principal sera rétabli.
+- **Prototypes Figma** : les liens « Voir le prototype » ne s'ouvrent pour les visiteurs que si le fichier est partagé en lecture à toute personne qui a le lien.
+- **Badge WES** : si WES propose un badge numérique (Credly) pour cette évaluation, ajouter son lien de vérification à côté de l'extrait du rapport.
 - **Années du parcours** : la section Parcours n'affiche pas de dates ; à ajouter si souhaité.
 - **Image de partage** (`og:image`) : à créer, pour un bel aperçu sur LinkedIn.
 

@@ -12,7 +12,7 @@
 // La boîte .hero__stage (CSS) décide où se pose le symbole ; le canvas couvre tout le hero.
 // Les couleurs et l'espacement viennent des jetons de src/styles/tokens.css.
 import * as THREE from 'three';
-import { coarse, motionQuery, clamp, token, tokenPx } from '../core/env.js';
+import { coarse, motionQuery, reduced, clamp, token, tokenPx } from '../core/env.js';
 import { state, signalGlReady, EVT_INTRO, EVT_PAUSE } from '../core/state.js';
 import { scramble } from '../core/text.js';
 import { FORMS, POOL, TRACE_DEFS, ZTR, V } from './formations.js';
@@ -242,7 +242,8 @@ function start() {
   };
 
   /** Rien ne bouge seul : réglage « réduire les animations » ou bouton pause. */
-  const still = () => motionQuery.matches || state.paused;
+  // reduced() et non motionQuery.matches : lire la requête à chaque image fait perdre son événement 'change'
+  const still = () => reduced() || state.paused;
 
   function setHint(name) {
     if (!hint) return;

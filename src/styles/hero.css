@@ -68,6 +68,14 @@
   color: var(--text-2);
 }
 
+/* la promesse, sur sa propre ligne, dans la couleur du texte */
+.hero__motto {
+  display: block;
+  margin-top: var(--space-1);
+  font-weight: var(--fw-semibold);
+  color: var(--text);
+}
+
 .hero__actions {
   display: flex;
   flex-wrap: wrap;
