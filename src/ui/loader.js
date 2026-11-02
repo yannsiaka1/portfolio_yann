@@ -1,6 +1,6 @@
 // Intro : journal de build, compteur, puis ouverture en huit bandes. Une fois par visite (sessionStorage),
-// jamais avec « réduire les animations » (le script de <head> ne pose alors pas .is-loading), et un clic ou
-// Échap la passe. Elle attend la scène 3D et les polices, avec des délais de secours.
+// jamais avec « réduire les animations » (le script de <head> ne pose alors pas .is-loading). Un clic ou
+// n'importe quelle touche (Tab compris) la passe. Elle attend la scène 3D et les polices, avec des délais de secours.
 import { gsap, ScrollTrigger } from '../core/gsap.js';
 import { $, $$, root } from '../core/env.js';
 import { state, EVT_GL_READY, fireIntro } from '../core/state.js';
@@ -53,9 +53,9 @@ export function runLoader() {
       .add(finish)
       .to('.loader__belts i', { scaleY: 0, duration: 0.8, ease: 'expo.inOut', stagger: 0.045 }, '<');
   };
-  // passer l'intro : clic, toucher ou Échap
+  // passer l'intro : clic, toucher ou n'importe quelle touche (Tab mène ensuite au lien d'évitement, visible)
   loader.addEventListener('pointerdown', close, { once: true });
-  window.addEventListener('keydown', (e) => e.key === 'Escape' && close(), { once: true });
+  window.addEventListener('keydown', close, { once: true });
 
   const glReady = new Promise((resolve) => {
     if (state.glReady) return resolve();

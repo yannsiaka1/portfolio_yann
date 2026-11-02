@@ -38,7 +38,8 @@ export function initCursor() {
   });
 
   // la scène 3D pilote la jauge circulaire pendant l'appui long
-  const C = parseFloat(token('--ring-length')) || 113.1;
+  // pas de valeur de repli : la circonférence vient du thème, comme les couleurs de la scène
+  const C = parseFloat(token('--ring-length'));
   let holdP = -1;
   let overSymbol = false;
   let holdClass = false;

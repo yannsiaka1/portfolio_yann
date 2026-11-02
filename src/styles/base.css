@@ -65,6 +65,13 @@ a {
   color: inherit;
 }
 
+/* le code garde JetBrains Mono, même dans un parent qui fixe une autre famille */
+code,
+pre {
+  font-family: var(--font-code);
+  font-size: inherit;
+}
+
 button {
   font: inherit;
   color: inherit;

@@ -24,7 +24,7 @@ export function initSkills() {
     layers.forEach((layer) => layer.classList.toggle('is-active', Number(layer.dataset.layer) === index));
     if (focus) tabs[index].focus();
     if (changed && !reduced() && panels[index]) {
-      gsap.fromTo(panels[index].children, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.6, ease: 'expo.out', stagger: 0.05 });
+      gsap.fromTo(panels[index].children, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: parseFloat(token('--slow')), ease: 'expo.out', stagger: 0.05 });
     }
   };
 

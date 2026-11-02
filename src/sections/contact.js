@@ -73,7 +73,7 @@ export function initContact() {
     }
     const subject = `${data.besoin}, de la part de ${data.nom}`;
     const body = `${data.message}\n\n${data.nom}\n${data.courriel}`;
-    if (status) status.textContent = 'Votre logiciel de courriel s’ouvre avec le message prêt à partir. Rien ne s’ouvre? Copiez l’adresse ci-contre.';
+    if (status) status.textContent = 'Votre logiciel de courriel s’ouvre avec le message prêt à partir. Rien ne s’ouvre? Utilisez le bouton « Copier l’adresse ».';
     window.location.href = `mailto:${TO}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   });
 

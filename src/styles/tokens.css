@@ -83,6 +83,9 @@
   --caret-gap: 0.15em;
   --outline-text: 1.2px; /* contour des mots évidés du bandeau */
   --mask-pad: 0.12em; /* marge sous un mot masqué, pour ne pas couper les jambages */
+  --reel-h: 1em; /* hauteur d'un chiffre des compteurs à rouleaux */
+  --tab-size: 2; /* indentation des extraits de code */
+  --hover-zoom: 1.015; /* capture agrandie au survol d'un projet */
 
   /* ---------- mise en page ---------- */
   --container: 90rem; /* 1440 px de contenu */
@@ -113,6 +116,8 @@
   --iso-size-sm: 20rem; /* pile sous 1024 px */
   --iso-perspective: 120rem;
   --iso-tilt: rotateX(57deg) rotateZ(-38deg);
+  --iso-mid: 1.5; /* rang de la couche du milieu : la pile s'écarte autour de lui */
+  --ratio-square: 1;
   --statement-measure: 24em; /* la phrase d'accroche tient en trois ou quatre lignes */
   --signature-gap: 0.25em;
   --fig-sym-w: 4ch; /* légende du symbole : largeur fixe, le texte ne saute pas d'un symbole à l'autre */

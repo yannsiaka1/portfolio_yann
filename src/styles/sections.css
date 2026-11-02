@@ -112,7 +112,7 @@
 
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
   .project:hover .project__shot {
-    transform: scale(1.015);
+    transform: scale(var(--hover-zoom));
   }
 }
 
@@ -129,6 +129,7 @@
 .project__points {
   display: grid;
   gap: var(--space-1);
+  max-width: var(--measure);
   margin: 0;
   padding-left: var(--list-indent);
   list-style: disc;
@@ -152,10 +153,24 @@
   color: var(--text-2);
 }
 
+/* projet tutoré en élément à filet : même rythme et même couleur de description que les projets principaux */
+.item > .project__desc {
+  color: var(--text);
+}
+
+.item > .project__points {
+  margin-top: var(--space-1);
+}
+
+.item > .project__links {
+  margin-top: var(--space-3);
+}
+
 /* jalons d'un produit en construction */
 .milestones {
   display: grid;
   gap: var(--space-2);
+  max-width: var(--measure);
   margin: var(--space-1) 0;
   padding: var(--space-2) var(--space-3);
   list-style: none;
@@ -241,20 +256,8 @@
   overflow-wrap: anywhere;
 }
 
-.schema__table span {
-  font-family: var(--font-code);
-  font-size: var(--fs-sm);
-  color: var(--text-2);
-}
-
 .schema__table--hot {
   border-color: var(--accent);
-}
-
-@media (max-width: 47.99rem) {
-  .schema__table span {
-    display: none;
-  }
 }
 
 @media (min-width: 64rem) {
@@ -270,6 +273,7 @@
   font-size: var(--fs-statement);
   line-height: var(--lh-heading);
   font-weight: var(--fw-regular);
+  font-stretch: var(--stretch-heading);
   letter-spacing: var(--ls-heading);
 }
 
@@ -352,7 +356,7 @@
 
 .reel {
   display: inline-block;
-  height: 1em;
+  height: var(--reel-h);
   overflow: hidden;
 }
 
@@ -362,7 +366,7 @@
 }
 
 .reel__strip span {
-  height: 1em;
+  height: var(--reel-h);
   line-height: var(--lh-display);
 }
 
@@ -392,7 +396,7 @@
 .iso {
   position: relative;
   width: min(100%, var(--iso-size));
-  aspect-ratio: 1;
+  aspect-ratio: var(--ratio-square);
   margin-inline: auto;
   perspective: var(--iso-perspective);
 }
@@ -408,7 +412,7 @@
 .iso__layer {
   position: absolute;
   inset: 15%;
-  transform: translateZ(calc((var(--z) - 1.5) * var(--gap)));
+  transform: translateZ(calc((var(--z) - var(--iso-mid)) * var(--gap)));
   border: var(--stroke) solid var(--line-strong);
   border-radius: var(--radius-phone);
   background-color: var(--surface);
@@ -423,16 +427,21 @@
     transform var(--slow) var(--ease-expo);
 }
 
+.has-cursor .iso__layer {
+  cursor: none;
+}
+
 .iso__layer.is-active {
   border-color: var(--accent);
   box-shadow: 0 0 var(--space-7) var(--accent-glow);
 }
 
+/* étiquettes décoratives (la pile est aria-hidden, les onglets portent l'information) */
 .iso__label {
   position: absolute;
   left: 9%;
   bottom: 9%;
-  font-size: var(--fs-sm);
+  font-size: var(--fs-lg);
   font-weight: var(--fw-semibold);
   color: var(--text-2);
   transition: color var(--slow) var(--ease);
@@ -535,6 +544,7 @@
 }
 
 .commit__line {
+  order: -1;
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-1) var(--space-2);
@@ -615,6 +625,7 @@
 }
 
 .release__tag {
+  order: -1;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -650,9 +661,19 @@
   align-items: start;
 }
 
-.form {
+/* sans JavaScript, le formulaire et son aperçu s'effacent : restent le courriel, le lien et GitHub */
+.form,
+.preview {
+  display: none;
+}
+
+.js .form {
   display: grid;
   gap: var(--space-3);
+}
+
+.js .preview {
+  display: block;
 }
 
 .form__foot {
@@ -710,10 +731,6 @@
   gap: var(--space-2);
 }
 
-.contact__direct-title {
-  color: var(--text-2);
-}
-
 /* Le courriel prend le style d'un titre de niveau 3 sans en être un : c'est une donnée, pas une rubrique. */
 .contact__email {
   font-size: var(--fs-lg);
@@ -756,7 +773,7 @@
   gap: 0 var(--signature-gap);
   padding-block: var(--space-6) var(--space-4);
   font-size: var(--fs-signature);
-  line-height: var(--lh-name);
+  line-height: var(--lh-display);
   font-weight: var(--fw-heading);
   font-stretch: var(--stretch-heading);
   letter-spacing: var(--ls-name);

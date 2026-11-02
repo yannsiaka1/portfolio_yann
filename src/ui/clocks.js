@@ -1,5 +1,6 @@
-// Horloges Montréal et Douala (repères, pied de page).
+// Horloges Montréal et Douala (repères, pied de page). Elles s'arrêtent avec le bouton pause (WCAG 2.2.2).
 import { $$ } from '../core/env.js';
+import { state } from '../core/state.js';
 
 const ZONES = { mtl: 'America/Toronto', dla: 'Africa/Douala' };
 
@@ -23,6 +24,7 @@ export function initClocks() {
   const clocks = $$('[data-clock]');
   if (!clocks.length) return;
   const tick = () => {
+    if (state.paused) return;
     const now = new Date();
     clocks.forEach((el) => {
       const f = formatters[el.dataset.clock];

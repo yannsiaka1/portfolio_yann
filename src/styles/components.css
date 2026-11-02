@@ -166,24 +166,6 @@
   }
 }
 
-/* étapes numérotées : seulement là où l'ordre compte */
-.steps {
-  counter-reset: step;
-}
-
-.steps > .item {
-  counter-increment: step;
-}
-
-.steps > .item > h4::before {
-  content: counter(step);
-  content: counter(step) / "";
-  display: inline-block;
-  min-width: var(--list-number);
-  color: var(--text-2);
-  font-variant-numeric: tabular-nums;
-}
-
 /* ---------- liste de capacités : ce que je sais faire, une coche par ligne ---------- */
 .checks {
   display: grid;
@@ -221,7 +203,7 @@
   font-size: var(--fs-sm);
   line-height: var(--lh-body);
   white-space: pre;
-  tab-size: 2;
+  tab-size: var(--tab-size);
 }
 
 .code .k,

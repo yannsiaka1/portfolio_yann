@@ -117,6 +117,23 @@
   opacity: 1;
 }
 
+/* invisible, donc hors de l'ordre du clavier, tant que la scène n'a pas rendu sa première image */
+.js .hero__controls {
+  visibility: hidden;
+}
+
+.gl-ready .hero__controls,
+.no-gl .hero__controls {
+  visibility: visible;
+}
+
+.hero__fig,
+.hero__hint {
+  padding: 0 var(--space-1);
+  border-radius: var(--radius-focus);
+  background: var(--bg);
+}
+
 .hero__fig {
   display: flex;
   flex-wrap: wrap;

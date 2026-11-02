@@ -91,7 +91,8 @@ export function initReveals() {
   const statement = $('#statement');
   if (statement) {
     const words = splitText(statement, 'words');
-    gsap.fromTo(words, { opacity: 0.18 }, { opacity: 1, ease: 'none', stagger: 0.1, scrollTrigger: { trigger: statement, start: 'top 82%', end: 'bottom 55%', scrub: true } });
+    // entièrement éclairée dès que son haut atteint 45 % de la fenêtre, là où l'on commence à la lire
+    gsap.fromTo(words, { opacity: 0.3 }, { opacity: 1, ease: 'none', stagger: 0.1, scrollTrigger: { trigger: statement, start: 'top 85%', end: 'top 45%', scrub: true } });
   }
 
   // les rouleaux d'un même nombre partent l'un après l'autre

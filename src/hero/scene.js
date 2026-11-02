@@ -789,10 +789,12 @@ function start() {
     if (tag) {
       const show = tracesReady && !calm && st.scrollP < 0.05 && !st.holding && st.clickBurst < 0.05 && st.introAmt < 0.05;
       if (show) {
+        // au bout d'une piste, décalée d'un pas de la grille, sans jamais sortir du hero
         const portrait = camera.aspect < 0.95;
         const p = toCanvas(portrait ? traces[2].pts[1] : traces[1].pts[2], _a);
-        const x = clamp(p.x + 14, 16, st.cw - 200);
-        const y = clamp(p.y - 30, 16, st.heroH - 40);
+        const step = tokenPx('--space-2');
+        const x = clamp(p.x + step, step, st.cw - tag.offsetWidth - step);
+        const y = clamp(p.y - tokenPx('--space-4'), step, st.heroH - tokenPx('--space-5'));
         tag.style.transform = `translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0)`;
       }
       if (show !== st.tagOn) {
