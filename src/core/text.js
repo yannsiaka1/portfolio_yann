@@ -6,7 +6,7 @@ import { reduced } from './env.js';
  * - 'chars' : une span.ch par lettre, regroupées par mot (span.w) pour éviter les coupures au milieu d'un mot
  * - 'mask'  : une span.wi par mot dans une span.w qui sert de masque
  * - 'words' : une span.w par mot
- * Renvoie les éléments à animer. Les éléments .sr-only sont laissés intacts.
+ * Renvoie les éléments à animer. Les éléments .sr-only et [data-nosplit] (compteur en exposant) sont laissés intacts.
  */
 export function splitText(el, mode) {
   const out = [];
@@ -43,7 +43,7 @@ export function splitText(el, mode) {
           frag.appendChild(w);
         });
         n.parentNode.replaceChild(frag, n);
-      } else if (n.nodeType === 1 && !n.classList.contains('sr-only')) walk(n);
+      } else if (n.nodeType === 1 && !n.classList.contains('sr-only') && !n.hasAttribute('data-nosplit')) walk(n);
     });
   };
   walk(el);

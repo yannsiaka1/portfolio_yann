@@ -2,9 +2,15 @@
 
 export const root = document.documentElement;
 
-/** Réglage système « réduire les animations » : lire .matches au moment voulu, il peut changer pendant la visite. */
+/** Réglage système « réduire les animations ». Il peut changer pendant la visite : les modules écoutent
+ *  motionQuery ('change') et lisent reduced(), une valeur gardée à jour ici. Lire .matches à chaque image
+ *  (bandeau) empêche Chromium d'envoyer l'événement 'change' de cette requête. */
 export const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-export const reduced = () => motionQuery.matches;
+let reducedNow = motionQuery.matches;
+motionQuery.addEventListener('change', (e) => {
+  reducedNow = e.matches;
+});
+export const reduced = () => reducedNow;
 /** Souris ou pavé tactile : curseur personnalisé, boutons magnétiques et survols actifs. */
 export const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 /** Écran tactile : interactions au toucher, rendu 3D allégé. */

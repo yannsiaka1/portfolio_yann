@@ -230,7 +230,7 @@ video.browser__shot {
   top: 50%;
   bottom: auto;
   width: 30%;
-  transform: translateY(-50%) rotate(4deg);
+  transform: translateY(-50%) rotate(var(--device-tilt));
 }
 
 .erd {
@@ -426,7 +426,7 @@ video.browser__shot {
 
 .is-deck .projects__panel > .card {
   height: 100%;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 9fr) minmax(0, 11fr);
 }
 
 .is-deck .card__visual {
@@ -444,6 +444,35 @@ video.browser__shot {
   margin-top: 0;
 }
 
+/* les deux jalons côte à côte : la carte du produit en construction tient sur un écran d'ordinateur portable */
+.is-deck .milestones {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.is-deck .milestones li + li {
+  padding-top: 0;
+  padding-left: var(--space-2);
+  border-top: 0;
+  border-left: var(--stroke) solid var(--line);
+}
+
+/* écran bas (ordinateur portable) : texte plus serré, pour que chaque carte tienne encore en entier */
+@media (max-height: 50rem) {
+  .is-deck .projects__panel {
+    padding-top: var(--space-1);
+  }
+
+  .is-deck .card__body {
+    gap: var(--space-1);
+    padding-block: var(--space-3);
+  }
+
+  .is-deck .card__title {
+    font-size: var(--fs-card-title-short);
+  }
+}
+
 /* pendant la mesure (src/sections/projects.js), le texte part du haut : un dépassement se voit en entier */
 .is-measuring .card__body {
   justify-content: flex-start;
@@ -453,7 +482,7 @@ video.browser__shot {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  height: var(--space-5);
+  height: var(--progress-h);
   margin: 0;
   font-size: var(--fs-sm);
   color: var(--text-2);
@@ -462,7 +491,7 @@ video.browser__shot {
 .projects__bar {
   position: relative;
   flex: 1;
-  max-width: 17.5rem;
+  max-width: var(--progress-bar-w);
   height: var(--stroke-strong);
   overflow: hidden;
   background: var(--line-strong);

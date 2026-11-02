@@ -54,6 +54,7 @@
   --fs-marquee: clamp(3rem, 1rem + 8vw, 8.5rem); /* 48 → 136 px : bandeau défilant */
   --fs-signature: clamp(4rem, 1rem + 13vw, 15rem); /* 64 → 240 px : signature du pied de page */
   --fs-card-title: clamp(2rem, 1rem + 2.2vw, 3.25rem); /* 32 → 52 px : nom d'un projet */
+  --fs-card-title-short: 2.25rem; /* 36 px : nom d'un projet épinglé sur un écran bas */
   --mock-unit: clamp(0.4375rem, 0.92vw, 0.8125rem); /* 7 → 13 px : l'unité em des maquettes, qui suivent la largeur */
 
   --lh-name: 0.95;
@@ -100,7 +101,6 @@
   --icon: 0.75em; /* flèche des liens externes */
   --icon-ui: 1rem; /* 16 px : icônes de bouton */
   --list-indent: 1.25em; /* retrait des listes à puces */
-  --list-number: 1.5em; /* place du numéro des étapes */
   --caret-w: 0.6em; /* curseur de l'invite : la largeur d'un caractère de code */
   --caret-h: 1.1em;
   --caret-gap: 0.15em;
@@ -108,7 +108,6 @@
   --mask-pad: 0.12em; /* marge sous un mot masqué, pour ne pas couper les jambages */
   --reel-h: 1em; /* hauteur d'un chiffre des compteurs à rouleaux */
   --tab-size: 2; /* indentation des extraits de code */
-  --hover-zoom: 1.015; /* capture agrandie au survol d'un projet */
 
   /* ---------- mise en page ---------- */
   --container: 90rem; /* 1440 px de contenu */
@@ -138,8 +137,11 @@
   --ratio-video: 1320 / 932; /* vidéo du prototype de l'ERP */
   --ratio-visual: 4 / 3; /* visuel d'un projet quand la carte est en colonne */
   --visual-min-h: 26rem; /* visuel d'un projet à côté du texte */
-  --deck-h: calc(100svh - var(--header-h) - var(--space-5)); /* fenêtre des projets épinglés, sous la barre et au-dessus de la progression */
+  --progress-h: var(--space-5); /* barre « Défilez » sous les projets épinglés */
+  --deck-h: calc(100svh - var(--header-h) - var(--progress-h)); /* fenêtre des projets épinglés, sous la barre et au-dessus de la progression */
   --deck-perspective: 100rem;
+  --progress-bar-w: 17.5rem; /* barre « Défilez » des projets épinglés */
+  --device-tilt: 4deg; /* téléphone incliné de la maquette d'Easy Life */
 
   /* ---------- pile isométrique, phrase d'accroche, signature ---------- */
   --iso-size: 30rem; /* pile des compétences dès 1024 px */
@@ -171,5 +173,12 @@
 @media (min-width: 48rem) {
   :root {
     --gutter: var(--space-4);
+  }
+}
+
+/* écran bas : la barre de progression des projets épinglés rend un peu de hauteur aux cartes */
+@media (max-height: 50rem) {
+  :root {
+    --progress-h: var(--space-4);
   }
 }

@@ -136,7 +136,7 @@
           <div class="container">
             <div class="section-head">
               <p class="eyebrow" id="projets-label">Projets</p>
-              <h2 id="projets-title" data-reveal="words">Du schéma <em>au déploiement.</em><span class="count" aria-hidden="true">(05)</span></h2>
+              <h2 id="projets-title" data-reveal="words">Du schéma <em>au déploiement.</em><span class="count" aria-hidden="true" data-nosplit>(05)</span></h2>
               <p class="section-head__intro">Cinq projets&nbsp;: deux sites clients en ligne, deux projets d’études et le produit que je construis en ce moment.</p>
             </div>
           </div>
@@ -158,7 +158,7 @@
                 <h3 class="card__title" id="projet-precious">Precious</h3>
                 <p class="status status--live">Site client en ligne</p>
                 <p class="card__desc">Site vitrine d’une marque montréalaise&nbsp;: jus 100&nbsp;% bio pressés à la commande, donuts artisanaux, cocktails pour les événements et une académie de formation.</p>
-                <ul class="card__facts">
+                <ul class="card__facts" role="list">
                   <li>Maquettes Figma, puis intégration en composants React</li>
                   <li>Formulaires envoyés côté serveur depuis un domaine authentifié (Resend)</li>
                   <li>Parcours de formation et paiement intégrés (Payhip)</li>
@@ -189,7 +189,7 @@
                 <h3 class="card__title" id="projet-glorious-hall">Glorious Hall</h3>
                 <p class="status status--live">Site client en ligne</p>
                 <p class="card__desc">Site d’une salle événementielle à Bonamoussadi, Douala, codé à partir de ma propre maquette.</p>
-                <ul class="card__facts">
+                <ul class="card__facts" role="list">
                   <li>Composants React typés en TypeScript</li>
                   <li>Animations au défilement&nbsp;: chaque section glisse et vient recouvrir la précédente</li>
                   <li>Galerie photos et vidéos classée par type d’événement</li>
@@ -219,7 +219,7 @@
                 <h3 class="card__title" id="projet-easytravel">EasyTravel</h3>
                 <p class="status status--live">Projet d’études en ligne</p>
                 <p class="card__desc">Réservation de bus entre Douala et Yaoundé&nbsp;: recherche de voyages, réservation, paiement simulé et billets, avec un espace agent pour gérer les départs.</p>
-                <ul class="card__facts">
+                <ul class="card__facts" role="list">
                   <li>API REST Laravel&nbsp;12, authentification par jetons Sanctum</li>
                   <li>Rôles client et agent, routes protégées côté interface</li>
                   <li>Contrôle des places disponibles et génération des billets</li>
@@ -262,7 +262,7 @@
                   <li><p class="status status--live">Jalon 1 scellé</p><p>Modèle de données&nbsp;: 52 tables PostgreSQL en 9 schémas, 24 décisions d’architecture, conventions vérifiées par des tests.</p></li>
                   <li><p class="status status--progress">Jalon 2 en cours</p><p>Socle Laravel&nbsp;13&nbsp;: authentification, réservation, paiement et e-billet QR.</p></li>
                 </ul>
-                <ul class="card__facts">
+                <ul class="card__facts" role="list">
                   <li>Organisé sur GitHub Projects&nbsp;: Kanban, jalons, revue avant chaque livraison</li>
                   <li>Mobile Money asynchrone&nbsp;: idempotence et relances, sans double débit</li>
                   <li>Prototype Figma&nbsp;: de la recherche au billet, en thème clair et sombre</li>
@@ -295,7 +295,7 @@
                 <h3 class="card__title" id="projet-erp">ERP de l’IUT de Douala</h3>
                 <p class="status status--live">Projet tutoré en ligne</p>
                 <p class="card__desc">Gestion numérique d’un institut universitaire&nbsp;: notes, requêtes, cours, présences, diplomation et archivage des documents, pour les étudiants, les enseignants et l’administration.</p>
-                <ul class="card__facts">
+                <ul class="card__facts" role="list">
                   <li>Tableaux de bord par rôle&nbsp;: étudiant, enseignant, responsable académique</li>
                   <li>Appel en classe et suivi des présences par salle</li>
                   <li>API Laravel&nbsp;12 avec jetons Sanctum, 50 migrations</li>
@@ -334,9 +334,9 @@
       <h3 class="stats__title">Le travail, <em>en chiffres.</em></h3>
       <ul class="stats" role="list">
         <li class="stat">
-          <p class="stat__num"><span data-odo>3</span></p>
+          <p class="stat__num"><span data-odo>4</span></p>
           <p class="stat__label">sites en ligne</p>
-          <p class="stat__detail">Precious, Glorious Hall et EasyTravel</p>
+          <p class="stat__detail">Precious, Glorious Hall, EasyTravel et l’ERP de l’IUT</p>
         </li>
         <li class="stat">
           <p class="stat__num"><span data-odo>52</span></p>

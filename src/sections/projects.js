@@ -9,7 +9,7 @@
 // à l'écran. La vidéo de l'ERP ne joue que visible, s'arrête avec la pause générale et a son propre bouton.
 import { gsap, ScrollTrigger } from '../core/gsap.js';
 import { $, $$, reduced, motionQuery } from '../core/env.js';
-import { scrollToY } from '../core/scroll.js';
+import { scrollToY, focusVisible } from '../core/scroll.js';
 import { state, EVT_PAUSE } from '../core/state.js';
 
 const DECK_QUERY = '(min-width: 64rem) and (min-height: 40rem)';
@@ -175,8 +175,8 @@ export function initProjects() {
     return st.start + (rest[i] / duration) * (st.end - st.start);
   }
 
-  // Aimant : un geste arrêté au milieu d'une transition se termine vers la carte la plus proche,
-  // dans le sens où l'on défilait.
+  // Aimant : un geste arrêté au milieu d'une transition se termine vers la carte suivante dans le sens où l'on
+  // défilait ; au clavier, quelques flèches font sortir du repos, puis l'aimant amène la carte voisine.
   let lastY = window.scrollY;
   let dir = 1;
   let snapTimer;
@@ -190,7 +190,8 @@ export function initProjects() {
     const local = t - k * period;
     if (local <= HOLD) return; // déjà au repos
     const f = local - HOLD; // avancement de la transition k → k + 1, de 0 à 1
-    const forward = dir > 0 ? f > 0.2 : f > 0.8;
+    // un petit pas (flèche du clavier, cran de molette) suffit : la transition se termine dans le sens du geste
+    const forward = dir > 0 ? f > 0.02 : f > 0.98;
     const target = forward ? (k + 1) * period + 0.02 : k * period + HOLD - 0.02;
     scrollToY(st.start + (target / duration) * (st.end - st.start), 0.7);
   }
@@ -208,7 +209,7 @@ export function initProjects() {
 
   // Au clavier : la carte qui reçoit le focus vient au repos à l'écran.
   root.addEventListener('focusin', (e) => {
-    if (mode !== 'deck' || !deck) return;
+    if (mode !== 'deck' || !deck || !focusVisible(e.target)) return;
     const i = panels.indexOf(e.target.closest('.projects__panel'));
     if (i < 0) return;
     const y = restY(i);

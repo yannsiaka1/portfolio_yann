@@ -162,7 +162,7 @@
 
 /* nombre d'éléments d'une section, en exposant de son titre */
 .count {
-  margin-left: 0.3em;
+  margin-left: var(--space-1);
   font-family: var(--font-code);
   font-size: var(--fs-sm);
   font-weight: var(--fw-regular);

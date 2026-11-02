@@ -119,7 +119,7 @@ Les mêmes panneaux de verre se recomposent en sept symboles, environ toutes les
 
 - **Projets en ligne** (Precious, Glorious Hall, EasyTravel) : vraies captures dans `src/assets/projects/`, sur ordinateur (1440 × 900) et sur mobile (390 × 844).
 - **Easy Life** : capture de l'écran d'accueil du prototype mobile (Figma), à côté d'un schéma de six tables tirées de son modèle de données (le dépôt est privé).
-- **ERP de l'IUT** : vidéo du prototype Figma de l'espace étudiant (`erp-prototype.mp4`, 15 s, sans son, avec son affiche WebP). Elle vient d'un enregistrement d'écran sur téléphone : recadrée sur le prototype, bouton flottant d'iOS retiré, coupée avant l'ouverture du centre de contrôle, dernière image prolongée pour boucler calmement.
+- **ERP de l'IUT** : vidéo du prototype Figma de l'espace étudiant (`erp-prototype.mp4`, 15 s, sans son, avec son affiche WebP). Elle vient d'un enregistrement d'écran sur téléphone : recadrée sur le prototype, bandes noires remplacées par le prolongement de l'écran, bouton flottant d'iOS retiré (la zone du tableau de bord vient d'une capture propre), coupée avant que le bouton ne s'allume et que le centre de contrôle s'ouvre, dernière image prolongée deux secondes pour boucler calmement.
 
 Pour rafraîchir une capture : construire le site depuis son dépôt (`npm run build`, puis `npm run preview`), capturer la page d'accueil aux deux formats, puis convertir en WebP : 720 et 1200 px de large pour l'ordinateur, 360 px pour le mobile. Garder les mêmes noms de fichiers.
 
@@ -134,10 +134,10 @@ Pour rafraîchir une capture : construire le site depuis son dépôt (`npm run b
 ## Accessibilité et performance
 
 - **Objectif WCAG 2.1 AA** : texte à 7:1 au moins, focus visible sur toute cible, navigation complète au clavier, lien d'évitement, cibles de 48 px, page lisible à 320 px de large sans défilement horizontal.
-- **Mouvement réduit** (réglage système) : pas d'intro, pas de défilement doux, contenu visible tout de suite, symbole immobile, projets empilés, vidéo et grain à l'arrêt.
+- **Mouvement réduit** (réglage système, suivi aussi s'il change pendant la visite) : pas d'intro, pas de défilement doux, contenu visible tout de suite, symbole immobile, projets empilés, vidéo et grain à l'arrêt.
 - **Pause** : un bouton fige tout ce qui bouge seul (WCAG 2.2.2).
-- **Clavier** : les blocs pas encore révélés restent focalisables ; un élément qui reçoit le focus est amené à l'écran sous la barre ; dans les projets épinglés, sa carte est amenée au repos.
-- **Projets** : épinglés seulement sur un écran d'au moins 1024 × 640 px où chaque carte tient en entier (mesuré au chargement et à chaque redimensionnement) ; sinon les cartes s'empilent, et rien n'est jamais coupé. La vidéo de l'ERP ne joue que visible, a son propre bouton lecture et pause, et ne se lance jamais seule avec « réduire les animations ».
+- **Clavier** : les blocs pas encore révélés restent focalisables ; un élément qui reçoit le focus du clavier est amené à l'écran sous la barre (un clic de souris ne fait jamais défiler la page) ; dans les projets épinglés, sa carte est amenée au repos.
+- **Projets** : épinglés seulement sur un écran d'au moins 1024 × 640 px où chaque carte tient en entier (mesuré au chargement et à chaque redimensionnement : c'est le cas sur les ordinateurs portables courants, jusqu'à une fenêtre de 1280 × 640) ; sinon les cartes s'empilent, et rien n'est jamais coupé. Aux flèches du clavier, un pas suffit pour passer à la carte suivante. La vidéo de l'ERP ne joue que visible, a son propre bouton lecture et pause, et ne se lance jamais seule avec « réduire les animations ».
 - **Code** : les lignes trop longues passent à la ligne, aucune zone ne défile à l'horizontale.
 - **Sans WebGL 2** : un symbole `</>` dessiné en SVG remplace la scène, le reste du site fonctionne.
 - **Mobile** : matériau métal à la place du verre réfractif, résolution limitée, interactions au toucher.
