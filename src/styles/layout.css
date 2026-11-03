@@ -116,6 +116,14 @@
   text-underline-offset: var(--underline-offset-nav);
 }
 
+/* lien vers l'autre langue (English / Français) : sur grand écran, un filet le sépare des sections */
+@media (min-width: 64rem) {
+  .site-nav__lang {
+    margin-left: var(--space-1);
+    border-left: var(--stroke) solid var(--line);
+  }
+}
+
 .site-nav__cta {
   margin-left: var(--space-2);
 }

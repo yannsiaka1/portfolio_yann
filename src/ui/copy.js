@@ -1,11 +1,12 @@
 // Bouton « Copier l'adresse » : copie le courriel et le confirme dans une zone annoncée.
 // Si le navigateur refuse l'accès au presse-papiers, l'adresse est sélectionnée pour une copie au clavier.
 import { $$ } from '../core/env.js';
+import { t } from '../core/i18n.js';
 
-const MESSAGES = {
-  copied: 'Adresse copiée.',
-  selected: 'Adresse sélectionnée\u00a0: copiez-la avec Ctrl+C ou Cmd+C.',
-};
+const MESSAGES = t({
+  fr: { copied: 'Adresse copiée.', selected: 'Adresse sélectionnée\u00a0: copiez-la avec Ctrl+C ou Cmd+C.' },
+  en: { copied: 'Address copied.', selected: 'Address selected: copy it with Ctrl+C or Cmd+C.' },
+});
 
 function selectText(el) {
   const range = document.createRange();

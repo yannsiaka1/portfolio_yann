@@ -1,5 +1,6 @@
 // Barre de navigation : invite « yann@siaka:~/section$ », section en cours, menu mobile, ancres.
 import { $, $$ } from '../core/env.js';
+import { t } from '../core/i18n.js';
 import { scramble } from '../core/text.js';
 import { scrollToTarget, hasSmoothScroll } from '../core/scroll.js';
 
@@ -15,7 +16,7 @@ export function initNav() {
   const setOpen = (open, refocus = false) => {
     header.classList.toggle('is-open', open);
     toggle.setAttribute('aria-expanded', String(open));
-    toggle.textContent = open ? 'Fermer' : 'Menu';
+    toggle.textContent = open ? t({ fr: 'Fermer', en: 'Close' }) : 'Menu';
     if (!open && refocus) toggle.focus();
   };
 

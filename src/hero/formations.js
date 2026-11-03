@@ -6,6 +6,7 @@
 // Option g (0, 1, 2) : groupe du panneau, pour décaler la respiration des bras.
 // Option glow (0 → 1) : intensité de la lueur ambrée. Option blink : clignote comme un curseur.
 import * as THREE from 'three';
+import { t } from '../core/i18n.js';
 
 export const V = (x, y, z = 0) => new THREE.Vector3(x, y, z);
 const X_AXIS = V(1, 0, 0);
@@ -150,10 +151,10 @@ function stack() {
 /** sym et name s'affichent sous le symbole (« 01 / 07 </> Interfaces ») ; rot = rotation de présentation. */
 export const FORMS = [
   { sym: '</>', name: 'interfaces', els: code(), rot: [0, 0, 0], spin: false },
-  { sym: '{ }', name: 'logique métier', els: braces(), rot: [0, 0, 0], spin: false },
-  { sym: '>_', name: 'outillage', els: terminal(), rot: [0, 0, 0], spin: false },
-  { sym: 'GET /', name: 'API REST', els: api(), rot: [0, 0, 0], spin: true },
-  { sym: '⇄', name: 'intégrations', els: network(), rot: [0, 0, 0], spin: true },
+  { sym: '{ }', name: t({ fr: 'logique métier', en: 'business logic' }), els: braces(), rot: [0, 0, 0], spin: false },
+  { sym: '>_', name: t({ fr: 'outillage', en: 'tooling' }), els: terminal(), rot: [0, 0, 0], spin: false },
+  { sym: 'GET /', name: t({ fr: 'API REST', en: 'REST API' }), els: api(), rot: [0, 0, 0], spin: true },
+  { sym: '⇄', name: t({ fr: 'intégrations', en: 'integrations' }), els: network(), rot: [0, 0, 0], spin: true },
   { sym: '[■]', name: 'modules', els: moduleCube(), rot: [0.5, 0.72, 0], spin: true },
   { sym: '≡', name: 'full-stack', els: stack(), rot: [0.6, 0.785, 0], spin: true },
 ];

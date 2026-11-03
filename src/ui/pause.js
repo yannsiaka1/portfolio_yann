@@ -3,8 +3,12 @@
 // Masqué avec « réduire les animations », puisque rien ne bouge alors seul ; suivi en cours de visite.
 import { $, motionQuery } from '../core/env.js';
 import { state, setPaused } from '../core/state.js';
+import { t } from '../core/i18n.js';
 
-const LABELS = { run: 'Mettre les animations en pause', paused: 'Relancer les animations' };
+const LABELS = t({
+  fr: { run: 'Mettre les animations en pause', paused: 'Relancer les animations' },
+  en: { run: 'Pause animations', paused: 'Resume animations' },
+});
 
 export function initPause() {
   const button = $('#heroPause');

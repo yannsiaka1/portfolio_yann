@@ -14,12 +14,15 @@ npm install
 npm run dev       # serveur de développement sur http://localhost:5173
 npm run build     # build de production dans dist/
 npm run preview   # sert dist/ pour vérifier le build
+npm run check:i18n  # vérifie que les pages française et anglaise gardent la même structure
 ```
 
 ## Structure
 
 ```
-index.html                 tout le contenu de la page, balises de partage
+index.html                 tout le contenu de la page en français, balises de partage
+en/index.html              la même page en anglais : même balisage, texte traduit à la main
+scripts/check-i18n.mjs     compare la structure des deux pages (npm run check:i18n)
 public/favicon.svg
 public/proofs/             pièces justificatives agrandissables : extrait du rapport WES, attestation D-CLIC (720 et 1200 px)
 public/cv/yann-siaka-cv.pdf CV à télécharger (hero, Contact, pied de page), sans numéro de téléphone ; pour le mettre à jour, remplacer ce fichier en gardant son nom
@@ -29,6 +32,7 @@ src/
 ├── core/
 │   ├── env.js             préférences de l'appareil (souris, tactile, mouvement réduit), jetons, utilitaires DOM
 │   ├── state.js           état partagé avec la scène 3D, pause globale des animations
+│   ├── i18n.js            langue de la page, pour les textes écrits par les scripts : t({ fr, en })
 │   ├── gsap.js            GSAP + ScrollTrigger enregistrés une seule fois
 │   ├── scroll.js          défilement doux Lenis, synchronisé avec ScrollTrigger et avec le focus clavier
 │   └── text.js            découpe de texte et effet de brouillage « terminal »
@@ -53,6 +57,16 @@ src/
     ├── hero.css           hero et scène 3D
     └── sections.css       bandeau, projets, à propos, compétences, méthode, parcours, contact, signature
 ```
+
+## Deux langues
+
+- **Deux pages, une structure** : le français à la racine (`index.html`), l'anglais dans `en/` (`en/index.html`). Mêmes balises, mêmes identifiants, mêmes classes ; seuls changent le texte, les attributs lisibles (`alt`, `aria-label`, `title`, valeurs des choix), la langue (`lang="fr-CA"` ou `lang="en-CA"`) et les chemins (`../` dans `en/`).
+- **Traduction faite à la main**, pas par un traducteur automatique : termes métier et techniques vérifiés (récit utilisateur, idempotence, jalons, projet tutoré traduit par *capstone project*), orthographe canadienne (*colour*, *modelling*, *traveller*). Les visiteurs anglophones lisent ainsi un texte juste au lieu d'une traduction automatique de la page française.
+- **Textes des scripts** (menu mobile, bouton pause, vidéos, formulaire, indications du symbole 3D, horloges) : ils suivent la langue de la page par `src/core/i18n.js`, écrits sous la forme `t({ fr: '…', en: '…' })`.
+- **Passer d'une langue à l'autre** : lien « English » ou « Français » dans le menu, « English version » ou « Version française » dans le pied de page (attributs `hreflang` et `lang`).
+- **Traducteurs automatiques** : `translate="no"` protège ce qui ne doit jamais être traduit, comme les noms propres (Precious, Glorious Hall, EasyTravel, Easy Life, le nom), le code, les outils, l'invite de commande et les adresses. Une page traduite par Chrome ou Google Traduction dans une autre langue garde ces termes intacts.
+- **Modifier le contenu** : faire le même changement dans `index.html` et dans `en/index.html`, puis lancer `npm run check:i18n`. Le script signale toute balise qui diffère.
+- **CV** : le fichier téléchargeable est en français. La page anglaise le dit (« Download my CV (French) »).
 
 ## Système de design
 
@@ -110,7 +124,7 @@ Les mêmes panneaux de verre se recomposent en sept symboles, environ toutes les
 | Hero | nom, rôle, accroche, « Voir les projets », CV à télécharger, GitHub, disponibilité, symbole 3D | lettres qui sortent du flou, symbole qui s'assemble |
 | Bandeau | verbes et outils | défilement infini qui suit la vitesse du scroll |
 | Projets | cinq cartes : Precious, Glorious Hall, EasyTravel, Easy Life (prototype, schéma, jalons), l'ERP de l'IUT (vidéo du prototype) | grand écran : section épinglée, chaque projet arrive par la droite pendant que le précédent bascule à gauche ; ailleurs, cartes empilées qui arrivent par la droite et repartent à gauche |
-| À propos | titre, phrase d'accroche avec mots d'accent, présentation, langues, quatre repères en cartes | phrase éclairée mot par mot, compteurs à rouleaux |
+| À propos | titre, phrase d'accroche avec mots d'accent, présentation, langues, quatre repères en cartes | phrase éclairée mot par mot (du gris au blanc, lisible à plus de 7:1 à chaque instant), compteurs à rouleaux |
 | Compétences | six couches, de l'analyse du besoin et de la modélisation à la mise en ligne : ce que je sais faire, outils, extrait de code | on parcourt les couches au défilement, une par hauteur d'écran ; sur grand écran, la pile et la progression restent à l'écran et s'allument sur la couche lue, puis la page passe à la suite ; un clic sur la pile mène à sa couche |
 | Méthode | sept étapes, du besoin à la maintenance, lues comme un historique Git (le design et le prototypage avant le développement) | graphe tracé au défilement |
 | Parcours | journal des versions (diplômes, stages, équivalence WES), équivalence avec un extrait du rapport, attestation D-CLIC avec qui contacter pour la faire confirmer, certifications | blocs qui montent |
@@ -155,10 +169,12 @@ Pour rafraîchir une capture : construire le site depuis son dépôt (`npm run b
 - **Badge WES** : si WES propose un badge numérique (Credly) pour cette évaluation, ajouter son lien de vérification à côté de l'extrait du rapport.
 - **Années du parcours** : la section Parcours n'affiche pas de dates ; à ajouter si souhaité.
 - **Image de partage** (`og:image`) : à créer, pour un bel aperçu sur LinkedIn.
+- **Domaine** : une fois l'adresse du site connue, ajouter dans les deux pages `canonical`, `og:url` et les liens `hreflang` (fr-CA, en-CA, x-default) avec des adresses complètes, comme le demande Google.
+- **CV en anglais** : à déposer dans `public/cv/` et à relier depuis la page anglaise, si souhaité.
 
 ## Déploiement
 
-Le build utilise des chemins relatifs (`base: './'`) : `dist/` fonctionne à la racine d'un domaine comme dans un sous-dossier.
+Le build utilise des chemins relatifs (`base: './'`) : `dist/` fonctionne à la racine d'un domaine comme dans un sous-dossier. Il produit deux pages, `dist/index.html` (français) et `dist/en/index.html` (anglais), qui partagent les mêmes fichiers de `dist/assets/`.
 
 - **Vercel / Netlify** : commande `npm run build`, dossier `dist`.
 - **GitHub Pages** : publier le contenu de `dist/`.
