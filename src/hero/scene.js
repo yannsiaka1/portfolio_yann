@@ -17,6 +17,7 @@ import { state, signalGlReady, EVT_INTRO, EVT_PAUSE } from '../core/state.js';
 import { scramble } from '../core/text.js';
 import { FORMS, POOL, TRACE_DEFS, ZTR, V } from './formations.js';
 import { TAU, easeInOutCubic, easeOutCubic, roundedBox, resample, dotTexture } from './helpers.js';
+import { t } from '../core/i18n.js';
 
 const CHARGE = 0.55; // durée de la charge avant l'éclatement (s)
 const CYCLE = 7; // temps passé sur chaque symbole (s)
@@ -26,15 +27,28 @@ const FIT_H = 0.86; // part de la hauteur restante une fois la légende placée
 const SYM_W = 3.5; // le symbole tient dans un rectangle d'environ 3,5 × 2,4 unités (formations.js)
 const SYM_H = 2.4;
 
-const HINTS = {
-  idle: 'Cliquez sur le symbole pour le changer, maintenez pour <b>casser la prod</b>.',
-  idleTouch: 'Touchez le symbole pour le changer, appui long pour <b>casser la prod</b>.',
-  still: 'Cliquez sur le symbole pour passer au suivant.',
-  stillTouch: 'Touchez le symbole pour passer au suivant.',
-  charge: '<code>deploy --force</code> en cours…',
-  blast: 'Tout est cassé. Relâchez pour un <b>rollback</b>.',
-  rollback: '<b>Rollback</b> effectué, tout est rentré dans l’ordre.',
-};
+const HINTS = t({
+  fr: {
+    idle: 'Cliquez sur le symbole pour le changer, maintenez pour <b>casser la prod</b>.',
+    idleTouch: 'Touchez le symbole pour le changer, appui long pour <b>casser la prod</b>.',
+    still: 'Cliquez sur le symbole pour passer au suivant.',
+    stillTouch: 'Touchez le symbole pour passer au suivant.',
+    charge: '<code>deploy --force</code> en cours…',
+    blast: 'Tout est cassé. Relâchez pour un <b>rollback</b>.',
+    rollback: '<b>Rollback</b> effectué, tout est rentré dans l’ordre.',
+    touchTrace: 'Touchez une piste',
+  },
+  en: {
+    idle: 'Click the symbol to change it, hold to <b>break prod</b>.',
+    idleTouch: 'Tap the symbol to change it, long-press to <b>break prod</b>.',
+    still: 'Click the symbol to see the next one.',
+    stillTouch: 'Tap the symbol to see the next one.',
+    charge: '<code>deploy --force</code> running…',
+    blast: 'Everything is broken. Let go for a <b>rollback</b>.',
+    rollback: '<b>Rollback</b> done, everything is back in order.',
+    touchTrace: 'Tap a trace',
+  },
+});
 const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
 export function initHero() {
@@ -61,7 +75,7 @@ function start() {
   const figBar = document.getElementById('figBar');
   const vibEls = Array.from(document.querySelectorAll('[data-vibrate]'));
   if (!canvas || !hero || !stage) return signalGlReady(false);
-  if (tag && coarse) tag.textContent = 'Touchez une piste';
+  if (tag && coarse) tag.textContent = HINTS.touchTrace;
 
   // three.js exige WebGL 2 : on vérifie avant de créer le renderer, pour un repli sans erreur
   const attrs = { antialias: true, alpha: false, powerPreference: 'high-performance' };

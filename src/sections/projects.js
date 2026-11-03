@@ -11,6 +11,7 @@ import { gsap, ScrollTrigger } from '../core/gsap.js';
 import { $, $$, reduced, motionQuery } from '../core/env.js';
 import { scrollToY, focusVisible } from '../core/scroll.js';
 import { state, EVT_PAUSE } from '../core/state.js';
+import { t } from '../core/i18n.js';
 
 const DECK_QUERY = '(min-width: 64rem) and (min-height: 40rem)';
 const HOLD = 0.7; // repos d'une carte, en durées de transition
@@ -62,7 +63,9 @@ export function initProjects() {
 
   function syncButton(p) {
     const many = p.videos.length > 1;
-    const label = isPlaying(p) ? (many ? 'Mettre les vidéos en pause' : 'Mettre la vidéo en pause') : many ? 'Lire les vidéos' : 'Lire la vidéo';
+    const label = isPlaying(p)
+      ? many ? t({ fr: 'Mettre les vidéos en pause', en: 'Pause the videos' }) : t({ fr: 'Mettre la vidéo en pause', en: 'Pause the video' })
+      : many ? t({ fr: 'Lire les vidéos', en: 'Play the videos' }) : t({ fr: 'Lire la vidéo', en: 'Play the video' });
     p.btn.classList.toggle('is-playing', isPlaying(p));
     p.btn.setAttribute('aria-label', label);
     p.btn.title = label;

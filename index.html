@@ -8,6 +8,7 @@
   <meta name="theme-color" content="#121211">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="fr_CA">
+  <meta property="og:locale:alternate" content="en_CA">
   <meta property="og:title" content="Yann Siaka, développeur full-stack">
   <meta property="og:description" content="De l’idée à l’application : j’écoute, je conçois, je planifie et je code des applications web complètes et sur mesure.">
   <meta name="twitter:card" content="summary">
@@ -42,7 +43,7 @@
       <p><span>Scène 3D prête</span><b>ok</b></p>
     </div>
     <p class="loader__count"><span id="loaderCount">000</span></p>
-    <p class="loader__name">Yann Siaka</p>
+    <p class="loader__name" translate="no">Yann Siaka</p>
   </div>
 </div>
 
@@ -56,7 +57,7 @@
 
 <header class="site-header">
   <div class="container site-header__inner" data-vibrate>
-    <a class="prompt" href="#accueil" aria-label="yann@siaka, retour en haut de page">
+    <a class="prompt" href="#accueil" translate="no" aria-label="yann@siaka, retour en haut de page">
       <span class="prompt__user">yann</span><span class="prompt__host"><span class="prompt__sep">@</span>siaka</span><span class="prompt__sep">:</span><span class="prompt__path" id="navPath">~</span><span class="prompt__sep">$</span><span class="prompt__caret"></span>
     </a>
     <button class="btn btn--secondary menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
@@ -67,6 +68,7 @@
         <li><a class="site-nav__link" href="#competences">Compétences</a></li>
         <li><a class="site-nav__link" href="#methode">Méthode</a></li>
         <li><a class="site-nav__link" href="#parcours">Parcours</a></li>
+        <li><a class="site-nav__link site-nav__lang" href="./en/" hreflang="en" lang="en">English</a></li>
         <li><a class="btn btn--secondary site-nav__cta magnetic" href="#contact">Me contacter</a></li>
       </ul>
     </nav>
@@ -81,7 +83,7 @@
     <div class="container hero__inner">
       <div class="hero__text" data-vibrate>
         <h1 class="hero__title" id="hero-title">
-          <span class="hero__name" id="heroName"><span class="hero__name-line">Yann</span> <span class="hero__name-line">Siaka<span class="sr-only">,</span></span></span>
+          <span class="hero__name" id="heroName" translate="no"><span class="hero__name-line">Yann</span> <span class="hero__name-line">Siaka<span class="sr-only">,</span></span></span>
           <span class="hero__role" data-intro>Développeur full-stack à Montréal</span>
         </h1>
         <p class="hero__lede" data-intro>De l’idée à l’application&nbsp;: j’écoute, je conçois, je planifie et je code des applications web complètes et sur mesure, de l’interface à l’API, en passant par la base de données. <strong class="hero__motto">Votre vision devient mon objectif.</strong></p>
@@ -96,7 +98,7 @@
         <svg class="hero__fallback" viewBox="0 0 120 80" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><path d="M38 18 14 40l24 22M82 18l24 22-24 22M68 10 52 70" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         <button class="hero__symbol" id="heroSymbol" type="button" aria-label="Afficher le symbole suivant" hidden></button>
         <div class="hero__controls" id="heroControls" data-vibrate>
-          <p class="hero__fig" aria-hidden="true"><span class="hero__fig-n" id="figN">01 / 07</span><code class="hero__fig-sym" id="figSym">&lt;/&gt;</code><span class="hero__fig-name" id="figName">Interfaces</span><span class="hero__fig-bar"><i id="figBar"></i></span></p>
+          <p class="hero__fig" aria-hidden="true"><span class="hero__fig-n" id="figN">01 / 07</span><code class="hero__fig-sym" id="figSym" translate="no">&lt;/&gt;</code><span class="hero__fig-name" id="figName">Interfaces</span><span class="hero__fig-bar"><i id="figBar"></i></span></p>
           <div class="hero__hint-row">
             <button class="btn btn--secondary btn--icon hero__pause" id="heroPause" type="button" aria-label="Mettre les animations en pause" title="Mettre les animations en pause" hidden>
               <svg class="icon-pause" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M5.5 3.5v9M10.5 3.5v9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
@@ -127,7 +129,7 @@
         <span class="marquee__word">Maintenance<code>&gt;_</code></span>
       </div>
     </div>
-    <div class="marquee__row" data-speed="45" data-dir="1">
+    <div class="marquee__row" data-speed="45" data-dir="1" translate="no">
       <div class="marquee__set">
         <span class="marquee__tool">Figma<i>/</i></span><span class="marquee__tool">Python<i>/</i></span><span class="marquee__tool">JavaScript<i>/</i></span><span class="marquee__tool">TypeScript<i>/</i></span><span class="marquee__tool">PHP<i>/</i></span><span class="marquee__tool">React<i>/</i></span><span class="marquee__tool">Laravel<i>/</i></span><span class="marquee__tool">Git<i>/</i></span><span class="marquee__tool">GitHub<i>/</i></span><span class="marquee__tool">SQL<i>/</i></span><span class="marquee__tool">PostgreSQL<i>/</i></span><span class="marquee__tool">Redis<i>/</i></span><span class="marquee__tool">WSL<i>/</i></span><span class="marquee__tool">Docker<i>/</i></span><span class="marquee__tool">UML<i>/</i></span><span class="marquee__tool">SEO<i>/</i></span>
       </div>
@@ -156,14 +158,14 @@
               <figure class="card__visual">
                 <div class="card__stage" data-par>
                   <div class="browser">
-                    <p class="browser__bar" aria-hidden="true"><i></i><i></i><i></i><span class="browser__url">precious-jus.com</span></p>
+                    <p class="browser__bar" aria-hidden="true"><i></i><i></i><i></i><span class="browser__url" translate="no">precious-jus.com</span></p>
                     <img class="browser__shot" src="./src/assets/projects/precious-desktop-720.webp" srcset="./src/assets/projects/precious-desktop-720.webp 720w, ./src/assets/projects/precious-desktop-1200.webp 1200w" sizes="(min-width: 64rem) 40vw, 80vw" width="1200" height="750" alt="Page d’accueil du site Precious sur ordinateur" loading="lazy" decoding="async">
                   </div>
                   <div class="device"><img src="./src/assets/projects/precious-mobile.webp" srcset="./src/assets/projects/precious-mobile.webp 360w, ./src/assets/projects/precious-mobile-720.webp 720w" sizes="(min-width: 64rem) 10vw, 22vw" width="360" height="779" alt="Page d’accueil du site Precious sur mobile" loading="lazy" decoding="async"></div>
                 </div>
               </figure>
               <div class="card__body">
-                <h3 class="card__title" id="projet-precious">Precious</h3>
+                <h3 class="card__title" id="projet-precious" translate="no">Precious</h3>
                 <p class="status status--live">Site client en ligne</p>
                 <p class="card__desc">Site vitrine d’une marque montréalaise&nbsp;: jus 100&nbsp;% bio pressés à la commande, donuts artisanaux, cocktails pour les événements et formations.</p>
                 <div class="card__groups">
@@ -184,7 +186,7 @@
                     </ul>
                   </div>
                 </div>
-                <ul class="tools" role="list" aria-label="Outils">
+                <ul class="tools" translate="no" role="list" aria-label="Outils">
                   <li>Figma</li><li>Vite</li><li>React</li><li>Tailwind</li><li>Vercel</li><li>Resend</li>
                 </ul>
                 <div class="card__links">
@@ -199,14 +201,14 @@
               <figure class="card__visual">
                 <div class="card__stage" data-par>
                   <div class="browser">
-                    <p class="browser__bar" aria-hidden="true"><i></i><i></i><i></i><span class="browser__url">glorious-hall-4wah.vercel.app</span></p>
+                    <p class="browser__bar" aria-hidden="true"><i></i><i></i><i></i><span class="browser__url" translate="no">glorious-hall-4wah.vercel.app</span></p>
                     <img class="browser__shot" src="./src/assets/projects/glorious-hall-desktop-720.webp" srcset="./src/assets/projects/glorious-hall-desktop-720.webp 720w, ./src/assets/projects/glorious-hall-desktop-1200.webp 1200w" sizes="(min-width: 64rem) 40vw, 80vw" width="1200" height="750" alt="Page d’accueil du site Glorious Hall sur ordinateur" loading="lazy" decoding="async">
                   </div>
                   <div class="device"><img src="./src/assets/projects/glorious-hall-mobile.webp" srcset="./src/assets/projects/glorious-hall-mobile.webp 360w, ./src/assets/projects/glorious-hall-mobile-720.webp 720w" sizes="(min-width: 64rem) 10vw, 22vw" width="360" height="779" alt="Page d’accueil du site Glorious Hall sur mobile" loading="lazy" decoding="async"></div>
                 </div>
               </figure>
               <div class="card__body">
-                <h3 class="card__title" id="projet-glorious-hall">Glorious Hall</h3>
+                <h3 class="card__title" id="projet-glorious-hall" translate="no">Glorious Hall</h3>
                 <p class="status status--live">Site client en ligne</p>
                 <p class="card__desc">Site d’une salle événementielle à Bonamoussadi, Douala&nbsp;: mariages, séminaires, anniversaires, baptêmes et réceptions.</p>
                 <div class="card__groups">
@@ -226,7 +228,7 @@
                     </ul>
                   </div>
                 </div>
-                <ul class="tools" role="list" aria-label="Outils">
+                <ul class="tools" translate="no" role="list" aria-label="Outils">
                   <li>React</li><li>TypeScript</li><li>Tailwind</li><li>Vercel</li>
                 </ul>
                 <div class="card__links">
@@ -241,14 +243,14 @@
               <figure class="card__visual">
                 <div class="card__stage" data-par>
                   <div class="browser">
-                    <p class="browser__bar" aria-hidden="true"><i></i><i></i><i></i><span class="browser__url">easytravel-front-wine.vercel.app</span></p>
+                    <p class="browser__bar" aria-hidden="true"><i></i><i></i><i></i><span class="browser__url" translate="no">easytravel-front-wine.vercel.app</span></p>
                     <img class="browser__shot" src="./src/assets/projects/easytravel-desktop-720.webp" srcset="./src/assets/projects/easytravel-desktop-720.webp 720w, ./src/assets/projects/easytravel-desktop-1200.webp 1200w" sizes="(min-width: 64rem) 40vw, 80vw" width="1200" height="750" alt="Page d’accueil du site EasyTravel sur ordinateur" loading="lazy" decoding="async">
                   </div>
                   <div class="device"><img src="./src/assets/projects/easytravel-mobile.webp" srcset="./src/assets/projects/easytravel-mobile.webp 360w, ./src/assets/projects/easytravel-mobile-720.webp 720w" sizes="(min-width: 64rem) 10vw, 22vw" width="360" height="779" alt="Page d’accueil du site EasyTravel sur mobile" loading="lazy" decoding="async"></div>
                 </div>
               </figure>
               <div class="card__body">
-                <h3 class="card__title" id="projet-easytravel">EasyTravel</h3>
+                <h3 class="card__title" id="projet-easytravel" translate="no">EasyTravel</h3>
                 <p class="status status--live">Projet d’études en ligne</p>
                 <p class="card__desc">Réservation de bus entre Douala et Yaoundé, avec un espace agent pour gérer les départs.</p>
                 <div class="card__groups">
@@ -268,7 +270,7 @@
                     </ul>
                   </div>
                 </div>
-                <ul class="tools" role="list" aria-label="Outils">
+                <ul class="tools" translate="no" role="list" aria-label="Outils">
                   <li>React</li><li>Vite</li><li>Laravel</li><li>PostgreSQL</li><li>Tailwind</li>
                 </ul>
                 <div class="card__links">
@@ -312,7 +314,7 @@
                 </button>
               </figure>
               <div class="card__body">
-                <h3 class="card__title" id="projet-easy-life">Easy Life</h3>
+                <h3 class="card__title" id="projet-easy-life" translate="no">Easy Life</h3>
                 <p class="status status--progress">Produit en construction, dépôt privé</p>
                 <p class="card__desc">Plateforme de transport pour le Cameroun&nbsp;: bus interurbains, taxis et motos sur un seul compte et un seul portefeuille, avec un ERP pour les agences et le paiement Mobile Money.</p>
                 <ul class="milestones" role="list">
@@ -335,7 +337,7 @@
                     </ul>
                   </div>
                 </div>
-                <ul class="tools" role="list" aria-label="Outils">
+                <ul class="tools" translate="no" role="list" aria-label="Outils">
                   <li>Figma</li><li>Laravel 13</li><li>PostgreSQL</li><li>Redis</li><li>Docker</li><li>GitHub Projects</li>
                 </ul>
                 <div class="card__links">
@@ -350,7 +352,7 @@
               <figure class="card__visual">
                 <div class="card__stage" data-par>
                   <div class="browser">
-                    <p class="browser__bar" aria-hidden="true"><i></i><i></i><i></i><span class="browser__url">Prototype Figma, espace étudiant</span></p>
+                    <p class="browser__bar" aria-hidden="true"><i></i><i></i><i></i><span class="browser__url" translate="no">Prototype Figma, espace étudiant</span></p>
                     <video class="browser__shot" id="erpVideo" controls muted loop playsinline preload="none" width="1320" height="932" poster="./src/assets/projects/erp-prototype-poster.webp">
                       <source src="./src/assets/projects/erp-prototype.mp4" type="video/mp4">
                     </video>
@@ -384,7 +386,7 @@
                     </ul>
                   </div>
                 </div>
-                <ul class="tools" role="list" aria-label="Outils">
+                <ul class="tools" translate="no" role="list" aria-label="Outils">
                   <li>Figma</li><li>React</li><li>Laravel</li><li>Tailwind</li><li>DaisyUI</li>
                 </ul>
                 <div class="card__links">
@@ -476,10 +478,10 @@
               <li>Modéliser en UML&nbsp;: cas d’utilisation, classes et séquences</li>
               <li>Découper le besoin en jalons et en tâches, pour que chacun sache ce qui vient ensuite</li>
             </ul>
-            <ul class="tools" role="list" aria-label="Outils">
+            <ul class="tools" translate="no" role="list" aria-label="Outils">
               <li>UML</li><li>GitHub Projects</li>
             </ul>
-<pre class="code"><code><span class="c"># récit utilisateur, Easy Life</span>
+<pre class="code" translate="no"><code><span class="c"># récit utilisateur, Easy Life</span>
 <span class="k">En tant que</span> voyageur,
 <span class="k">je veux</span> réserver ma place et payer par Mobile Money
 <span class="k">afin de</span> recevoir mon e-billet QR sans passer au guichet.</code></pre>
@@ -494,10 +496,10 @@
               <li>Décliner un design system&nbsp;: couleurs, typographie, composants, thème clair et sombre</li>
               <li>Vérifier la lisibilité et l’accessibilité&nbsp;: contrastes, tailles, clavier, mobile d’abord</li>
             </ul>
-            <ul class="tools" role="list" aria-label="Outils">
+            <ul class="tools" translate="no" role="list" aria-label="Outils">
               <li>Figma</li>
             </ul>
-<pre class="code"><code><span class="c">/* deux thèmes, un seul jeu de jetons */</span>
+<pre class="code" translate="no"><code><span class="c">/* deux thèmes, un seul jeu de jetons */</span>
 :root {
   --navy: <span class="s">#0e1b3d</span>;
   --sun: <span class="s">#ffc72c</span>;
@@ -515,10 +517,10 @@
               <li>Tester chaque écran sur un téléphone d’entrée de gamme et une connexion lente</li>
               <li>Animer avec retenue (GSAP, three.js) en respectant l’accessibilité</li>
             </ul>
-            <ul class="tools" role="list" aria-label="Outils">
+            <ul class="tools" translate="no" role="list" aria-label="Outils">
               <li>React</li><li>JavaScript</li><li>TypeScript</li><li>HTML</li><li>CSS</li><li>Tailwind</li><li>Bootstrap</li><li>Figma</li><li>Vite</li>
             </ul>
-<pre class="code"><code><span class="k">export function</span> <span class="f">TripCard</span>({ trip }) {
+<pre class="code" translate="no"><code><span class="k">export function</span> <span class="f">TripCard</span>({ trip }) {
   <span class="k">return</span> (
     &lt;<span class="k">article</span> className=<span class="s">"trip"</span>&gt;
       &lt;<span class="k">h3</span>&gt;{trip.from} → {trip.to}&lt;/<span class="k">h3</span>&gt;
@@ -537,10 +539,10 @@
               <li>Traiter un paiement de façon asynchrone&nbsp;: files d’attente, idempotence, relances</li>
               <li>Écrire des outils et des services en Python (Flask, Django, Tkinter)</li>
             </ul>
-            <ul class="tools" role="list" aria-label="Outils">
+            <ul class="tools" translate="no" role="list" aria-label="Outils">
               <li>PHP</li><li>Laravel</li><li>Sanctum</li><li>Python</li><li>Flask</li><li>Django</li><li>Node.js</li><li>Postman</li>
             </ul>
-<pre class="code"><code><span class="k">public function</span> <span class="f">store</span>(StoreBookingRequest $request)
+<pre class="code" translate="no"><code><span class="k">public function</span> <span class="f">store</span>(StoreBookingRequest $request)
 {
     $booking = Booking::<span class="f">create</span>($request-&gt;<span class="f">validated</span>());
 
@@ -557,10 +559,10 @@
               <li>Organiser PostgreSQL en schémas, avec PostGIS pour les données de localisation</li>
               <li>Accélérer les lectures fréquentes avec Redis</li>
             </ul>
-            <ul class="tools" role="list" aria-label="Outils">
+            <ul class="tools" translate="no" role="list" aria-label="Outils">
               <li>SQL</li><li>PostgreSQL</li><li>PostGIS</li><li>MySQL</li><li>SQLite</li><li>Redis</li><li>DBML</li>
             </ul>
-<pre class="code"><code><span class="k">Table</span> trips {
+<pre class="code" translate="no"><code><span class="k">Table</span> trips {
   id uuid [pk]
   route_id uuid [ref: &gt; routes.id]
   travel_class_id uuid [ref: &gt; travel_classes.id]
@@ -580,10 +582,10 @@
               <li>Déployer sur Vercel, Render ou Railway&nbsp;: domaine, courriel authentifié (SPF, DKIM, DMARC), référencement (SEO) et Search Console</li>
               <li>Documenter et tester&nbsp;: tests fonctionnels, Postman, décisions d’architecture</li>
             </ul>
-            <ul class="tools" role="list" aria-label="Outils">
+            <ul class="tools" translate="no" role="list" aria-label="Outils">
               <li>Git</li><li>GitHub</li><li>GitHub Projects</li><li>Docker</li><li>WSL</li><li>Vercel</li><li>Render</li><li>Railway</li><li>Trello</li>
             </ul>
-<pre class="code"><code><span class="c">$</span> git switch -c <span class="s">feat/refonte-ux</span>
+<pre class="code" translate="no"><code><span class="c">$</span> git switch -c <span class="s">feat/refonte-ux</span>
 <span class="c">$</span> git commit -m <span class="s">"feat(refonte): page lisible et hiérarchisée"</span>
 <span class="c">$</span> gh pr create --base <span class="s">main</span>
 <span class="c">#</span> relecture, corrections, validation, puis fusion</code></pre>
@@ -601,7 +603,7 @@
         <h2 id="methode-title" data-reveal="words">De l’idée <em>au déploiement.</em></h2>
         <p class="section-head__intro">Ma façon de travailler, lue comme un historique Git.</p>
       </div>
-      <p class="cmd"><code><span aria-hidden="true">$ </span>git log --oneline --graph --reverse</code></p>
+      <p class="cmd" translate="no"><code><span aria-hidden="true">$ </span>git log --oneline --graph --reverse</code></p>
       <div class="gitlog" id="gitlog">
         <svg class="gitlog__svg" id="gitSvg" aria-hidden="true" focusable="false"><path class="gitlog__base" id="gitBaseMain"/><path class="gitlog__base" id="gitBaseBranch"/><path class="gitlog__prog" id="gitProgMain" pathLength="1"/><path class="gitlog__prog" id="gitProgBranch" pathLength="1"/></svg>
         <ol class="gitlog__list" role="list">
@@ -609,7 +611,7 @@
             <span class="commit__dot" aria-hidden="true"></span>
             <div class="commit__head">
               <h3>Comprendre le besoin</h3>
-              <p class="commit__line"><code class="commit__hash">9a0c3e8</code><code class="commit__type">feat(analyse)</code></p>
+              <p class="commit__line" translate="no"><code class="commit__hash">9a0c3e8</code><code class="commit__type">feat(analyse)</code></p>
             </div>
             <p class="commit__text">J’écoute avant de proposer&nbsp;: le problème à résoudre, les utilisateurs, leur appareil et leur connexion. J’analyse l’existant avant d’ouvrir l’éditeur.</p>
           </li>
@@ -617,7 +619,7 @@
             <span class="commit__dot" aria-hidden="true"></span>
             <div class="commit__head">
               <h3>Concevoir et planifier</h3>
-              <p class="commit__line"><code class="commit__hash">3e4f2a1</code><code class="commit__type">feat(conception)</code></p>
+              <p class="commit__line" translate="no"><code class="commit__hash">3e4f2a1</code><code class="commit__type">feat(conception)</code></p>
             </div>
             <p class="commit__text">Architecture, choix techniques, puis jalons et tâches sur GitHub Projects&nbsp;: chacun sait ce qui vient ensuite.</p>
           </li>
@@ -625,7 +627,7 @@
             <span class="commit__dot" aria-hidden="true"></span>
             <div class="commit__head">
               <h3>Modéliser les données</h3>
-              <p class="commit__line"><code class="commit__hash">2f6b5d1</code><code class="commit__type">feat(données)</code></p>
+              <p class="commit__line" translate="no"><code class="commit__hash">2f6b5d1</code><code class="commit__type">feat(données)</code></p>
             </div>
             <p class="commit__text">Schéma, contraintes et index (UML, DBML) avant la première ligne d’interface. Une base claire évite des mois de correctifs.</p>
           </li>
@@ -633,7 +635,7 @@
             <span class="commit__dot" aria-hidden="true"></span>
             <div class="commit__head">
               <h3>Designer et prototyper</h3>
-              <p class="commit__line"><code class="commit__hash">5d27b9e</code><code class="commit__type">feat(design)</code></p>
+              <p class="commit__line" translate="no"><code class="commit__hash">5d27b9e</code><code class="commit__type">feat(design)</code></p>
             </div>
             <p class="commit__text">Parcours, maquettes et prototype cliquable dans Figma, en thème clair et sombre&nbsp;: on éprouve l’expérience avant d’écrire le code.</p>
           </li>
@@ -641,7 +643,7 @@
             <span class="commit__dot" aria-hidden="true"></span>
             <div class="commit__head">
               <h3>Développer écran par écran</h3>
-              <p class="commit__line"><code class="commit__hash">e91a7c2</code><code class="commit__type">feat(produit)</code><code class="commit__ref">feature/produit</code></p>
+              <p class="commit__line" translate="no"><code class="commit__hash">e91a7c2</code><code class="commit__type">feat(produit)</code><code class="commit__ref">feature/produit</code></p>
             </div>
             <p class="commit__text">L’API et les composants avancent ensemble sur une branche dédiée, testés sur mobile à chaque étape.</p>
           </li>
@@ -649,7 +651,7 @@
             <span class="commit__dot" aria-hidden="true"></span>
             <div class="commit__head">
               <h3>Tester et déployer</h3>
-              <p class="commit__line"><code class="commit__hash">4b8d0f3</code><code class="commit__type">merge</code></p>
+              <p class="commit__line" translate="no"><code class="commit__hash">4b8d0f3</code><code class="commit__type">merge</code></p>
             </div>
             <p class="commit__text">Tests, revue de la pull request, mise en ligne, formulaires fiables, courriel authentifié et indexation par Google.</p>
           </li>
@@ -657,7 +659,7 @@
             <span class="commit__dot" aria-hidden="true"></span>
             <div class="commit__head">
               <h3>Maintenir et faire grandir</h3>
-              <p class="commit__line"><code class="commit__hash">7c1e2a9</code><code class="commit__type">refactor</code><code class="commit__ref">HEAD → main</code></p>
+              <p class="commit__line" translate="no"><code class="commit__hash">7c1e2a9</code><code class="commit__type">refactor</code><code class="commit__ref">HEAD → main</code></p>
             </div>
             <p class="commit__text">Les retours des vrais utilisateurs décident de la suite&nbsp;: corrections, performances, montée en charge.</p>
           </li>
@@ -825,13 +827,13 @@
         </form>
 
         <div class="contact__side">
-          <div class="preview" aria-hidden="true">
+          <div class="preview" aria-hidden="true" translate="no">
             <p class="preview__bar"><code>courriel.json</code><span>Aperçu en direct</span></p>
             <pre class="preview__body" id="previewBody"></pre>
           </div>
           <div class="contact__direct">
             <h3>Plutôt directement?</h3>
-            <p class="contact__email" id="contact-email">yannsiaka1@gmail.com</p>
+            <p class="contact__email" id="contact-email" translate="no">yannsiaka1@gmail.com</p>
             <div class="contact__actions">
               <a class="btn btn--secondary" href="mailto:yannsiaka1@gmail.com">Écrire un courriel</a>
               <button class="btn btn--secondary" type="button" data-copy="yannsiaka1@gmail.com" data-copy-source="contact-email" data-copy-feedback="contact-feedback">Copier l’adresse</button>
@@ -849,7 +851,7 @@
 
 <footer class="site-footer">
   <div class="container">
-    <p class="signature" id="signature" aria-hidden="true"><span class="signature__word">Yann</span> <span class="signature__word">Siaka</span></p>
+    <p class="signature" id="signature" aria-hidden="true" translate="no"><span class="signature__word">Yann</span> <span class="signature__word">Siaka</span></p>
     <div class="site-footer__inner">
       <p class="site-footer__clock">Montréal <time data-clock="mtl">--:--:--</time></p>
       <p class="site-footer__clock">Douala <time data-clock="dla">--:--:--</time></p>
@@ -858,6 +860,7 @@
         <li><a class="link link--standalone ext" href="https://github.com/yannsiaka1" target="_blank" rel="noopener">GitHub<span class="sr-only"> (nouvel onglet)</span></a></li>
         <li><a class="link link--standalone" href="mailto:yannsiaka1@gmail.com">Courriel</a></li>
         <li><a class="link link--standalone" href="./cv/yann-siaka-cv.pdf" download="Yann-Siaka-CV.pdf" type="application/pdf">CV (PDF)<span class="sr-only">, 85&nbsp;ko</span></a></li>
+        <li><a class="link link--standalone" href="./en/" hreflang="en" lang="en">English version</a></li>
         <li><a class="link link--standalone" href="#accueil">Haut de page</a></li>
       </ul>
     </div>
