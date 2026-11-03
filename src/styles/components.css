@@ -1,0 +1,508 @@
+/* Composants partagés : bouton, lien, statut, liste d'outils, élément à filet, code, progression au défilement, formulaire, progression. */
+
+/* ---------- bouton : principal (plein) ou secondaire (contour) ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  min-height: var(--target);
+  padding-inline: var(--space-3);
+  border: var(--stroke) solid transparent;
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-ui);
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background-color var(--fast) var(--ease),
+    border-color var(--fast) var(--ease);
+}
+
+.btn--primary {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.btn--primary:hover {
+  background: var(--accent-hover);
+}
+
+/* fond opaque : le bouton reste lisible quand il flotte (lien d'évitement) ou passe devant la scène 3D */
+.btn--secondary {
+  border-color: var(--line-strong);
+  background: var(--bg);
+  color: var(--text);
+}
+
+.btn--secondary:hover {
+  border-color: var(--text);
+}
+
+/* bouton carré à icône seule : toujours un aria-label ; il ne rétrécit jamais à côté d'un texte */
+.btn--icon {
+  flex: none;
+  width: var(--target);
+  padding-inline: 0;
+}
+
+.btn--icon svg {
+  width: var(--icon-ui);
+  height: var(--icon-ui);
+}
+
+/* ---------- lien texte ---------- */
+.link {
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-thickness: var(--stroke);
+  text-decoration-color: var(--line-strong);
+  text-underline-offset: var(--underline-offset);
+  transition: text-decoration-color var(--fast) var(--ease);
+}
+
+.link:hover {
+  text-decoration-color: currentColor;
+}
+
+/* lien isolé (hors d'une phrase) : même hauteur de cible qu'un bouton */
+.link--standalone {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  gap: var(--space-1);
+  min-height: var(--target);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+}
+
+/* flèche des liens externes, toujours accompagnée de « (nouvel onglet) » pour les lecteurs d'écran */
+.ext::after {
+  content: "";
+  flex: none;
+  width: var(--icon);
+  height: var(--icon);
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M3.5 1.75h6.75V8.5M10.25 1.75 1.75 10.25' fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M3.5 1.75h6.75V8.5M10.25 1.75 1.75 10.25' fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+/* ---------- statut : une pastille et toujours un texte, jamais la couleur seule ---------- */
+.status {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-1);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-ui);
+  color: var(--text-2);
+}
+
+/* la pastille reste centrée sur la première ligne quand le texte passe à la ligne */
+.status::before {
+  content: "";
+  flex: none;
+  width: var(--dot);
+  height: var(--dot);
+  margin-top: calc((var(--lh-ui) * 1em - var(--dot)) / 2);
+  border-radius: 50%;
+  background: var(--neutral);
+}
+
+.status--live::before {
+  background: var(--live);
+}
+
+.status--progress::before {
+  background: var(--accent);
+}
+
+/* ---------- liste d'outils : une étiquette par outil, comme dans la première version ---------- */
+.tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tools li {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--space-4);
+  padding-inline: var(--space-2);
+  border: var(--stroke) solid var(--line-strong);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-code);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-ui);
+  color: var(--text);
+}
+
+/* ---------- sur-titre d'une section : son nom dans le menu, précédé d'un trait ---------- */
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+  font-family: var(--font-code);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-ui);
+  color: var(--text-2);
+}
+
+.eyebrow::before {
+  content: "";
+  flex: none;
+  width: var(--space-4);
+  height: var(--stroke);
+  background: var(--accent);
+}
+
+/* nombre d'éléments d'une section, en exposant de son titre */
+.count {
+  margin-left: var(--space-1);
+  font-family: var(--font-code);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-regular);
+  font-stretch: normal;
+  letter-spacing: 0;
+  color: var(--accent);
+  vertical-align: super;
+}
+
+/* ---------- élément à filet : compétences, étapes, formation, certifications, autres projets ---------- */
+.items {
+  display: grid;
+  gap: var(--space-4) var(--space-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: grid;
+  align-content: start;
+  gap: var(--space-1);
+  padding-top: var(--space-3);
+  border-top: var(--stroke) solid var(--line);
+}
+
+.item > p {
+  max-width: var(--measure);
+  color: var(--text-2);
+}
+
+.item > .tools {
+  margin-top: var(--space-1);
+}
+
+/* code de vérification d'un certificat, à recopier si le lien ne suffit pas */
+.item > .item__code {
+  font-size: var(--fs-sm);
+}
+
+.item__code code {
+  color: var(--text);
+}
+
+/* à qui écrire pour faire confirmer un document que l'on ne peut pas vérifier soi-même */
+.item__contacts {
+  display: grid;
+  gap: var(--space-1);
+  max-width: var(--measure);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--fs-sm);
+  color: var(--text-2);
+}
+
+/* pièce justificative : extrait d'un document officiel, agrandissable */
+.proof {
+  display: grid;
+  gap: var(--space-1);
+  max-width: var(--measure);
+  margin: var(--space-1) 0 0;
+}
+
+.proof__link {
+  display: block;
+  border-radius: var(--radius-code);
+}
+
+.proof img {
+  width: 100%;
+  border: var(--stroke) solid var(--line);
+  border-radius: var(--radius-code);
+  background: var(--text);
+}
+
+.proof figcaption {
+  font-size: var(--fs-sm);
+  line-height: var(--lh-ui);
+  color: var(--text-2);
+}
+
+@media (min-width: 48rem) {
+  .items--2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ---------- liste de capacités : ce que je sais faire, une coche par ligne ---------- */
+.checks {
+  display: grid;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.checks li {
+  display: grid;
+  grid-template-columns: var(--list-indent) minmax(0, 1fr);
+  max-width: var(--measure);
+}
+
+.checks li::before {
+  content: "";
+  width: var(--dot);
+  height: var(--dot);
+  margin-top: calc((var(--lh-body) * 1em - var(--dot)) / 2);
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+/* ---------- code : extraits, invite de commande, aperçu JSON ---------- */
+/* les lignes trop longues passent à la ligne : aucun défilement horizontal à rattraper au clavier */
+.code {
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  border: var(--stroke) solid var(--line);
+  border-radius: var(--radius-code);
+  background: var(--surface);
+  color: var(--text);
+  font-family: var(--font-code);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-body);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  tab-size: var(--tab-size);
+}
+
+.code .k,
+.preview__body .k {
+  color: var(--accent);
+}
+
+.code .f {
+  color: var(--live);
+}
+
+.code .s,
+.preview__body .s {
+  color: var(--text-2);
+}
+
+.code .c {
+  color: var(--text-2);
+  font-weight: var(--fw-semibold);
+}
+
+.cmd {
+  display: inline-flex;
+  max-width: 100%;
+  margin-bottom: var(--space-4);
+  padding: var(--space-1) var(--space-2);
+  border: var(--stroke) solid var(--line);
+  border-radius: var(--radius-code);
+  font-family: var(--font-code);
+  font-size: var(--fs-sm);
+  color: var(--text-2);
+  overflow-wrap: anywhere;
+}
+
+/* ---------- progression d'une section que l'on parcourt au défilement (projets, compétences) ----------
+   « Défilez », une barre qui se remplit et le rang de l'étape ; décorative (aria-hidden), affichée par sa section */
+.scroll-progress {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: var(--progress-h);
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--text-2);
+}
+
+.scroll-progress__bar {
+  position: relative;
+  flex: 1;
+  max-width: var(--progress-bar-w);
+  height: var(--stroke-strong);
+  overflow: hidden;
+  background: var(--line-strong);
+}
+
+.scroll-progress__bar i {
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.scroll-progress__count {
+  font-family: var(--font-code);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- formulaire ---------- */
+.field {
+  display: grid;
+  gap: var(--space-1);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.field__label {
+  padding: 0;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+}
+
+.field__input {
+  width: 100%;
+  min-height: var(--target);
+  padding: var(--space-1) var(--space-2);
+  border: var(--stroke) solid var(--line-strong);
+  border-radius: var(--radius-code);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  transition: border-color var(--fast) var(--ease);
+}
+
+textarea.field__input {
+  resize: vertical;
+}
+
+.field__input:hover {
+  border-color: var(--text-2);
+}
+
+.field__input:focus-visible {
+  border-color: var(--accent);
+}
+
+.field__input[aria-invalid="true"] {
+  border-color: var(--danger);
+}
+
+.field__hint,
+.field__error {
+  font-size: var(--fs-sm);
+  line-height: var(--lh-ui);
+  color: var(--text-2);
+}
+
+.field__error {
+  color: var(--danger);
+}
+
+.field__error:empty {
+  display: none;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.chip {
+  position: relative;
+}
+
+.chip input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.chip span {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target);
+  padding-inline: var(--space-2);
+  border: var(--stroke) solid var(--line-strong);
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  color: var(--text-2);
+  transition:
+    color var(--fast) var(--ease),
+    border-color var(--fast) var(--ease),
+    background-color var(--fast) var(--ease);
+}
+
+.chip input:checked + span {
+  border-color: var(--text);
+  background: var(--text);
+  color: var(--bg);
+}
+
+.chip input:focus-visible + span {
+  outline: var(--stroke-strong) solid var(--accent);
+  outline-offset: var(--focus-offset);
+}
+
+/* ---------- progression d'une préparation ---------- */
+.progress {
+  display: grid;
+  gap: var(--space-1);
+  color: var(--text-2);
+}
+
+.progress progress {
+  appearance: none;
+  width: 100%;
+  height: var(--dot);
+  overflow: hidden;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--line);
+  color: var(--accent);
+}
+
+.progress progress::-webkit-progress-bar {
+  background: var(--line);
+}
+
+.progress progress::-webkit-progress-value {
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+}
+
+.progress progress::-moz-progress-bar {
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+}
+
+/* ---------- titres révélés mot par mot (src/sections/reveals.js) ---------- */
+.reveal-mask .w {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  padding-bottom: var(--mask-pad);
+  margin-bottom: calc(var(--mask-pad) * -1);
+}
+
+.reveal-mask .wi {
+  display: inline-block;
+  will-change: transform;
+}

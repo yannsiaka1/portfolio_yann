@@ -1,12 +1,12 @@
 // Découpe de texte (lettres, mots, masques) et effet de brouillage « terminal ».
-import { reduce } from './env.js';
+import { reduced } from './env.js';
 
 /**
- * Découpe le texte d'un élément en conservant sa structure (em, span…).
+ * Découpe le texte d'un élément en conservant sa structure (span, b…).
  * - 'chars' : une span.ch par lettre, regroupées par mot (span.w) pour éviter les coupures au milieu d'un mot
  * - 'mask'  : une span.wi par mot dans une span.w qui sert de masque
  * - 'words' : une span.w par mot
- * Renvoie les éléments à animer.
+ * Renvoie les éléments à animer. Les éléments .sr-only et [data-nosplit] (compteur en exposant) sont laissés intacts.
  */
 export function splitText(el, mode) {
   const out = [];
@@ -43,7 +43,7 @@ export function splitText(el, mode) {
           frag.appendChild(w);
         });
         n.parentNode.replaceChild(frag, n);
-      } else if (n.nodeType === 1 && !n.classList.contains('work__count')) walk(n);
+      } else if (n.nodeType === 1 && !n.classList.contains('sr-only') && !n.hasAttribute('data-nosplit')) walk(n);
     });
   };
   walk(el);
@@ -55,7 +55,7 @@ const GLYPHS = '</>{}[]_#$%&*+=;:01';
 /** Fait défiler des glyphes de code avant d'afficher le texte final. */
 export function scramble(el, text, dur = 0.5) {
   if (!el) return;
-  if (reduce) {
+  if (reduced()) {
     el.textContent = text;
     return;
   }

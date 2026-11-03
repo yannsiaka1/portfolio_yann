@@ -1,0 +1,280 @@
+/* Mise en page : conteneur, barre de navigation (invite de commande), sections, pied de page. */
+.container {
+  width: 100%;
+  max-width: calc(var(--container) + 2 * var(--gutter));
+  margin-inline: auto;
+  padding-inline: max(var(--gutter), env(safe-area-inset-left, 0px)) max(var(--gutter), env(safe-area-inset-right, 0px));
+}
+
+/* ---------- barre de navigation ---------- */
+/* Collante sous l'encoche du téléphone (viewport-fit=cover) ; la bande au-dessus est peinte par body::before.
+   Fond opaque : les liens gardent leur contraste quand une capture claire passe dessous. */
+.site-header {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: var(--z-header);
+  background: var(--bg);
+  border-bottom: var(--stroke) solid transparent;
+  transition: border-color var(--fast) var(--ease);
+}
+
+.site-header.is-scrolled,
+.site-header.is-open {
+  border-bottom-color: var(--line);
+}
+
+.site-header__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0 var(--space-3);
+  min-height: var(--header-h);
+}
+
+/* Invite « yann@siaka:~/section$ » : le chemin suit la section lue (src/ui/nav.js). */
+.prompt {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target);
+  font-family: var(--font-code);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  color: var(--text);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.prompt__sep {
+  color: var(--text-2);
+}
+
+.prompt__path {
+  color: var(--accent);
+}
+
+.prompt__caret {
+  width: var(--caret-w);
+  height: var(--caret-h);
+  margin-left: var(--caret-gap);
+  background: var(--accent);
+  animation: caret var(--blink) steps(1) infinite;
+}
+
+@keyframes caret {
+  50% {
+    opacity: 0;
+  }
+}
+
+.is-paused .prompt__caret {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .prompt__caret {
+    animation: none;
+  }
+}
+
+@media (max-width: 23.5rem) {
+  .prompt__host {
+    display: none;
+  }
+}
+
+.site-nav__list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-nav__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target);
+  padding-inline: var(--space-2);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  color: var(--text-2);
+  text-decoration: none;
+  transition: color var(--fast) var(--ease);
+}
+
+.site-nav__link:hover {
+  color: var(--text);
+}
+
+.site-nav__link[aria-current="true"] {
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-thickness: var(--stroke-strong);
+  text-underline-offset: var(--underline-offset-nav);
+}
+
+.site-nav__cta {
+  margin-left: var(--space-2);
+}
+
+/* Bouton Menu : l'apparence vient de .btn.btn--secondary, seul son affichage est ici. */
+.site-header .menu-toggle {
+  display: none;
+}
+
+/* Menu mobile, jusqu'à 1024 px : seulement quand JavaScript est là pour l'ouvrir. */
+@media (max-width: 63.99rem) {
+  .js .site-header .menu-toggle {
+    display: inline-flex;
+  }
+
+  .js .site-nav {
+    display: none;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    padding: var(--space-1) max(var(--gutter), env(safe-area-inset-right, 0px)) var(--space-3) max(var(--gutter), env(safe-area-inset-left, 0px));
+    background: var(--surface);
+    border-bottom: var(--stroke) solid var(--line);
+  }
+
+  .js .site-header.is-open .site-nav {
+    display: block;
+    animation: menu-in var(--slow) var(--ease-expo);
+  }
+
+  .js .site-nav__list {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .js .site-nav__link {
+    display: flex;
+    padding-inline: 0;
+    font-size: var(--fs-lg);
+    color: var(--text);
+    border-bottom: var(--stroke) solid var(--line);
+  }
+
+  .js .site-nav__cta {
+    width: 100%;
+    margin: var(--space-3) 0 0;
+  }
+}
+
+@keyframes menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(calc(var(--space-2) * -1));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js .site-header.is-open .site-nav {
+    animation: none;
+  }
+}
+
+/* ---------- sections ---------- */
+/* Opaques et au-dessus du hero : elles recouvrent la scène 3D en remontant.
+   overflow-x: clip retient la pile 3D des compétences sans créer de conteneur de défilement (sticky intact). */
+.section {
+  position: relative;
+  z-index: var(--z-raised);
+  overflow-x: clip;
+  background: var(--bg);
+  padding-block: var(--space-7);
+  border-top: var(--stroke) solid var(--line);
+}
+
+.section-head {
+  max-width: var(--measure);
+  margin-bottom: var(--space-5);
+}
+
+.section-head__intro {
+  margin-top: var(--space-2);
+  color: var(--text-2);
+}
+
+.subsection {
+  margin-top: var(--space-7);
+}
+
+.subsection > h3,
+.column > h3 {
+  margin-bottom: var(--space-4);
+}
+
+/* deux colonnes côte à côte dès 1024 px (Parcours) */
+.columns {
+  display: grid;
+  gap: var(--space-7);
+}
+
+@media (min-width: 48rem) {
+  .section {
+    padding-block: var(--space-8);
+  }
+
+  .section-head {
+    margin-bottom: var(--space-6);
+  }
+
+  .subsection {
+    margin-top: var(--space-8);
+  }
+}
+
+@media (min-width: 64rem) {
+  .columns {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-6);
+  }
+}
+
+/* ---------- pied de page ---------- */
+.site-footer {
+  position: relative;
+  z-index: var(--z-raised);
+  overflow: hidden;
+  background: var(--bg);
+  border-top: var(--stroke) solid var(--line);
+}
+
+.site-footer__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0 var(--space-4);
+  padding-block: var(--space-3);
+  border-top: var(--stroke) solid var(--line);
+  font-size: var(--fs-sm);
+  color: var(--text-2);
+}
+
+.site-footer__clock time {
+  margin-left: var(--space-1);
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.site-footer__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-footer__fine {
+  padding-bottom: var(--space-4);
+  font-size: var(--fs-sm);
+  color: var(--text-2);
+}

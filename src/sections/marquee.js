@@ -1,12 +1,22 @@
-// Bandeau défilant infini : accélère et change de sens selon la vitesse du scroll.
+// Bandeau défilant infini : accélère et change de sens selon la vitesse du défilement.
+// Immobile avec « réduire les animations » ou le bouton pause, et hors de l'écran.
 import { gsap } from '../core/gsap.js';
-import { $, $$, reduce } from '../core/env.js';
+import { $, $$, reduced } from '../core/env.js';
 import { state } from '../core/state.js';
 
 const measures = [];
 
 export function initMarquee() {
-  $$('.marquee__row').forEach((row) => {
+  const band = $('.marquee');
+  if (!band) return;
+  let visible = true;
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+    }).observe(band);
+  }
+
+  $$('.marquee__row', band).forEach((row) => {
     const set = $('.marquee__set', row);
     if (!set) return;
     let w = set.getBoundingClientRect().width || 1;
@@ -19,9 +29,9 @@ export function initMarquee() {
     measures.push(() => {
       w = set.getBoundingClientRect().width || 1;
     });
-    if (reduce) return;
 
     gsap.ticker.add((time, dtMs) => {
+      if (reduced() || state.paused || !visible) return;
       const v = state.vel || 0;
       const boost = 1 + Math.min(5, Math.abs(v) * 0.08);
       const sign = v < -0.5 ? -1 : 1;

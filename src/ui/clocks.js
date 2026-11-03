@@ -1,11 +1,19 @@
-// Horloges Montréal / Douala (menu, repères, pied de page) et abréviations de fuseau.
+// Horloges Montréal et Douala (repères, pied de page). Elles s'arrêtent avec le bouton pause (WCAG 2.2.2).
 import { $$ } from '../core/env.js';
+import { state } from '../core/state.js';
 
 const ZONES = { mtl: 'America/Toronto', dla: 'Africa/Douala' };
 
+/** Heure au format 24 h « 14:05:09 », quelle que soit la langue du navigateur. */
 function makeFormatter(timeZone) {
   try {
-    return new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false, timeZone });
+    const f = new Intl.DateTimeFormat('fr-CA', { hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23', timeZone });
+    return {
+      format: (date) => {
+        const parts = Object.fromEntries(f.formatToParts(date).map((p) => [p.type, p.value]));
+        return `${parts.hour}:${parts.minute}:${parts.second}`;
+      },
+    };
   } catch (err) {
     return null;
   }
@@ -13,25 +21,16 @@ function makeFormatter(timeZone) {
 
 export function initClocks() {
   const formatters = { mtl: makeFormatter(ZONES.mtl), dla: makeFormatter(ZONES.dla) };
-
-  // HAE / HNE à Montréal, UTC+1 à Douala
-  $$('[data-tz]').forEach((el) => {
-    try {
-      const part = new Intl.DateTimeFormat('fr-CA', { timeZone: ZONES[el.dataset.tz], timeZoneName: 'short' })
-        .formatToParts(new Date())
-        .find((x) => x.type === 'timeZoneName');
-      el.textContent = part ? part.value : '';
-    } catch (err) {
-      el.textContent = '';
-    }
-  });
-
   const clocks = $$('[data-clock]');
+  if (!clocks.length) return;
   const tick = () => {
+    if (state.paused) return;
     const now = new Date();
     clocks.forEach((el) => {
       const f = formatters[el.dataset.clock];
-      if (f) el.textContent = f.format(now);
+      if (!f) return;
+      el.textContent = f.format(now);
+      el.dateTime = now.toISOString();
     });
   };
   tick();

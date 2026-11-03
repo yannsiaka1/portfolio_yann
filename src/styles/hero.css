@@ -1,36 +1,322 @@
-/* Hero : canvas 3D, titre, barre d’indices. */
-/* ---------- hero ---------- */
-#gl{position:fixed;left:0;top:0;width:100%;height:100%;z-index:0;display:block;pointer-events:none}
-.hero{position:relative;min-height:100vh;min-height:100svh;display:flex;flex-direction:column;padding-top:calc(var(--nav-h) + 10px);padding-bottom:18px;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;touch-action:pan-y}
-.hero__meta{position:relative;display:flex;justify-content:space-between;gap:.6rem 1.5rem;flex-wrap:wrap;color:var(--cendre)}
-.hero__meta p{display:flex;gap:.5rem;align-items:center}
-.hero__main{position:relative;display:grid;grid-template-columns:minmax(0,1fr) minmax(240px,21rem);gap:clamp(1.5rem,4vw,4rem);align-items:end;margin-top:auto;padding-top:28vh}
-.hero__title{position:relative;margin:0;font-size:clamp(3rem,9.3vw,10.4rem);line-height:.86;letter-spacing:-.048em;font-weight:500;font-variation-settings:"wdth" 100;color:#EDEBE5;mix-blend-mode:difference}
-.hero__title .line{display:block}
-.hero__title em{font-family:var(--f-serif);font-style:italic;font-weight:300;letter-spacing:-.025em;color:var(--ambre);padding-right:.04em}
-.hero__side{position:relative;display:grid;gap:1.4rem;padding-bottom:.6rem}
-.hero__lede{font-size:clamp(1rem,1.15vw,1.12rem);line-height:1.55;color:var(--craie);max-width:34ch}
-.hero__ctas{display:flex;flex-wrap:wrap;gap:.6rem}
-.hero__bar{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:1rem 2rem;margin-top:clamp(1.4rem,3.2vh,2.6rem);padding-top:14px;border-top:1px solid var(--trait)}
-.hint{display:flex;align-items:center;gap:.7rem;color:var(--cendre);min-width:0}
-.hint__text{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-main{overflow-x:clip}
-.hero__bar>*{min-width:0}
-.hint b{font-weight:400;color:var(--craie)}
-.hint__meter{position:relative;flex:0 0 46px;height:2px;background:var(--trait-fort);overflow:hidden}
-.hint__meter i{position:absolute;inset:0;background:var(--ambre);transform:scaleX(var(--charge,0));transform-origin:left}
-.hint[data-state="blast"] b,.hint[data-state="rollback"] b{color:var(--ambre)}
-.fig{display:flex;align-items:center;gap:.8rem;color:var(--cendre)}
-.fig__sym{color:var(--ambre);min-width:3.2ch;text-align:center;text-transform:none}
-.fig__name{color:var(--craie);min-width:12ch}
-.fig__bar{position:relative;width:54px;height:2px;background:var(--trait-fort);overflow:hidden}
-.fig__bar i{position:absolute;inset:0;background:var(--craie);transform:scaleX(0);transform-origin:left}
-.scroll-cue{display:flex;align-items:center;gap:.7rem;color:var(--cendre)}
-.scroll-cue__line{position:relative;display:block;width:1px;height:28px;background:var(--trait-fort);overflow:hidden}
-.scroll-cue__line::after{content:"";position:absolute;left:0;top:-50%;width:1px;height:50%;background:var(--ambre);animation:drip 1.8s var(--ease-io) infinite}
-@keyframes drip{to{top:110%}}
-.trace-tag{position:fixed;left:0;top:0;z-index:1;pointer-events:none;font-family:var(--f-mono);font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ambre);white-space:nowrap;opacity:0;transition:opacity .6s}
-.trace-tag.is-on{opacity:.9}
-.hero__fallback{display:none;position:absolute;right:max(var(--g),env(safe-area-inset-right,0px));top:22%;font-family:var(--f-mono);font-size:clamp(6rem,22vw,20rem);line-height:1;color:transparent;-webkit-text-stroke:1px var(--trait-fort);pointer-events:none}
-.no-gl .hero__fallback{display:block}
-.no-gl .hint,.no-gl .fig{visibility:hidden}
+/* Hero : le nom à gauche, le symbole 3D à droite (dessous sous 1024 px : l'ordre visuel suit l'ordre du clavier).
+   Le canvas couvre le hero et déborde sous le bandeau, qui le recouvre en remontant :
+   les panneaux qui s'écartent au défilement ne sont jamais coupés net. */
+.hero {
+  position: relative;
+  isolation: isolate;
+}
+
+.hero__canvas {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: block;
+  width: 100%;
+  height: calc(100% + var(--canvas-overflow));
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--slow) var(--ease);
+}
+
+.gl-ready .hero__canvas {
+  opacity: 1;
+}
+
+.hero__inner {
+  position: relative;
+  z-index: var(--z-raised);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-4);
+  min-height: var(--hero-min-h);
+  padding-block: var(--space-4) var(--space-6);
+}
+
+.hero__title {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.hero__name {
+  display: block;
+  font-size: var(--fs-name);
+  line-height: var(--lh-name);
+  font-weight: var(--fw-name);
+  font-stretch: var(--stretch-name);
+  letter-spacing: var(--ls-name);
+}
+
+.hero__name-line {
+  display: block;
+}
+
+.hero__name .ch {
+  display: inline-block;
+}
+
+.hero__role {
+  display: block;
+  font-size: var(--fs-lg);
+  line-height: var(--lh-title);
+  font-weight: var(--fw-medium);
+}
+
+.hero__lede {
+  max-width: var(--measure);
+  margin-top: var(--space-3);
+  color: var(--text-2);
+}
+
+/* la promesse, sur sa propre ligne, dans la couleur du texte */
+.hero__motto {
+  display: block;
+  margin-top: var(--space-1);
+  font-weight: var(--fw-semibold);
+  color: var(--text);
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+
+.hero__availability {
+  margin-top: var(--space-3);
+}
+
+/* La scène : sa boîte décide où se pose le symbole (lue par src/hero/scene.js). */
+.hero__stage {
+  position: relative;
+  height: var(--stage-h);
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* Zone cliquable posée sur le symbole par scene.js : clic, appui long, Entrée ou Espace au clavier. */
+.hero__symbol {
+  position: absolute;
+  border-radius: var(--radius-media);
+  cursor: pointer;
+}
+
+.has-cursor .hero__symbol {
+  cursor: none;
+}
+
+/* Légende du symbole, indice et bouton pause, placés par scene.js juste sous le symbole. */
+.hero__controls {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: grid;
+  justify-items: center;
+  gap: var(--space-1);
+  opacity: 0;
+  transition: opacity var(--slow) var(--ease);
+}
+
+.gl-ready .hero__controls {
+  opacity: 1;
+}
+
+/* invisible, donc hors de l'ordre du clavier, tant que la scène n'a pas rendu sa première image */
+.js .hero__controls {
+  visibility: hidden;
+}
+
+.gl-ready .hero__controls,
+.no-gl .hero__controls {
+  visibility: visible;
+}
+
+.hero__fig,
+.hero__hint {
+  padding: 0 var(--space-1);
+  border-radius: var(--radius-focus);
+  background: var(--bg);
+}
+
+.hero__fig {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1) var(--space-2);
+  font-size: var(--fs-sm);
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.hero__fig-sym {
+  min-width: var(--fig-sym-w);
+  font-family: var(--font-code);
+  color: var(--accent);
+  text-align: center;
+}
+
+.hero__fig-name {
+  min-width: var(--fig-name-w);
+  color: var(--text);
+}
+
+.hero__fig-bar {
+  position: relative;
+  width: var(--space-6);
+  height: var(--stroke-strong);
+  overflow: hidden;
+  background: var(--line-strong);
+}
+
+.hero__fig-bar i {
+  position: absolute;
+  inset: 0;
+  background: var(--text);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.hero__hint-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+}
+
+.hero__hint {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-ui);
+  color: var(--text-2);
+}
+
+.hero__hint b {
+  font-weight: var(--fw-semibold);
+  color: var(--text);
+}
+
+.hero__hint[data-state="blast"] b,
+.hero__hint[data-state="rollback"] b {
+  color: var(--accent);
+}
+
+.hero__hint code {
+  font-family: var(--font-code);
+  color: var(--accent);
+}
+
+/* jauge de l'appui maintenu (absente quand rien ne bouge seul : pas d'appui long possible) */
+.is-paused .hero__meter {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__meter {
+    display: none;
+  }
+}
+
+.hero__meter {
+  position: relative;
+  flex: none;
+  width: var(--space-5);
+  height: var(--stroke-strong);
+  overflow: hidden;
+  background: var(--line-strong);
+}
+
+.hero__meter i {
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  transform: scaleX(var(--charge, 0));
+  transform-origin: left;
+}
+
+.hero__pause .icon-play,
+.hero__pause.is-paused .icon-pause {
+  display: none;
+}
+
+.hero__pause.is-paused .icon-play {
+  display: block;
+}
+
+/* étiquette posée par la scène au bout d'une piste du circuit */
+.trace-tag {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: var(--z-raised);
+  font-size: var(--fs-sm);
+  color: var(--accent);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--slow) var(--ease);
+}
+
+.trace-tag.is-on {
+  opacity: 1;
+}
+
+/* Sans WebGL 2, ou sans JavaScript : un symbole dessiné remplace la scène. */
+.hero__fallback {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: var(--space-4);
+  color: var(--accent);
+}
+
+.js .hero__fallback {
+  display: none;
+}
+
+.no-gl .hero__fallback {
+  display: block;
+}
+
+.no-gl .hero__fig,
+.no-gl .hero__hint,
+.no-gl .hero__symbol,
+.no-gl .trace-tag {
+  display: none;
+}
+
+.no-gl .hero__controls {
+  opacity: 1;
+}
+
+@media (min-width: 48rem) {
+  .hero__role {
+    font-size: var(--fs-xl);
+  }
+}
+
+@media (min-width: 64rem) {
+  .hero__inner {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: var(--space-3);
+    padding-block: var(--space-6);
+  }
+
+  .hero__text {
+    grid-column: 1 / span 6;
+  }
+
+  .hero__stage {
+    grid-column: 7 / span 6;
+    align-self: stretch;
+    height: auto;
+    min-height: var(--stage-min-h);
+  }
+}

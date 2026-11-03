@@ -1,37 +1,42 @@
-// Hero, côté DOM : titre découpé en lettres et intro jouée à la fin du préchargement.
+// Hero, côté page : le nom découpé en lettres sort du flou à la fin de l'intro, puis le reste monte.
 // La partie 3D vit dans src/hero/.
 import { gsap } from '../core/gsap.js';
-import { $, $$, reduce } from '../core/env.js';
+import { $, reduced } from '../core/env.js';
 import { splitText } from '../core/text.js';
-import { fireIntro } from '../core/state.js';
+import { EVT_INTRO, state } from '../core/state.js';
 
-/** Découpe le titre en lettres en gardant un libellé lisible pour les lecteurs d'écran. */
-export function prepareHeroTitle() {
-  const title = $('#heroTitle');
-  if (!title) return;
-  title.setAttribute('aria-label', title.textContent.trim());
-  splitText(title, 'chars');
-  $$('.line', title).forEach((line) => line.setAttribute('aria-hidden', 'true'));
+/** Découpe le nom en lettres : une copie lisible reste pour les lecteurs d'écran. */
+export function prepareHero() {
+  const name = $('#heroName');
+  if (!name || reduced()) return;
+  const lines = Array.from(name.querySelectorAll('.hero__name-line'));
+  const sr = document.createElement('span');
+  sr.className = 'sr-only';
+  sr.textContent = 'Yann Siaka,';
+  lines.forEach((line) => {
+    line.setAttribute('aria-hidden', 'true');
+    splitText(line, 'chars');
+  });
+  name.querySelectorAll('.sr-only').forEach((el) => el.remove());
+  name.prepend(sr);
+  // opacité seulement : les boutons du hero restent focalisables pendant l'intro
+  gsap.set('#heroName .ch', { opacity: 0 });
+  gsap.set('.hero [data-intro]', { opacity: 0, y: 22 });
 }
 
-export function playHeroIntro() {
-  fireIntro();
-  if (reduce) return;
+function play() {
+  if (reduced()) return;
   // chaque lettre sort du flou dans un ordre aléatoire
   gsap.fromTo(
-    '#heroTitle .ch',
-    { autoAlpha: 0, filter: 'blur(14px)', yPercent: 24 },
-    {
-      autoAlpha: 1,
-      filter: 'blur(0px)',
-      yPercent: 0,
-      duration: 1.1,
-      ease: 'power3.out',
-      stagger: { each: 0.05, from: 'random' },
-      delay: 0.25,
-      clearProps: 'filter,transform',
-    },
+    '#heroName .ch',
+    { opacity: 0, filter: 'blur(14px)', yPercent: 24 },
+    { opacity: 1, filter: 'blur(0px)', yPercent: 0, duration: 1.1, ease: 'power3.out', stagger: { each: 0.05, from: 'random' }, delay: 0.15, clearProps: 'filter,transform' },
   );
-  gsap.fromTo('.hero [data-intro]', { autoAlpha: 0, y: 22 }, { autoAlpha: 1, y: 0, duration: 1, ease: 'expo.out', stagger: 0.07, delay: 0.75, clearProps: 'transform' });
-  gsap.fromTo('.nav__inner > *', { autoAlpha: 0, y: -14 }, { autoAlpha: 1, y: 0, duration: 0.9, ease: 'expo.out', stagger: 0.06, delay: 0.5, clearProps: 'transform' });
+  gsap.to('.hero [data-intro]', { opacity: 1, y: 0, duration: 1, ease: 'expo.out', stagger: 0.08, delay: 0.55, clearProps: 'transform' });
+  gsap.fromTo('.site-header__inner > *', { opacity: 0, y: -12 }, { opacity: 1, y: 0, duration: 0.9, ease: 'expo.out', stagger: 0.06, delay: 0.35, clearProps: 'transform' });
+}
+
+export function initHeroIntro() {
+  if (state.introFired) play();
+  else window.addEventListener(EVT_INTRO, play, { once: true });
 }

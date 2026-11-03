@@ -1,4 +1,4 @@
-// Outils de la scène 3D : courbes d'animation, géométrie des panneaux, texture des paquets.
+// Outils de la scène 3D : courbes d'animation, géométrie des panneaux, pistes et paquets.
 import * as THREE from 'three';
 
 export const TAU = Math.PI * 2;
@@ -37,15 +37,16 @@ export function resample(pts, step) {
   return out;
 }
 
-/** Point lumineux ambré, dessiné dans un canvas (aucune image à charger). */
-export function dotTexture() {
+/** Point lumineux de la couleur d'accent, dessiné dans un canvas (aucune image à charger). */
+export function dotTexture(accent) {
   const c = document.createElement('canvas');
   c.width = c.height = 64;
   const g = c.getContext('2d');
   const grd = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+  const rgb = `${Math.round(accent.r * 255)},${Math.round(accent.g * 255)},${Math.round(accent.b * 255)}`;
   grd.addColorStop(0, 'rgba(255,255,255,1)');
-  grd.addColorStop(0.25, 'rgba(255,214,140,.9)');
-  grd.addColorStop(1, 'rgba(255,176,0,0)');
+  grd.addColorStop(0.25, `rgba(${rgb},.9)`);
+  grd.addColorStop(1, `rgba(${rgb},0)`);
   g.fillStyle = grd;
   g.fillRect(0, 0, 64, 64);
   const tx = new THREE.CanvasTexture(c);

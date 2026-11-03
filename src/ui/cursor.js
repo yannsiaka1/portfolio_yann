@@ -1,17 +1,16 @@
-// Curseur personnalisé (point + anneau qui affiche la charge du clic long) et boutons magnétiques.
-// Actifs seulement avec une souris, et jamais si l'utilisateur demande moins d'animations.
+// Curseur personnalisé (point + anneau qui affiche la charge de l'appui long) et boutons magnétiques.
+// Seulement avec une souris, et jamais avec « réduire les animations ».
 import { gsap } from '../core/gsap.js';
-import { $, $$, root, fine, reduce } from '../core/env.js';
+import { $, $$, root, fine, reduced, token } from '../core/env.js';
 import { state } from '../core/state.js';
 
 export function initCursor() {
   const cursor = $('#cursor');
-  if (!fine || reduce || !cursor) return;
+  if (!fine || reduced() || !cursor) return;
   root.classList.add('has-cursor');
 
   const dot = $('.cursor__dot', cursor);
   const ring = $('.cursor__ring', cursor);
-  const label = $('.cursor__label', cursor);
   const prog = $('.cursor__prog', cursor);
   const dx = gsap.quickTo(dot, 'x', { duration: 0.06, ease: 'none' });
   const dy = gsap.quickTo(dot, 'y', { duration: 0.06, ease: 'none' });
@@ -30,19 +29,17 @@ export function initCursor() {
     },
     { passive: true },
   );
-  root.addEventListener('mouseleave', () => cursor.classList.add('is-out'));
+  document.addEventListener('mouseleave', () => cursor.classList.add('is-out'));
 
-  // libellé (« Défilez ») sur les cartes projet, anneau agrandi sur les liens
+  // anneau agrandi sur tout ce qui se clique
   document.addEventListener('pointerover', (e) => {
-    const labelled = e.target.closest('[data-cursor]');
-    const link = e.target.closest('a,button,input,textarea,label');
-    cursor.classList.toggle('is-label', !!labelled && !link);
+    const link = e.target.closest('a, button:not(.hero__symbol), input, textarea, label, [role="tab"], .iso__layer');
     cursor.classList.toggle('is-link', !!link);
-    if (labelled) label.textContent = labelled.dataset.cursor;
   });
 
-  // la scène 3D pilote la jauge circulaire pendant le clic long
-  const C = 2 * Math.PI * 18;
+  // la scène 3D pilote la jauge circulaire pendant l'appui long
+  // pas de valeur de repli : la circonférence vient du thème, comme les couleurs de la scène
+  const C = parseFloat(token('--ring-length'));
   let holdP = -1;
   let overSymbol = false;
   let holdClass = false;
@@ -67,7 +64,7 @@ export function initCursor() {
 }
 
 export function initMagnetic() {
-  if (!fine || reduce) return;
+  if (!fine || reduced()) return;
   $$('.magnetic').forEach((el) => {
     const xTo = gsap.quickTo(el, 'x', { duration: 0.6, ease: 'power3.out' });
     const yTo = gsap.quickTo(el, 'y', { duration: 0.6, ease: 'power3.out' });

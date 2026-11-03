@@ -1,161 +1,98 @@
-// Barre de navigation : invite « yann@siaka:~/section$ », liens, bouton son, menu plein écran et ancres.
-import { $, $$, root } from '../core/env.js';
-import { audio } from '../core/audio.js';
+// Barre de navigation : invite « yann@siaka:~/section$ », section en cours, menu mobile, ancres.
+import { $, $$ } from '../core/env.js';
 import { scramble } from '../core/text.js';
-import { pauseScroll, resumeScroll, scrollToTarget, hasSmoothScroll } from '../core/scroll.js';
+import { scrollToTarget, hasSmoothScroll } from '../core/scroll.js';
 
-const els = {};
-let menuOpen = false;
+export function initNav() {
+  const header = $('.site-header');
+  if (!header) return;
+  const toggle = $('.menu-toggle', header);
+  const nav = $('#site-nav');
+  const wide = window.matchMedia('(min-width: 64rem)');
 
-/* ---------- menu ---------- */
-/** Menu ouvert : la page derrière devient inerte (ni focus clavier, ni lecteur d'écran). */
-function setPageInert(on) {
-  [$('#main'), $('.footer')].forEach((el) => {
-    if (el) el.inert = on;
-  });
-}
+  /* ---------- menu mobile ---------- */
+  const isOpen = () => header.classList.contains('is-open');
+  const setOpen = (open, refocus = false) => {
+    header.classList.toggle('is-open', open);
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.textContent = open ? 'Fermer' : 'Menu';
+    if (!open && refocus) toggle.focus();
+  };
 
-function openMenu() {
-  const { menu, menuBtn, panel, nav } = els;
-  if (!menu || menuOpen) return;
-  menuOpen = true;
-  // le cercle du clip-path s'ouvre depuis le bouton Menu
-  const r = menuBtn.getBoundingClientRect();
-  const pr = panel.getBoundingClientRect();
-  panel.style.setProperty('--mx', `${r.left + r.width / 2 - pr.left}px`);
-  panel.style.setProperty('--my', `${r.top + r.height / 2 - pr.top}px`);
-  menu.classList.add('is-open');
-  root.classList.add('menu-open');
-  menuBtn.setAttribute('aria-expanded', 'true');
-  nav.classList.remove('is-hidden');
-  setPageInert(true);
-  pauseScroll();
-  setTimeout(() => {
-    const first = $('a', menu);
-    if (first) first.focus({ preventScroll: true });
-  }, 380);
-}
+  if (toggle && nav) {
+    toggle.addEventListener('click', () => setOpen(!isOpen()));
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && isOpen()) setOpen(false, true);
+    });
+    document.addEventListener('click', (e) => {
+      if (isOpen() && !header.contains(e.target)) setOpen(false);
+    });
+    // le focus quitte la barre (Tab après le dernier lien) : le menu se referme au lieu de masquer la page
+    header.addEventListener('focusout', (e) => {
+      if (isOpen() && e.relatedTarget && !header.contains(e.relatedTarget)) setOpen(false);
+    });
+    wide.addEventListener('change', () => setOpen(false));
+  }
 
-function closeMenu(refocus) {
-  const { menu, menuBtn } = els;
-  if (!menu || !menuOpen) return;
-  menuOpen = false;
-  menu.classList.remove('is-open');
-  root.classList.remove('menu-open');
-  menuBtn.setAttribute('aria-expanded', 'false');
-  setPageInert(false);
-  resumeScroll();
-  if (refocus) menuBtn.focus({ preventScroll: true });
-}
-
-function initMenu() {
-  const { menuBtn } = els;
-  if (menuBtn) menuBtn.addEventListener('click', () => (menuOpen ? closeMenu(true) : openMenu()));
-  $$('[data-close]').forEach((el) => el.addEventListener('click', () => closeMenu(true)));
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeMenu(true);
-  });
-}
-
-/* ---------- bouton son ---------- */
-function initSoundToggle() {
-  const btn = $('#soundBtn');
-  if (!btn) return;
-  btn.addEventListener('click', () => {
-    const on = !audio.enabled;
-    audio.setEnabled(on);
-    btn.setAttribute('aria-pressed', String(on));
-    btn.setAttribute('aria-label', on ? 'Couper le son' : 'Activer le son');
-    const label = $('.sound__label', btn);
-    if (label) label.textContent = on ? 'Son on' : 'Son off';
-    if (on) audio.morph();
-  });
-}
-
-/* ---------- ancres internes ---------- */
-function initAnchors() {
-  $$('a[href^="#"]').forEach((a) => {
-    a.addEventListener('click', (e) => {
-      const id = a.getAttribute('href');
+  /* ---------- ancres : défilement doux, puis focus sur la section (le lien du menu disparaît avec lui) ---------- */
+  $$('a[href^="#"]').forEach((link) => {
+    link.addEventListener('click', (e) => {
+      const id = link.getAttribute('href');
       if (!id || id.length < 2) return;
       const target = document.querySelector(id);
       if (!target) return;
       e.preventDefault();
-      closeMenu(false);
-      // une section épinglée par ScrollTrigger vit dans un « pin-spacer » : on vise celui-ci
-      const host = target.parentElement && target.parentElement.classList.contains('pin-spacer') ? target.parentElement : target;
-      scrollToTarget(id === '#accueil' ? 0 : host);
-      if (id !== '#accueil') {
-        if (!target.hasAttribute('tabindex')) target.setAttribute('tabindex', '-1');
-        setTimeout(() => target.focus({ preventScroll: true }), hasSmoothScroll() ? 900 : 300);
+      if (isOpen()) setOpen(false);
+      scrollToTarget(id === '#accueil' ? 0 : target);
+      if (id === '#main' || id === '#accueil') {
+        if (id === '#main') target.focus({ preventScroll: true });
+        return;
       }
+      if (!target.hasAttribute('tabindex')) target.setAttribute('tabindex', '-1');
+      setTimeout(() => target.focus({ preventScroll: true }), hasSmoothScroll() ? 900 : 0);
     });
   });
-  const toTop = $('#toTop');
-  if (toTop) toTop.addEventListener('click', () => scrollToTarget(0));
-}
 
-/* ---------- état de la barre et chemin de l'invite ---------- */
-function initNavState() {
-  const { nav } = els;
+  /* ---------- filet sous la barre dès que la page défile ---------- */
+  const onScroll = () => header.classList.toggle('is-scrolled', window.scrollY > 8);
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  /* ---------- section en cours : celle qui contient le milieu de l'écran ----------
+     Mesurée à chaque défilement (une fois par image) plutôt qu'avec un IntersectionObserver : les sections
+     épinglées (projets, compétences) restent ainsi reconnues pendant tout leur épinglage. */
+  const links = $$('.site-nav__link');
   const pathEl = $('#navPath');
   const sections = $$('[data-path]');
-  const links = $$('.nav__links a');
-  let lastY = 0;
-  let curPath = '~';
-  let ticking = false;
-
+  let currentPath = null;
+  let queued = false;
   const update = () => {
-    ticking = false;
-    const y = window.scrollY;
-    nav.classList.toggle('is-scrolled', y > 30);
-    // cachée en descendant, réaffichée en remontant
-    if (!menuOpen) {
-      if (y > lastY + 2 && y > window.innerHeight * 0.8) nav.classList.add('is-hidden');
-      else if (y < lastY - 2 || y < window.innerHeight * 0.8) nav.classList.remove('is-hidden');
-    }
-    lastY = y;
-
-    const mid = window.innerHeight * 0.42;
-    let found = sections[0];
-    for (let i = 0; i < sections.length; i++) if (sections[i].getBoundingClientRect().top <= mid) found = sections[i];
-    const path = found ? found.dataset.path : '~';
-    if (path !== curPath) {
-      curPath = path;
-      scramble(pathEl, path, 0.45);
-      const id = found && found.id ? `#${found.id}` : '';
-      links.forEach((a) => a.classList.toggle('is-active', a.getAttribute('href') === id));
+    queued = false;
+    const mid = window.innerHeight * 0.47;
+    const section = sections.find((el) => {
+      const r = el.getBoundingClientRect();
+      return r.top <= mid && r.bottom > mid;
+    });
+    if (!section) return; // bandeau entre le hero et les projets : on garde la section précédente
+    const id = `#${section.id}`;
+    links.forEach((a) => {
+      if (a.getAttribute('href') === id) a.setAttribute('aria-current', 'true');
+      else a.removeAttribute('aria-current');
+    });
+    const path = section.dataset.path || '~';
+    if (path !== currentPath) {
+      const first = currentPath === null;
+      currentPath = path;
+      if (first) pathEl.textContent = path;
+      else scramble(pathEl, path, 0.45);
     }
   };
-
-  window.addEventListener(
-    'scroll',
-    () => {
-      if (!ticking) {
-        ticking = true;
-        requestAnimationFrame(update);
-      }
-    },
-    { passive: true },
-  );
+  const queue = () => {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(update);
+  };
+  window.addEventListener('scroll', queue, { passive: true });
+  window.addEventListener('resize', queue);
   update();
-}
-
-export function initNav() {
-  els.nav = $('#nav');
-  els.menu = $('#menu');
-  els.menuBtn = $('#menuBtn');
-  els.panel = $('.menu__panel');
-
-  initSoundToggle();
-  initMenu();
-  initAnchors();
-  initNavState();
-
-  // les liens de la barre se brouillent au survol
-  $$('[data-scramble]').forEach((a) => {
-    const text = a.textContent;
-    a.addEventListener('pointerenter', () => scramble(a, text, 0.4));
-    a.addEventListener('focus', () => scramble(a, text, 0.4));
-  });
 }

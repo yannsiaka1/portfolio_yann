@@ -2,9 +2,16 @@
 
 export const root = document.documentElement;
 
-/** L'utilisateur a demandé moins d'animations (réglage système). */
-export const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-/** Souris ou pavé tactile : curseur personnalisé et effets de survol actifs. */
+/** Réglage système « réduire les animations ». Il peut changer pendant la visite : les modules écoutent
+ *  motionQuery ('change') et lisent reduced(), une valeur gardée à jour ici. Lire .matches à chaque image
+ *  (bandeau) empêche Chromium d'envoyer l'événement 'change' de cette requête. */
+export const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+let reducedNow = motionQuery.matches;
+motionQuery.addEventListener('change', (e) => {
+  reducedNow = e.matches;
+});
+export const reduced = () => reducedNow;
+/** Souris ou pavé tactile : curseur personnalisé, boutons magnétiques et survols actifs. */
 export const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 /** Écran tactile : interactions au toucher, rendu 3D allégé. */
 export const coarse = window.matchMedia('(pointer: coarse)').matches;
@@ -12,3 +19,12 @@ export const coarse = window.matchMedia('(pointer: coarse)').matches;
 export const $ = (selector, context = document) => context.querySelector(selector);
 export const $$ = (selector, context = document) => Array.from(context.querySelectorAll(selector));
 export const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+
+/** Lit un jeton de tokens.css ; tokenPx convertit rem ou px en pixels. */
+const rootStyle = () => getComputedStyle(root);
+export const token = (name) => rootStyle().getPropertyValue(name).trim();
+export function tokenPx(name) {
+  const value = token(name);
+  const n = parseFloat(value) || 0;
+  return value.endsWith('rem') ? n * (parseFloat(rootStyle().fontSize) || 16) : n;
+}

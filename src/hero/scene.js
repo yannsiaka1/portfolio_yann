@@ -1,22 +1,41 @@
 // Scène 3D du hero : des symboles de code en panneaux de verre.
-// - les mêmes panneaux se recomposent en 7 formations (src/hero/formations.js)
-// - le symbole s'incline vers le curseur ; le panneau survolé s'illumine (raycast)
-// - clic long : charge, explosion, puis « rollback » au relâchement ; clic court : symbole suivant
-// - pistes de circuit derrière le symbole : étincelles et paquets de données au survol
+// - les mêmes panneaux se recomposent en 7 symboles (formations.js), environ toutes les 7 s
+// - le symbole s'incline vers le pointeur ; sur ordinateur, le panneau survolé s'illumine
+// - clic court, toucher, Entrée ou Espace : symbole suivant ; appui maintenu : la page tremble, le symbole
+//   éclate (« casser la prod »), puis se reconstruit au relâchement (« rollback »)
+// - pistes de circuit : les survoler (ou les toucher) lance des étincelles et des paquets vers le symbole
+// - au défilement, les panneaux s'écartent pendant que la section suivante recouvre le hero
+// - le bouton pause (src/ui/pause.js) et le réglage « réduire les animations » figent tout ce qui bouge seul
 //
-// Tout l'état passe par une seule valeur, explodeAmt = max(scroll, survol, explosion, intro),
-// qui décide de l'écartement des panneaux. Relâcher à n'importe quel moment inverse donc l'effet.
+// L'écartement passe par une seule valeur, explodeAmt = max(défilement, survol, éclatement, intro) :
+// relâcher à n'importe quel moment inverse donc l'effet.
+// La boîte .hero__stage (CSS) décide où se pose le symbole ; le canvas couvre tout le hero.
+// Les couleurs et l'espacement viennent des jetons de src/styles/tokens.css.
 import * as THREE from 'three';
-import { coarse, reduce, clamp } from '../core/env.js';
-import { state, signalGlReady, EVT_INTRO } from '../core/state.js';
-import { audio } from '../core/audio.js';
+import { coarse, motionQuery, reduced, clamp, token, tokenPx } from '../core/env.js';
+import { state, signalGlReady, EVT_INTRO, EVT_PAUSE } from '../core/state.js';
 import { scramble } from '../core/text.js';
 import { FORMS, POOL, TRACE_DEFS, ZTR, V } from './formations.js';
 import { TAU, easeInOutCubic, easeOutCubic, roundedBox, resample, dotTexture } from './helpers.js';
 
-const CHARGE = 0.55; // durée de la charge avant l'explosion (s)
-const CYCLE = reduce ? 9 : 5.6; // temps passé sur chaque symbole (s)
+const CHARGE = 0.55; // durée de la charge avant l'éclatement (s)
+const CYCLE = 7; // temps passé sur chaque symbole (s)
 const MORPH = 1.35; // durée d'une transition entre symboles (s)
+const FIT_W = 0.84; // part de la largeur de la scène occupée par le symbole
+const FIT_H = 0.86; // part de la hauteur restante une fois la légende placée
+const SYM_W = 3.5; // le symbole tient dans un rectangle d'environ 3,5 × 2,4 unités (formations.js)
+const SYM_H = 2.4;
+
+const HINTS = {
+  idle: 'Cliquez sur le symbole pour le changer, maintenez pour <b>casser la prod</b>.',
+  idleTouch: 'Touchez le symbole pour le changer, appui long pour <b>casser la prod</b>.',
+  still: 'Cliquez sur le symbole pour passer au suivant.',
+  stillTouch: 'Touchez le symbole pour passer au suivant.',
+  charge: '<code>deploy --force</code> en cours…',
+  blast: 'Tout est cassé. Relâchez pour un <b>rollback</b>.',
+  rollback: '<b>Rollback</b> effectué, tout est rentré dans l’ordre.',
+};
+const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
 export function initHero() {
   try {
@@ -30,7 +49,19 @@ export function initHero() {
 function start() {
   const canvas = document.getElementById('gl');
   const hero = document.getElementById('accueil');
-  if (!canvas || !hero) return signalGlReady(false);
+  const stage = document.getElementById('heroStage');
+  const symbolBtn = document.getElementById('heroSymbol');
+  const controls = document.getElementById('heroControls');
+  const hint = document.getElementById('heroHint');
+  const hintText = hint ? hint.querySelector('.hero__hint-text') : null;
+  const tag = document.getElementById('traceTag');
+  const figN = document.getElementById('figN');
+  const figSym = document.getElementById('figSym');
+  const figName = document.getElementById('figName');
+  const figBar = document.getElementById('figBar');
+  const vibEls = Array.from(document.querySelectorAll('[data-vibrate]'));
+  if (!canvas || !hero || !stage) return signalGlReady(false);
+  if (tag && coarse) tag.textContent = 'Touchez une piste';
 
   // three.js exige WebGL 2 : on vérifie avant de créer le renderer, pour un repli sans erreur
   const attrs = { antialias: true, alpha: false, powerPreference: 'high-performance' };
@@ -49,11 +80,15 @@ function start() {
     return signalGlReady(false);
   }
 
+  // pas de valeur de repli : un jeton renommé doit se voir, pas retomber sur une ancienne couleur
+  const BG = new THREE.Color(token('--bg'));
+  const ACCENT = new THREE.Color(token('--accent'));
+
   // verre réfractif sur ordinateur, métal poli (plus léger) sur mobile
   const small = Math.min(window.innerWidth, window.innerHeight) < 700;
   const hq = !coarse && !small;
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, hq ? 1.75 : 1.5));
-  renderer.setClearColor(0x0a0a09, 1);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+  renderer.setClearColor(BG, 1);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.08;
 
@@ -75,7 +110,7 @@ function start() {
     softbox(10, 2.2, 0xffffff, 3.2, [0, 7, 3]);
     softbox(2.2, 9, 0xffe2b0, 2.4, [-8, 0.5, 2]);
     softbox(2.2, 9, 0xb8cfff, 1.8, [8, -0.5, -1]);
-    softbox(9, 1.4, 0xffb000, 2.6, [0, -6, 5]);
+    softbox(9, 1.4, ACCENT, 2.6, [0, -6, 5]);
     softbox(4, 4, 0xffffff, 1.1, [0, 1, 9]);
     scene.environment = pmrem.fromScene(env, 0.035).texture;
     pmrem.dispose();
@@ -84,7 +119,7 @@ function start() {
   const key = new THREE.DirectionalLight(0xffffff, 1.3);
   key.position.set(3, 5, 6);
   scene.add(key);
-  const warm = new THREE.PointLight(0xffb000, 16, 16, 2);
+  const warm = new THREE.PointLight(ACCENT, 16, 16, 2);
   warm.position.set(-2.6, -2.4, 3.2);
   scene.add(warm);
 
@@ -104,7 +139,7 @@ function start() {
         envMapIntensity: 1.5,
         attenuationColor: new THREE.Color(0xffd7a0),
         attenuationDistance: 3.2,
-        emissive: new THREE.Color(0xffb000),
+        emissive: ACCENT.clone(),
         emissiveIntensity: 0,
       })
     : new THREE.MeshPhysicalMaterial({
@@ -117,7 +152,7 @@ function start() {
         iridescenceIOR: 1.3,
         iridescenceThicknessRange: [140, 520],
         envMapIntensity: 1.8,
-        emissive: new THREE.Color(0xffb000),
+        emissive: ACCENT.clone(),
         emissiveIntensity: 0,
       });
   const ENV_BASE = base.envMapIntensity;
@@ -135,7 +170,6 @@ function start() {
     const P = {
       mesh,
       mat,
-      i,
       active: false,
       g: 0,
       blink: false,
@@ -159,8 +193,8 @@ function start() {
   /* ---------- pistes, éclairs, paquets ---------- */
   const traceGroup = new THREE.Group();
   scene.add(traceGroup);
-  const DIM = new THREE.Color(0x5c4a26);
-  const HOT = new THREE.Color(0xffc24a);
+  const DIM = ACCENT.clone().multiplyScalar(0.36);
+  const HOT = ACCENT.clone().lerp(new THREE.Color(0xffffff), 0.2);
   const traces = TRACE_DEFS.map((pts) => {
     const dense = resample(pts, 0.04);
     const g = new THREE.BufferGeometry().setFromPoints(dense);
@@ -177,7 +211,7 @@ function start() {
   for (let i = 0; i < 14; i++) {
     const g = new THREE.BufferGeometry();
     g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(BOLT_PTS * 3), 3));
-    const m = new THREE.LineBasicMaterial({ color: i % 2 ? 0xffb000 : 0xfff3dc, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false });
+    const m = new THREE.LineBasicMaterial({ color: i % 2 ? ACCENT : 0xfff3dc, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false });
     const line = new THREE.Line(g, m);
     line.frustumCulled = false;
     line.visible = false;
@@ -188,7 +222,7 @@ function start() {
   const PK = 24;
   const pkGeo = new THREE.BufferGeometry();
   pkGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(PK * 3).fill(-999), 3));
-  const pkMat = new THREE.PointsMaterial({ size: 0.15, map: dotTexture(), color: 0xffc04d, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, sizeAttenuation: true });
+  const pkMat = new THREE.PointsMaterial({ size: 0.15, map: dotTexture(ACCENT), color: ACCENT, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, sizeAttenuation: true });
   const pkPoints = new THREE.Points(pkGeo, pkMat);
   pkPoints.frustumCulled = false;
   pkPoints.renderOrder = 6;
@@ -197,43 +231,35 @@ function start() {
 
   /* ---------- état ---------- */
   const st = {
-    time: 0, w: 1, h: 1, heroH: 1, scale: 1, hidden: false,
+    time: 0, cw: 1, ch: 1, heroH: 1, scale: 1, rect: canvas.getBoundingClientRect(),
     form: 0, morphing: false, morphStart: 0, cycleT: 0,
-    rotY: 0, mouse: new THREE.Vector2(), ndc: new THREE.Vector2(), px: -9999, py: -9999, hasPointer: false,
-    symX: 0, symY: 0, symR: 1, overSym: false, hoverAmt: 0, hovered: null, activeMeshes: [],
-    holding: false, holdTime: 0, blasted: false, charge: 0, vibrate: 0, clickBurst: 0, kick: 0, downX: 0, downY: 0, downAt: 0,
-    introStart: -1, introAmt: reduce ? 0 : 1, traceProg: reduce ? 1 : 0, scrollP: 0, explodeAmt: 1,
-    hoverTrace: -1, sparkLocal: null, burstLeft: 0, weldCd: 0, sparkSound: false, hint: '', hintAt: 0, vibOn: false, tagOn: false,
+    rotY: 0, mouse: new THREE.Vector2(), ndc: new THREE.Vector2(), px: -9999, py: -9999, hasPointer: false, overUI: false,
+    onSymbol: false, overSym: false, hoverAmt: 0, hovered: null, activeMeshes: [],
+    holding: false, holdTime: 0, blasted: false, suppressClick: false, charge: 0, shake: 0, clickBurst: 0, kick: 0, downX: 0, downY: 0,
+    introStart: -1, introAmt: 1, traceProg: 0, scrollP: 0, explodeAmt: 1,
+    hoverTrace: -1, sparkLocal: null, burstLeft: 0, weldCd: 0, hint: '', hintAt: 0, vibOn: false, tagOn: false,
+    dirty: true, settling: false, flashing: false, active: false,
   };
 
-  /* ---------- éléments du DOM pilotés par la scène ---------- */
-  const figN = document.getElementById('figN');
-  const figSym = document.getElementById('figSym');
-  const figName = document.getElementById('figName');
-  const figBar = document.getElementById('figBar');
-  const hint = document.getElementById('holdHint');
-  const hintText = hint ? hint.querySelector('.hint__text') : null;
-  const tag = document.getElementById('traceTag');
-  if (tag && coarse) tag.textContent = '⚡ touchez une piste';
-  const vibEls = Array.from(document.querySelectorAll('[data-vibrate]'));
-  const HINTS = {
-    idle: coarse ? 'Appui long sur le symbole pour <b>casser la prod</b>' : 'Maintenez le symbole appuyé pour <b>casser la prod</b>',
-    charge: '<b>deploy --force</b> en cours…',
-    blast: 'Tout est cassé. Relâchez pour un <b>rollback</b>',
-    rollback: '<b>Rollback</b> effectué, tout est rentré dans l’ordre',
-  };
+  /** Rien ne bouge seul : réglage « réduire les animations » ou bouton pause. */
+  // reduced() et non motionQuery.matches : lire la requête à chaque image fait perdre son événement 'change'
+  const still = () => reduced() || state.paused;
+
   function setHint(name) {
-    if (!hint || st.hint === name) return;
-    st.hint = name;
+    if (!hint) return;
+    const key = name === 'idle' ? `${still() ? 'still' : 'idle'}${coarse ? 'Touch' : ''}` : name;
+    if (st.hint === key) return;
+    st.hint = key;
     st.hintAt = st.time;
     hint.dataset.state = name;
-    if (hintText) hintText.innerHTML = HINTS[name];
+    if (hintText) hintText.innerHTML = HINTS[key];
   }
-  function updateHud(i) {
+
+  function updateFig(i) {
     const f = FORMS[i];
-    if (figN) figN.textContent = `fig. ${String(i + 1).padStart(2, '0')}/${String(FORMS.length).padStart(2, '0')}`;
+    if (figN) figN.textContent = `${String(i + 1).padStart(2, '0')} / ${String(FORMS.length).padStart(2, '0')}`;
     if (figSym) figSym.textContent = f.sym;
-    if (figName) scramble(figName, f.name, 0.5);
+    if (figName) scramble(figName, capitalize(f.name), 0.5);
   }
 
   /* ---------- formations ---------- */
@@ -268,7 +294,7 @@ function start() {
       P.bulge.copy(P.to.p).add(P.cur.p).normalize().multiplyScalar(0.6 + Math.random() * 0.7);
       P.bulge.z += (Math.random() - 0.3) * 1.2;
       P.mAxis.set(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).normalize();
-      // direction d'explosion propre à chaque panneau
+      // direction d'écartement propre à chaque panneau
       const dir = P.to.p.clone();
       if (dir.lengthSq() < 1e-4) dir.set(Math.random() - 0.5, Math.random() - 0.5, 0);
       dir.normalize();
@@ -290,71 +316,71 @@ function start() {
     st.morphing = !instant;
     st.morphStart = st.time;
     st.cycleT = 0;
-    updateHud(idx);
+    st.dirty = true;
+    updateFig(idx);
   }
-  function nextForm() {
-    setFormation((st.form + 1) % FORMS.length);
-    audio.morph();
-  }
+  const nextForm = () => setFormation((st.form + 1) % FORMS.length);
 
-  /* ---------- mise en page : moitié droite sur ordinateur, haut de l'écran sur mobile ---------- */
+  /* ---------- mise en page : le symbole se centre dans .hero__stage, la légende juste dessous ---------- */
   function layout() {
-    st.w = window.innerWidth;
-    st.h = window.innerHeight;
-    renderer.setSize(st.w, st.h, false);
-    camera.aspect = st.w / st.h;
+    st.cw = canvas.clientWidth || 1;
+    st.ch = canvas.clientHeight || 1;
+    renderer.setSize(st.cw, st.ch, false);
+    camera.aspect = st.cw / st.ch;
     camera.updateProjectionMatrix();
-    const visH = 2 * 11 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
-    const visW = visH * camera.aspect;
-    let s;
-    let x;
-    let y;
-    if (camera.aspect < 0.95) {
-      s = Math.min((visW * 0.78) / 3.5, (visH * 0.27) / 2.3);
-      x = 0;
-      y = visH * 0.2;
-    } else {
-      s = Math.min((visH * 0.56) / 2.4, (visW * 0.4) / 3.5);
-      x = visW * 0.17;
-      y = visH * 0.07;
+
+    const cr = canvas.getBoundingClientRect();
+    const sr = stage.getBoundingClientRect();
+    const upp = (2 * camera.position.z * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2))) / st.ch; // unités 3D par pixel
+    const ctrlH = controls && controls.offsetParent ? controls.offsetHeight : 0;
+    const minGap = ctrlH ? tokenPx('--space-5') : 0;
+    st.scale = Math.min((sr.width * FIT_W * upp) / SYM_W, (Math.max(40, sr.height - ctrlH - minGap) * FIT_H * upp) / SYM_H);
+    const symW = (SYM_W * st.scale) / upp; // taille du symbole à l'écran (px)
+    const symH = (SYM_H * st.scale) / upp;
+    // le symbole s'incline et s'écarte au survol : la légende garde une marge proportionnelle
+    const gap = ctrlH ? Math.max(minGap, symH * 0.14) : 0;
+    const top = Math.max(0, (sr.height - symH - gap - ctrlH) / 2);
+    const left = (sr.width - symW) / 2;
+    if (controls) {
+      controls.style.top = `${Math.round(top + symH + gap)}px`;
+      controls.style.bottom = 'auto';
     }
-    st.scale = s;
-    group.position.set(x, y, 0);
-    group.scale.setScalar(s);
-    traceGroup.position.set(x, y, 0);
-    traceGroup.scale.setScalar(s);
-    st.heroH = hero.offsetHeight || st.h;
+    if (symbolBtn) {
+      symbolBtn.style.left = `${Math.round(left)}px`;
+      symbolBtn.style.top = `${Math.round(top)}px`;
+      symbolBtn.style.width = `${Math.round(symW)}px`;
+      symbolBtn.style.height = `${Math.round(symH)}px`;
+    }
+    const cx = sr.left + sr.width / 2 - cr.left;
+    const cy = sr.top + top + symH / 2 - cr.top;
+    group.position.set((cx - st.cw / 2) * upp, -(cy - st.ch / 2) * upp, 0);
+    group.scale.setScalar(st.scale);
+    traceGroup.position.copy(group.position);
+    traceGroup.scale.setScalar(st.scale);
+    st.heroH = hero.offsetHeight || st.ch;
+    st.rect = cr;
+    st.dirty = true;
   }
 
+  /* ---------- pistes : détection (en pixels du canvas), éclairs, paquets ---------- */
   const _v = new THREE.Vector3();
   const _a = { x: 0, y: 0 };
   const _b = { x: 0, y: 0 };
-  function toScreen(local, out) {
+  function toCanvas(local, out) {
     _v.copy(local);
     traceGroup.localToWorld(_v);
     _v.project(camera);
-    out.x = (_v.x * 0.5 + 0.5) * st.w;
-    out.y = (-_v.y * 0.5 + 0.5) * st.h;
+    out.x = (_v.x * 0.5 + 0.5) * st.cw;
+    out.y = (-_v.y * 0.5 + 0.5) * st.ch;
     return out;
   }
-  function projectSymbol() {
-    _v.copy(group.position).project(camera);
-    st.symX = (_v.x * 0.5 + 0.5) * st.w;
-    st.symY = (-_v.y * 0.5 + 0.5) * st.h;
-    _v.copy(group.position);
-    _v.x += 1.75 * st.scale;
-    _v.project(camera);
-    st.symR = Math.abs((_v.x * 0.5 + 0.5) * st.w - st.symX);
-  }
-
-  /* ---------- pistes : détection, éclairs, paquets ---------- */
   function hitTrace(mx, my) {
     const threshold = coarse ? 26 : 14;
     for (let i = 0; i < traces.length; i++) {
       const pts = traces[i].pts;
       for (let s = 0; s < pts.length - 1; s++) {
-        const a = toScreen(pts[s], _a);
-        const b = toScreen(pts[s + 1], _b);
+        const a = toCanvas(pts[s], _a);
+        const b = toCanvas(pts[s + 1], _b);
         const abx = b.x - a.x;
         const aby = b.y - a.y;
         const len2 = abx * abx + aby * aby || 1;
@@ -370,8 +396,7 @@ function start() {
     let bestD = Infinity;
     for (let s = 0; s < pts.length - 1; s++) {
       const a = pts[s];
-      const b = pts[s + 1];
-      const ab = b.clone().sub(a);
+      const ab = pts[s + 1].clone().sub(a);
       const u = clamp(p.clone().sub(a).dot(ab) / (ab.lengthSq() || 1), 0, 1);
       const q = a.clone().addScaledVector(ab, u);
       const d = q.distanceToSquared(p);
@@ -431,7 +456,6 @@ function start() {
       st.hoverTrace = hit.idx;
       st.sparkLocal = hit.local;
       st.burstLeft = 5 + ((Math.random() * 2) | 0);
-      st.sparkSound = true;
       spawnPackets(hit.idx, hit.local, 3);
     }
     if (st.burstLeft > 0 && st.weldCd <= 0) {
@@ -440,10 +464,6 @@ function start() {
         .sort(() => Math.random() - 0.5)
         .slice(0, Math.random() > 0.5 ? 1 : 2);
       others.forEach((k) => fireBolt(hit.local, nearestOn(k, hit.local)));
-      if (st.sparkSound) {
-        audio.spark();
-        st.sparkSound = false;
-      }
       st.burstLeft--;
       st.weldCd = 0.04 + Math.random() * 0.06;
     }
@@ -451,82 +471,95 @@ function start() {
 
   /* ---------- interactions ---------- */
   function setPointer(e) {
-    st.px = e.clientX;
-    st.py = e.clientY;
-    st.ndc.set((e.clientX / st.w) * 2 - 1, -(e.clientY / st.h) * 2 + 1);
+    st.px = e.clientX - st.rect.left;
+    st.py = e.clientY - st.rect.top;
+    st.ndc.set((st.px / st.cw) * 2 - 1, -(st.py / st.ch) * 2 + 1);
     st.hasPointer = true;
+    st.overUI = !!(e.target && e.target.closest && e.target.closest('a, button:not(.hero__symbol), input, textarea, label'));
   }
   window.addEventListener(
     'pointermove',
     (e) => {
       setPointer(e);
-      // au doigt, glisser annule le clic long (on veut pouvoir faire défiler la page)
-      if (st.holding && e.pointerType !== 'mouse' && Math.hypot(e.clientX - st.downX, e.clientY - st.downY) > 14) cancelHold();
+      // au doigt, glisser annule l'appui long : la page doit pouvoir défiler
+      if (st.holding && e.pointerType !== 'mouse' && Math.hypot(e.clientX - st.downX, e.clientY - st.downY) > 14) release(null, true);
     },
     { passive: true },
   );
   document.addEventListener('pointerleave', () => {
     st.hasPointer = false;
   });
+  // au doigt, toucher une piste n'importe où dans le hero lance les étincelles
   hero.addEventListener('pointerdown', (e) => {
-    if (e.button > 0) return;
-    if (e.target.closest('a,button,input,textarea,select,label')) return;
-    if (!st.w || st.scrollP > 0.15 || st.introAmt > 0.2) return;
+    if (e.pointerType === 'mouse' || st.traceProg < 0.99 || still()) return;
+    if (e.target.closest('a, button, input, textarea, label')) return;
     setPointer(e);
-    if (Math.hypot(e.clientX - st.symX, e.clientY - st.symY) > st.symR * 1.1) {
-      // hors du symbole : au doigt, toucher une piste déclenche les étincelles
-      if (e.pointerType !== 'mouse' && st.traceProg > 0.99) {
-        const hit = hitTrace(e.clientX, e.clientY);
-        if (hit) {
-          st.hoverTrace = -1;
-          sparkAt(hit);
-        }
-      }
-      return;
+    const hit = hitTrace(st.px, st.py);
+    if (hit) {
+      st.hoverTrace = -1;
+      sparkAt(hit);
+      st.active = true;
     }
-    st.holding = true;
-    st.holdTime = 0;
-    st.blasted = false;
-    st.downX = e.clientX;
-    st.downY = e.clientY;
-    st.downAt = st.time;
-    audio.startRumble();
-    setHint('charge');
   });
+
+  if (symbolBtn) {
+    symbolBtn.addEventListener('pointerenter', () => {
+      st.onSymbol = true;
+    });
+    symbolBtn.addEventListener('pointerleave', () => {
+      st.onSymbol = false;
+    });
+    symbolBtn.addEventListener('pointerdown', (e) => {
+      if (e.button > 0) return;
+      setPointer(e);
+      st.suppressClick = false;
+      if (still() || st.scrollP > 0.15 || st.introAmt > 0.2) return;
+      st.holding = true;
+      st.holdTime = 0;
+      st.blasted = false;
+      st.downX = e.clientX;
+      st.downY = e.clientY;
+      setHint('charge');
+    });
+    // clic, toucher, Entrée ou Espace : symbole suivant (sauf à la fin d'un appui long ;
+    // un clic venu du clavier a detail = 0 et passe toujours)
+    symbolBtn.addEventListener('click', (e) => {
+      if (st.suppressClick && e.detail !== 0) {
+        st.suppressClick = false;
+        return;
+      }
+      st.suppressClick = false;
+      if (!st.morphing) nextForm();
+    });
+    symbolBtn.addEventListener('contextmenu', (e) => {
+      if (st.holding || st.blasted) e.preventDefault();
+    });
+  }
   function release(e, cancelled) {
     if (!st.holding) return;
     st.holding = false;
-    audio.stopRumble();
-    if (st.blasted) {
-      audio.rollback();
-      setHint('rollback');
-    } else {
-      setHint('idle');
-      // clic court : symbole suivant
-      if (!cancelled && st.time - st.downAt < 0.32 && !st.morphing) nextForm();
-    }
+    if (st.blasted) setHint('rollback');
+    else setHint('idle');
+    if (st.blasted || cancelled) st.suppressClick = true;
     if (e && e.pointerType !== 'mouse') st.hasPointer = false;
-  }
-  function cancelHold() {
-    release(null, true);
   }
   window.addEventListener('pointerup', (e) => release(e, false));
   window.addEventListener('pointercancel', () => release(null, true));
-  hero.addEventListener('contextmenu', (e) => {
-    if (st.holding || st.blasted) e.preventDefault();
-  });
+
+  const refreshStill = () => {
+    st.hint = '';
+    setHint('idle');
+    st.dirty = true;
+  };
+  window.addEventListener(EVT_PAUSE, refreshStill);
+  if (motionQuery.addEventListener) motionQuery.addEventListener('change', refreshStill);
+  else motionQuery.addListener(refreshStill);
 
   const onIntro = () => {
     if (st.introStart < 0) st.introStart = st.time;
   };
   window.addEventListener(EVT_INTRO, onIntro);
   if (state.introFired) onIntro();
-
-  let resizeTimer;
-  window.addEventListener('resize', () => {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(layout, 120);
-  });
 
   /* ---------- boucle ---------- */
   const tmpQ = new THREE.Quaternion();
@@ -536,8 +569,10 @@ function start() {
   function updatePanels(dt, t) {
     const mt = (t - st.morphStart) / MORPH;
     let done = true;
+    let flashing = false;
+    const calm = still();
     const ex = st.explodeAmt;
-    const driftK = 1 - Math.min(1, ex * 3);
+    const driftK = calm ? 0 : 1 - Math.min(1, ex * 3);
     const charge = st.charge;
     for (let i = 0; i < panels.length; i++) {
       const P = panels[i];
@@ -553,7 +588,7 @@ function start() {
         P.cur.s.lerpVectors(P.from.s, P.to.s, e);
         P.cur.glow = P.from.glow + (P.to.glow - P.from.glow) * e;
       }
-      // écartement (explosion, scroll, survol, intro) + respiration décalée par groupe
+      // écartement (défilement, survol, éclatement, intro) + respiration décalée par groupe
       const amt = Math.max(0, (ex - P.xDelay) / (1 - P.xDelay));
       const burst = amt * 5.2;
       const ph = P.g * (TAU / 3);
@@ -568,18 +603,21 @@ function start() {
       P.mesh.visible = P.cur.s.x > 0.012;
 
       P.flash *= Math.pow(0.92, dt * 60);
+      if (P.flash > 0.01) flashing = true;
       let glow = P.cur.glow;
-      if (P.blink && !st.morphing) glow *= Math.sin(t * TAU * 0.9) > -0.15 ? 1 : 0.06;
-      const em = glow * (0.85 + 0.15 * Math.sin(t * 2 + P.phase)) + P.flash * 1.3 + charge * charge * 0.6;
+      if (P.blink && !st.morphing && !calm) glow *= Math.sin(t * TAU * 0.9) > -0.15 ? 1 : 0.06;
+      const pulse = calm ? 1 : 0.85 + 0.15 * Math.sin(t * 2 + P.phase);
+      const em = glow * pulse + P.flash * 1.3 + charge * charge * 0.6;
       P.mat.emissiveIntensity = Math.min(2.6, em);
       P.mat.envMapIntensity = ENV_BASE + P.flash * 1.4 + charge * 0.8;
     }
     if (st.morphing && done) st.morphing = false;
+    st.flashing = flashing;
   }
 
-  /** Pendant la charge, le titre, la barre de navigation et les indices tremblent. */
+  /** Pendant la charge, le texte du hero, la barre de navigation et la légende tremblent. */
   function vibrateUI(t) {
-    const a = reduce ? 0 : st.vibrate * 2.4;
+    const a = still() ? 0 : st.shake * 2.4;
     if (a > 0.03) {
       st.vibOn = true;
       for (let k = 0; k < vibEls.length; k++) {
@@ -590,136 +628,143 @@ function start() {
     } else if (st.vibOn) {
       st.vibOn = false;
       vibEls.forEach((el) => {
-        el.style.transition = 'transform .7s cubic-bezier(.25,.46,.45,.94)';
+        el.style.transition = `transform ${token('--slow')} ${token('--ease')}`;
         el.style.transform = '';
       });
     }
   }
 
   function update(dt, t) {
+    const calm = still();
     if (st.introStart >= 0) {
-      st.introAmt = reduce ? 0 : 1 - easeOutCubic(clamp((t - st.introStart) / 2.3, 0, 1));
-      st.traceProg = reduce ? 1 : easeInOutCubic(clamp((t - st.introStart - 0.9) / 1.4, 0, 1));
+      st.introAmt = calm ? 0 : 1 - easeOutCubic(clamp((t - st.introStart) / 2.3, 0, 1));
+      st.traceProg = calm ? 1 : easeInOutCubic(clamp((t - st.introStart - 0.9) / 1.4, 0, 1));
+    } else if (calm) {
+      st.introAmt = 0;
+      st.traceProg = 1;
     }
 
+    // le symbole suit le pointeur, sauf quand rien ne doit bouger seul
     const mk = Math.min(1, dt * 4);
-    if (st.hasPointer) {
-      st.mouse.x += (st.ndc.x - st.mouse.x) * mk;
-      st.mouse.y += (st.ndc.y - st.mouse.y) * mk;
-    } else {
-      st.mouse.x += (0 - st.mouse.x) * mk * 0.5;
-      st.mouse.y += (0 - st.mouse.y) * mk * 0.5;
-    }
+    const follow = st.hasPointer && !calm;
+    st.mouse.x += ((follow ? st.ndc.x : 0) - st.mouse.x) * mk * (follow ? 1 : 0.5);
+    st.mouse.y += ((follow ? st.ndc.y : 0) - st.mouse.y) * mk * (follow ? 1 : 0.5);
 
-    projectSymbol();
-    st.overSym = st.hasPointer && !coarse && st.scrollP < 0.1 && Math.hypot(st.px - st.symX, st.py - st.symY) < st.symR;
-    st.hoverAmt += ((st.overSym && !st.holding ? 0.07 : 0) - st.hoverAmt) * Math.min(1, dt * 5);
+    st.overSym = st.onSymbol && !coarse && st.scrollP < 0.1;
+    st.hoverAmt += ((st.overSym && !st.holding && !calm ? 0.07 : 0) - st.hoverAmt) * Math.min(1, dt * 5);
 
-    if (st.holding) {
+    // appui maintenu : charge, puis éclatement
+    if (st.holding && !calm) {
       st.holdTime += dt;
       if (st.holdTime < CHARGE) {
         st.charge = st.holdTime / CHARGE;
-        st.vibrate = 0.25 + st.charge * 0.75;
+        st.shake = 0.25 + st.charge * 0.75;
       } else {
         if (!st.blasted) {
           st.blasted = true;
           st.kick = 1;
-          audio.blast();
           setHint('blast');
         }
         st.charge = Math.max(0, st.charge - dt * 6);
-        st.vibrate *= Math.pow(0.88, dt * 60);
+        st.shake *= Math.pow(0.88, dt * 60);
         st.clickBurst = Math.min(1, st.clickBurst + dt * 1.5);
       }
     } else {
       st.charge = Math.max(0, st.charge - dt * 5);
-      st.vibrate = Math.max(0, st.vibrate - dt * 5);
+      st.shake = Math.max(0, st.shake - dt * 5);
       st.clickBurst = Math.max(0, st.clickBurst - dt * 1.05);
       if (st.hint === 'rollback' && st.clickBurst <= 0.001 && t - st.hintAt > 1.6) setHint('idle');
     }
     st.kick = Math.max(0, st.kick - dt * 2.5);
 
+    const scrollAmt = calm ? 0 : Math.pow(st.scrollP, 1.15);
     const burst = st.scrollP < 0.15 ? st.clickBurst : 0;
-    st.explodeAmt = Math.max(Math.pow(st.scrollP, 1.15), st.hoverAmt, burst, st.introAmt);
+    st.explodeAmt = Math.max(scrollAmt, st.hoverAmt, burst, st.introAmt);
 
     // passage automatique au symbole suivant, seulement quand rien d'autre ne se passe
-    const idle = !st.morphing && !st.holding && st.clickBurst < 0.01 && st.introAmt < 0.03 && st.scrollP < 0.04 && !st.overSym;
+    const idle = !calm && !st.morphing && !st.holding && st.clickBurst < 0.01 && st.introAmt < 0.03 && st.scrollP < 0.04 && !st.overSym;
     if (idle) st.cycleT += dt;
     if (st.cycleT > CYCLE) nextForm();
-    if (figBar) figBar.style.transform = `scaleX(${clamp(st.cycleT / CYCLE, 0, 1).toFixed(3)})`;
+    if (figBar) figBar.style.transform = `scaleX(${calm ? 0 : clamp(st.cycleT / CYCLE, 0, 1).toFixed(3)})`;
 
     updatePanels(dt, t);
 
     const f = FORMS[st.form];
-    if (f.spin) st.rotY += dt * (reduce ? 0.08 : 0.3);
+    let settling = false;
+    if (f.spin && !calm) st.rotY += dt * 0.3;
     else {
-      // symboles plats : on revient de face au tour complet le plus proche
+      // symboles plats, ou rien ne bouge seul : retour de face au tour complet le plus proche
       const k = Math.round(st.rotY / TAU) * TAU;
       st.rotY += (k - st.rotY) * Math.min(1, dt * 2.4);
+      if (Math.abs(k - st.rotY) > 1e-4) settling = true;
     }
-    const sway = f.spin || reduce ? 0 : Math.sin(t * 0.55) * 0.34;
-    const swayX = reduce ? 0 : f.spin ? Math.sin(t * 0.3) * 0.08 : Math.sin(t * 0.42) * 0.1;
+    const sway = f.spin || calm ? 0 : Math.sin(t * 0.55) * 0.34;
+    const swayX = calm ? 0 : f.spin ? Math.sin(t * 0.3) * 0.08 : Math.sin(t * 0.42) * 0.1;
     const kr = Math.min(1, dt * 3.2);
-    group.rotation.x += (swayX - st.mouse.y * 0.3 - group.rotation.x) * kr;
-    group.rotation.y += (st.rotY + sway + st.mouse.x * 0.42 - group.rotation.y) * kr;
+    const targetX = swayX - st.mouse.y * 0.3;
+    const targetY = st.rotY + sway + st.mouse.x * 0.42;
+    group.rotation.x += (targetX - group.rotation.x) * kr;
+    group.rotation.y += (targetY - group.rotation.y) * kr;
+    if (Math.abs(targetX - group.rotation.x) > 1e-4 || Math.abs(targetY - group.rotation.y) > 1e-4 || st.mouse.lengthSq() > 1e-8) settling = true;
+    st.settling = settling;
 
-    const shake = reduce ? 0 : st.vibrate * 0.035 + st.kick * 0.12;
+    const shake = calm ? 0 : st.shake * 0.035 + st.kick * 0.12;
     camera.position.x = (Math.random() - 0.5) * shake;
     camera.position.y = (Math.random() - 0.5) * shake;
     camera.updateMatrixWorld();
 
-    // survol magnétique : le panneau sous le curseur s'illumine
+    // survol : le panneau sous le curseur s'illumine
     if (!coarse && st.hasPointer && st.explodeAmt < 0.08 && !st.morphing && !st.holding) {
       group.updateMatrixWorld();
       raycaster.setFromCamera(st.ndc, camera);
       const hits = raycaster.intersectObjects(st.activeMeshes, false);
       const hit = hits.length ? hits[0].object : null;
       if (hit !== st.hovered) {
-        if (hit) {
-          hit.userData.P.flash = 1;
-          audio.hover();
-        }
+        if (hit) hit.userData.P.flash = 1;
         st.hovered = hit;
       }
     } else st.hovered = null;
 
-    // pistes
+    // pistes : tracé, chaleur, étincelles au survol
     const tracesReady = st.traceProg > 0.99;
+    let heat = false;
     for (let i = 0; i < traces.length; i++) {
       const tr = traces[i];
       tr.geo.setDrawRange(0, Math.floor(tr.count * st.traceProg));
       tr.heat = Math.max(0, tr.heat - dt * 1.6);
+      if (tr.heat > 0) heat = true;
       tr.mat.color.copy(DIM).lerp(HOT, Math.min(1, tr.heat));
     }
     st.weldCd -= dt;
-    if (tracesReady && !coarse && st.hasPointer && !st.holding && st.scrollP < 0.1 && !st.overSym) {
+    if (tracesReady && !coarse && !calm && st.hasPointer && !st.overUI && !st.holding && st.scrollP < 0.1 && !st.overSym) {
       const hit = hitTrace(st.px, st.py);
       if (hit) sparkAt(hit);
       else st.hoverTrace = -1;
     } else if (!coarse) st.hoverTrace = -1;
-    if (coarse && st.burstLeft > 0 && st.hoverTrace >= 0 && st.weldCd <= 0 && st.sparkLocal) {
-      sparkAt({ idx: st.hoverTrace, local: st.sparkLocal });
-    }
+    if (coarse && st.burstLeft > 0 && st.hoverTrace >= 0 && st.weldCd <= 0 && st.sparkLocal) sparkAt({ idx: st.hoverTrace, local: st.sparkLocal });
 
+    let boltsAlive = false;
     for (let i = 0; i < bolts.length; i++) {
       const b = bolts[i];
       if (b.life > 0) {
+        boltsAlive = true;
         b.life -= dt;
         b.mat.opacity = Math.max(0, (b.life / b.max) * (0.55 + Math.random() * 0.45));
         if (b.life <= 0) b.line.visible = false;
       }
     }
+    let packetsAlive = false;
     const parr = pkGeo.attributes.position.array;
     for (let i = 0; i < PK; i++) {
       const pk = packets[i];
       if (pk.alive) {
+        packetsAlive = true;
         pk.s -= pk.speed * dt;
         if (pk.s <= 0) {
           // le paquet atteint le symbole : un panneau s'allume
           pk.alive = false;
           const P = panels[(Math.random() * FORMS[st.form].els.length) | 0];
           if (P) P.flash = 1;
-          audio.tick();
         } else {
           const d = traces[pk.tr].dense[Math.min(traces[pk.tr].dense.length - 1, pk.s | 0)];
           parr[i * 3] = d.x;
@@ -734,6 +779,7 @@ function start() {
       }
     }
     pkGeo.attributes.position.needsUpdate = true;
+    st.active = heat || boltsAlive || packetsAlive || (st.traceProg > 0 && st.traceProg < 1);
 
     // interface : vibration, jauge, curseur, étiquette des pistes
     vibrateUI(t);
@@ -742,11 +788,14 @@ function start() {
     state.setHold(st.holding ? (st.blasted ? 1 : st.charge) : 0);
     state.cursorSym(st.overSym && !st.holding);
     if (tag) {
-      const show = tracesReady && st.scrollP < 0.05 && !st.holding && st.clickBurst < 0.05 && st.introAmt < 0.05;
+      const show = tracesReady && !calm && st.scrollP < 0.05 && !st.holding && st.clickBurst < 0.05 && st.introAmt < 0.05;
       if (show) {
-        const p = toScreen(camera.aspect < 0.95 ? traces[2].pts[1] : traces[1].pts[2], _a);
-        const x = clamp(p.x + 14, 16, st.w - 200);
-        const y = clamp(p.y - 30, 70, st.h - 40);
+        // au bout d'une piste, décalée d'un pas de la grille, sans jamais sortir du hero
+        const portrait = camera.aspect < 0.95;
+        const p = toCanvas(portrait ? traces[2].pts[1] : traces[1].pts[2], _a);
+        const step = tokenPx('--space-2');
+        const x = clamp(p.x + step, step, st.cw - tag.offsetWidth - step);
+        const y = clamp(p.y - tokenPx('--space-4'), step, st.heroH - tokenPx('--space-5'));
         tag.style.transform = `translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0)`;
       }
       if (show !== st.tagOn) {
@@ -756,45 +805,85 @@ function start() {
     }
   }
 
-  // rendu en pause dès que le hero sort de l'écran ou que l'onglet est caché
-  let last = performance.now();
-  function frame(now) {
-    requestAnimationFrame(frame);
-    const dt = clamp((now - last) / 1000, 0, 0.05);
-    last = now;
-    const y = window.scrollY || 0;
-    const visible = !document.hidden && y < st.heroH + 60;
-    if (!visible) {
-      if (!st.hidden) {
-        st.hidden = true;
-        canvas.style.visibility = 'hidden';
-        if (tag) tag.classList.remove('is-on');
-        st.tagOn = false;
-      }
-      return;
-    }
-    if (st.hidden) {
-      st.hidden = false;
-      canvas.style.visibility = '';
-    }
+  /** Quand rien ne bouge seul, on ne redessine que si quelque chose a changé. */
+  const busy = () =>
+    st.dirty || st.morphing || st.holding || st.settling || st.flashing || st.active ||
+    st.charge > 1e-3 || st.clickBurst > 1e-3 || st.kick > 1e-3 || st.introAmt > 1e-3 || st.hoverAmt > 1e-3;
+
+  function tick(dt) {
     st.time += dt;
-    st.scrollP = clamp(y / (st.heroH * 0.85), 0, 1);
+    st.rect = canvas.getBoundingClientRect();
+    st.scrollP = clamp((window.scrollY || 0) / (st.heroH * 0.85), 0, 1);
     update(dt, st.time);
-    renderer.render(scene, camera);
+    if (!still() || busy()) {
+      renderer.render(scene, camera);
+      st.dirty = false;
+    }
   }
 
+  // rendu seulement quand le hero est à l'écran et l'onglet visible
+  let rafId = 0;
+  let last = 0;
+  let onScreen = true;
+  function loop(now) {
+    rafId = requestAnimationFrame(loop);
+    const dt = clamp((now - last) / 1000, 0, 0.05);
+    last = now;
+    tick(dt);
+  }
+  function syncLoop() {
+    const run = onScreen && !document.hidden;
+    if (run && !rafId) {
+      last = performance.now();
+      rafId = requestAnimationFrame(loop);
+    } else if (!run && rafId) {
+      cancelAnimationFrame(rafId);
+      rafId = 0;
+      if (tag) tag.classList.remove('is-on');
+      st.tagOn = false;
+    }
+  }
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(([entry]) => {
+      onScreen = entry.isIntersecting;
+      syncLoop();
+    }).observe(hero);
+  }
+  document.addEventListener('visibilitychange', syncLoop);
+
+  // la taille du hero change avec la fenêtre, le chargement de la police ou la barre d'adresse mobile
+  let layoutQueued = false;
+  const queueLayout = () => {
+    if (layoutQueued) return;
+    layoutQueued = true;
+    requestAnimationFrame(() => {
+      layoutQueued = false;
+      layout();
+    });
+  };
+  if ('ResizeObserver' in window) {
+    const ro = new ResizeObserver(queueLayout);
+    ro.observe(canvas);
+    ro.observe(stage);
+    if (controls) ro.observe(controls);
+  } else window.addEventListener('resize', queueLayout);
+
+  if (symbolBtn) symbolBtn.hidden = false;
+  setHint('idle');
   layout();
   setFormation(0, true);
-  setHint('idle');
+  st.introAmt = still() ? 0 : 1;
+  st.traceProg = still() ? 1 : 0;
   st.explodeAmt = st.introAmt;
   updatePanels(0, 0);
   try {
-    // compile les shaders avant la fin du préchargement pour éviter un à-coup à la première image
+    // compile les shaders avant la fin de l'intro pour éviter un à-coup à la première image
     renderer.compile(scene, camera);
     renderer.render(scene, camera);
   } catch (err) {
+    if (symbolBtn) symbolBtn.hidden = true;
     return signalGlReady(false);
   }
   signalGlReady(true);
-  requestAnimationFrame(frame);
+  syncLoop();
 }
