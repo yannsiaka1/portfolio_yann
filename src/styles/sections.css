@@ -349,14 +349,18 @@ video.browser__shot {
 }
 
 .card__facts li {
-  display: grid;
-  grid-template-columns: var(--list-indent) minmax(0, 1fr);
+  position: relative;
+  padding-left: var(--list-indent);
 }
 
-/* flèche décorative de la première version, tue pour les lecteurs d'écran */
+/* flèche décorative de la première version, tue pour les lecteurs d'écran ; posée dans la marge pour que le texte
+   reste d'un seul tenant, même avec des balises en ligne */
 .card__facts li::before {
   content: "→";
   content: "→" / "";
+  position: absolute;
+  top: 0;
+  left: 0;
   font-family: var(--font-code);
   color: var(--accent);
 }

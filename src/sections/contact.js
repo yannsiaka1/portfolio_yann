@@ -24,7 +24,7 @@ const TEXT = t({
     keys: ['to', 'from', 'name', 'need', 'message'],
     count: (n) => `${n} character${n === 1 ? '' : 's'}, ${MIN_MESSAGE} minimum`,
     name: 'Enter your name.',
-    email: 'Incomplete address. Example: name@domain.com',
+    email: 'Incomplete email address. Example: name@domain.com',
     message: (left) => `Your message needs at least ${MIN_MESSAGE} characters (${left} to go).`,
     fix: 'Fix the highlighted fields, then prepare the email.',
     subject: (need, name) => `${need}, from ${name}`,

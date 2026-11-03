@@ -1,6 +1,7 @@
 // Les deux pages, index.html (français) et en/index.html (anglais), doivent garder la même structure :
 // mêmes balises, dans le même ordre, avec les mêmes identifiants, classes, rôles et liens entre éléments.
 // Seuls changent le texte, les attributs lisibles (alt, aria-label, title, valeurs), la langue et les chemins.
+// Vérifie aussi que la page anglaise, rangée dans en/, vise ses fichiers par ../ et non ./.
 // À lancer après toute modification du contenu : npm run check:i18n
 import { readFileSync } from 'node:fs';
 
@@ -26,11 +27,20 @@ function structure(file) {
 
 const [fr, en] = PAGES.map(structure);
 const problems = [];
+
+// chemins : la page anglaise vit dans en/, ses fichiers sont donc un dossier plus haut (../), jamais ./
+const enHtml = readFileSync(PAGES[1], 'utf8');
+for (const m of enHtml.matchAll(/(?:src|href|poster|srcset)="([^"]*)"/g)) {
+  if (/(^|,\s*)\.\/(?!\/)/.test(m[1])) {
+    problems.push(`  ${PAGES[1]}:${enHtml.slice(0, m.index).split('\n').length}  chemin en ./ à écrire en ../ : ${m[0].slice(0, 90)}`);
+  }
+}
+
 for (let i = 0; i < Math.max(fr.length, en.length) && problems.length < 8; i++) {
   if (fr[i]?.sig !== en[i]?.sig) problems.push(`  ${PAGES[0]}:${fr[i]?.line ?? '-'}  ${fr[i]?.sig ?? '(fin)'}\n  ${PAGES[1]}:${en[i]?.line ?? '-'}  ${en[i]?.sig ?? '(fin)'}`);
 }
 if (problems.length) {
-  console.error(`Structures différentes (${fr.length} et ${en.length} balises). Premiers écarts :\n${problems.join('\n\n')}`);
+  console.error(`Écarts entre les deux pages (${fr.length} et ${en.length} balises) :\n${problems.join('\n\n')}`);
   process.exit(1);
 }
 console.log(`Même structure dans les deux langues : ${fr.length} balises comparées.`);
