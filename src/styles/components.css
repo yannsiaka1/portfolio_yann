@@ -260,17 +260,21 @@
   list-style: none;
 }
 
+/* la puce est posée dans la marge : le texte de la ligne reste d'un seul tenant, même avec des balises en ligne
+   (un nom protégé de la traduction automatique, par exemple) */
 .checks li {
-  display: grid;
-  grid-template-columns: var(--list-indent) minmax(0, 1fr);
+  position: relative;
   max-width: var(--measure);
+  padding-left: var(--list-indent);
 }
 
 .checks li::before {
   content: "";
+  position: absolute;
+  top: calc((var(--lh-body) * 1em - var(--dot)) / 2);
+  left: 0;
   width: var(--dot);
   height: var(--dot);
-  margin-top: calc((var(--lh-body) * 1em - var(--dot)) / 2);
   border-radius: 50%;
   background: var(--accent);
 }
