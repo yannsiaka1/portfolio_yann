@@ -22,6 +22,7 @@ npm run preview   # sert dist/ pour vérifier le build
 index.html                 tout le contenu de la page, balises de partage
 public/favicon.svg
 public/proofs/             pièces justificatives agrandissables : extrait du rapport WES, attestation D-CLIC (720 et 1200 px)
+public/cv/yann-siaka-cv.pdf CV à télécharger (hero, Contact, pied de page), sans numéro de téléphone ; pour le mettre à jour, remplacer ce fichier en gardant son nom
 src/
 ├── main.js                point d'entrée : polices, styles, interface, puis scène 3D chargée à part
 ├── app.js                 assemble l'interface dans le bon ordre
@@ -106,14 +107,14 @@ Les mêmes panneaux de verre se recomposent en sept symboles, environ toutes les
 | Section | Contenu | Animation |
 | --- | --- | --- |
 | Intro | journal de build, compteur | ouverture en huit bandes, une fois par visite |
-| Hero | nom, rôle, accroche, « Voir les projets », GitHub, disponibilité, symbole 3D | lettres qui sortent du flou, symbole qui s'assemble |
+| Hero | nom, rôle, accroche, « Voir les projets », CV à télécharger, GitHub, disponibilité, symbole 3D | lettres qui sortent du flou, symbole qui s'assemble |
 | Bandeau | verbes et outils | défilement infini qui suit la vitesse du scroll |
 | Projets | cinq cartes : Precious, Glorious Hall, EasyTravel, Easy Life (prototype, schéma, jalons), l'ERP de l'IUT (vidéo du prototype) | grand écran : section épinglée, chaque projet arrive par la droite pendant que le précédent bascule à gauche ; ailleurs, cartes empilées qui arrivent par la droite et repartent à gauche |
 | À propos | titre, phrase d'accroche avec mots d'accent, présentation, langues, quatre repères en cartes | phrase éclairée mot par mot, compteurs à rouleaux |
 | Compétences | six couches, de l'analyse du besoin et de la modélisation à la mise en ligne : ce que je sais faire, outils, extrait de code | on parcourt les couches au défilement, une par hauteur d'écran ; sur grand écran, la pile et la progression restent à l'écran et s'allument sur la couche lue, puis la page passe à la suite ; un clic sur la pile mène à sa couche |
 | Méthode | sept étapes, du besoin à la maintenance, lues comme un historique Git (le design et le prototypage avant le développement) | graphe tracé au défilement |
 | Parcours | journal des versions (diplômes, stages, équivalence WES), équivalence avec un extrait du rapport, attestation D-CLIC avec qui contacter pour la faire confirmer, certifications | blocs qui montent |
-| Contact | formulaire qui prépare un courriel, aperçu JSON, courriel direct | aperçu mis à jour à la saisie |
+| Contact | formulaire qui prépare un courriel, aperçu JSON, courriel direct, LinkedIn, GitHub, CV à télécharger | aperçu mis à jour à la saisie |
 | Pied de page | signature, horloges Montréal et Douala | une vague gonfle les lettres de la signature, en boucle, tant qu'elle est à l'écran ; à la souris, graisse et chasse suivent le curseur |
 
 ## Projets présentés
@@ -148,7 +149,6 @@ Pour rafraîchir une capture : construire le site depuis son dépôt (`npm run b
 
 ## À remplacer avant la mise en ligne
 
-- **LinkedIn** : pas affiché tant qu'il n'y a pas d'adresse de profil ; à ajouter dans Contact et le pied de page.
 - **Formulaire de contact** : il ouvre le logiciel de courriel du visiteur (lien mailto:). Pour un envoi direct depuis le site, le brancher sur un service (Formspree, Resend…).
 - **Glorious Hall** : remettre `glorioushall.com` (lien et barre de la maquette) quand le domaine principal sera rétabli.
 - **Prototypes Figma** : les liens « Voir le prototype » ne s'ouvrent pour les visiteurs que si le fichier est partagé en lecture à toute personne qui a le lien.
