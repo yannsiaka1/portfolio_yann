@@ -1,4 +1,4 @@
-/* Composants partagés : bouton, lien, statut, liste d'outils, élément à filet, code, onglets, formulaire, progression. */
+/* Composants partagés : bouton, lien, statut, liste d'outils, élément à filet, code, progression au défilement, formulaire, progression. */
 
 /* ---------- bouton : principal (plein) ou secondaire (contour) ---------- */
 .btn {
@@ -207,6 +207,18 @@
   color: var(--text);
 }
 
+/* à qui écrire pour faire confirmer un document que l'on ne peut pas vérifier soi-même */
+.item__contacts {
+  display: grid;
+  gap: var(--space-1);
+  max-width: var(--measure);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--fs-sm);
+  color: var(--text-2);
+}
+
 /* pièce justificative : extrait d'un document officiel, agrandissable */
 .proof {
   display: grid;
@@ -312,57 +324,38 @@
   overflow-wrap: anywhere;
 }
 
-/* ---------- onglets (Compétences) : sans JavaScript, tous les panneaux restent visibles ---------- */
-.tabs {
-  display: none;
-}
-
-.js .tabs {
+/* ---------- progression d'une section que l'on parcourt au défilement (projets, compétences) ----------
+   « Défilez », une barre qui se remplit et le rang de l'étape ; décorative (aria-hidden), affichée par sa section */
+.scroll-progress {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0 var(--space-3);
-  margin-bottom: var(--space-4);
-  border-bottom: var(--stroke) solid var(--line);
-}
-
-.tabs__tab {
-  min-height: var(--target);
-  margin-bottom: calc(var(--stroke) * -1);
-  border-bottom: var(--stroke-strong) solid transparent;
+  align-items: center;
+  gap: var(--space-2);
+  height: var(--progress-h);
+  margin: 0;
   font-size: var(--fs-sm);
-  font-weight: var(--fw-semibold);
   color: var(--text-2);
-  transition:
-    color var(--fast) var(--ease),
-    border-color var(--fast) var(--ease);
 }
 
-.tabs__tab:hover {
-  color: var(--text);
+.scroll-progress__bar {
+  position: relative;
+  flex: 1;
+  max-width: var(--progress-bar-w);
+  height: var(--stroke-strong);
+  overflow: hidden;
+  background: var(--line-strong);
 }
 
-.tabs__tab[aria-selected="true"] {
-  color: var(--text);
-  border-bottom-color: var(--accent);
+.scroll-progress__bar i {
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
 }
 
-.tabs__panel {
-  display: grid;
-  gap: var(--space-3);
-  align-content: start;
-}
-
-.tabs__panel + .tabs__panel {
-  margin-top: var(--space-6);
-}
-
-.js .tabs__panel + .tabs__panel {
-  margin-top: 0;
-}
-
-.tabs__lead {
-  max-width: var(--measure);
-  color: var(--text-2);
+.scroll-progress__count {
+  font-family: var(--font-code);
+  font-variant-numeric: tabular-nums;
 }
 
 /* ---------- formulaire ---------- */

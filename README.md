@@ -21,6 +21,7 @@ npm run preview   # sert dist/ pour vérifier le build
 ```
 index.html                 tout le contenu de la page, balises de partage
 public/favicon.svg
+public/proofs/             pièces justificatives agrandissables : extrait du rapport WES, attestation D-CLIC (720 et 1200 px)
 src/
 ├── main.js                point d'entrée : polices, styles, interface, puis scène 3D chargée à part
 ├── app.js                 assemble l'interface dans le bon ordre
@@ -37,7 +38,7 @@ src/
 │   ├── pause.js           bouton pause de toutes les animations
 │   ├── clocks.js          horloges Montréal et Douala
 │   └── copy.js            bouton « Copier l'adresse » et son message
-├── sections/              hero, révélations, bandeau, projets (épinglés ou empilés, vidéo de l'ERP), compétences (onglets), méthode, contact, pied de page
+├── sections/              hero, révélations, bandeau, projets (épinglés ou empilés, vidéo de l'ERP), compétences (six couches parcourues au défilement), méthode, contact, pied de page
 ├── hero/
 │   ├── scene.js           scène three.js : rendu, interactions, boucle d'animation
 │   ├── formations.js      les 7 symboles, décrits panneau par panneau
@@ -46,7 +47,7 @@ src/
     ├── tokens.css         la seule source des couleurs, tailles, espacements et rayons
     ├── base.css           remise à zéro, titres, focus, utilitaires
     ├── layout.css         conteneur, barre de navigation, sections, pied de page
-    ├── components.css     bouton, lien, statut, outils, sur-titre, compteur, élément à filet, code, onglets, formulaire, progression
+    ├── components.css     bouton, lien, statut, outils, sur-titre, compteur, élément à filet, code, progression au défilement, formulaire, progression
     ├── chrome.css         intro, curseur et grain
     ├── hero.css           hero et scène 3D
     └── sections.css       bandeau, projets, à propos, compétences, méthode, parcours, contact, signature
@@ -94,7 +95,7 @@ Les mêmes panneaux de verre se recomposent en sept symboles, environ toutes les
 - **Clic maintenu** ou appui long : le symbole éclate, puis se reconstruit au relâchement.
 - **Défilement** : les panneaux s'écartent pendant que la section Projets recouvre le hero.
 - **Pistes du circuit** : les survoler, ou les toucher au doigt, lance des étincelles et envoie des paquets de données vers le symbole.
-- **Pause** : le bouton placé sous le symbole fige tout ce qui bouge seul (scène, bandeau, curseur de l'invite, horloges, grain, vidéo de l'ERP), puis le relance.
+- **Pause** : le bouton placé sous le symbole fige tout ce qui bouge seul (scène, bandeau, curseur de l'invite, horloges, grain, vidéos des prototypes, vague de la signature), puis le relance.
 
 **Placement** : la boîte `.hero__stage` (CSS) décide où se pose le symbole : à droite du nom sur ordinateur, au-dessus sur mobile. Déplacer cette boîte suffit, la scène suit.
 
@@ -109,11 +110,11 @@ Les mêmes panneaux de verre se recomposent en sept symboles, environ toutes les
 | Bandeau | verbes et outils | défilement infini qui suit la vitesse du scroll |
 | Projets | cinq cartes : Precious, Glorious Hall, EasyTravel, Easy Life (prototype, schéma, jalons), l'ERP de l'IUT (vidéo du prototype) | grand écran : section épinglée, chaque projet arrive par la droite pendant que le précédent bascule à gauche ; ailleurs, cartes empilées qui arrivent par la droite et repartent à gauche |
 | À propos | titre, phrase d'accroche avec mots d'accent, présentation, langues, quatre repères en cartes | phrase éclairée mot par mot, compteurs à rouleaux |
-| Compétences | cinq couches, du design et de l'expérience à la mise en ligne : ce que je sais faire, outils, extrait de code | grand écran : section épinglée, le défilement passe d'une couche à l'autre et la pile s'ouvre autour d'elle ; ailleurs, onglets |
+| Compétences | six couches, de l'analyse du besoin et de la modélisation à la mise en ligne : ce que je sais faire, outils, extrait de code | on parcourt les couches au défilement, une par hauteur d'écran ; sur grand écran, la pile et la progression restent à l'écran et s'allument sur la couche lue, puis la page passe à la suite ; un clic sur la pile mène à sa couche |
 | Méthode | sept étapes, du besoin à la maintenance, lues comme un historique Git (le design et le prototypage avant le développement) | graphe tracé au défilement |
-| Parcours | journal des versions (diplômes, stages, équivalence WES), équivalence avec un extrait du rapport, certifications | blocs qui montent |
+| Parcours | journal des versions (diplômes, stages, équivalence WES), équivalence avec un extrait du rapport, attestation D-CLIC avec qui contacter pour la faire confirmer, certifications | blocs qui montent |
 | Contact | formulaire qui prépare un courriel, aperçu JSON, courriel direct | aperçu mis à jour à la saisie |
-| Pied de page | signature, horloges Montréal et Douala | graisse et chasse qui suivent le curseur |
+| Pied de page | signature, horloges Montréal et Douala | une vague gonfle les lettres de la signature, en boucle, tant qu'elle est à l'écran ; à la souris, graisse et chasse suivent le curseur |
 
 ## Projets présentés
 
@@ -134,10 +135,11 @@ Pour rafraîchir une capture : construire le site depuis son dépôt (`npm run b
 ## Accessibilité et performance
 
 - **Objectif WCAG 2.1 AA** : texte à 7:1 au moins, focus visible sur toute cible, navigation complète au clavier, lien d'évitement, cibles de 48 px, page lisible à 320 px de large sans défilement horizontal.
-- **Mouvement réduit** (réglage système, suivi aussi s'il change pendant la visite) : pas d'intro, pas de défilement doux, contenu visible tout de suite, symbole immobile, projets empilés, vidéo et grain à l'arrêt.
+- **Mouvement réduit** (réglage système, suivi aussi s'il change pendant la visite) : pas d'intro, pas de défilement doux, contenu visible tout de suite, symbole immobile, projets empilés, vidéos, grain et signature à l'arrêt.
 - **Pause** : un bouton fige tout ce qui bouge seul (WCAG 2.2.2).
 - **Clavier** : les blocs pas encore révélés restent focalisables ; un élément qui reçoit le focus du clavier est amené à l'écran sous la barre (un clic de souris ne fait jamais défiler la page) ; dans les projets épinglés, sa carte est amenée au repos.
 - **Projets** : épinglés seulement sur un écran d'au moins 1024 × 640 px où chaque carte tient en entier (mesuré au chargement et à chaque redimensionnement : c'est le cas sur les ordinateurs portables courants, jusqu'à une fenêtre de 1280 × 640) ; sinon les cartes s'empilent, et rien n'est jamais coupé. Aux flèches du clavier, un pas suffit pour passer à la carte suivante. La vidéo de l'ERP ne joue que visible, a son propre bouton lecture et pause, et ne se lance jamais seule avec « réduire les animations ».
+- **Compétences** : les six couches sont toutes dans la page, chacune avec son titre de niveau 3 ; la pile isométrique est décorative. Sur grand écran, elle reste à l'écran par une simple position collante, sans épinglage : rien n'est coupé, quelle que soit la hauteur de l'écran.
 - **Code** : les lignes trop longues passent à la ligne, aucune zone ne défile à l'horizontale.
 - **Sans WebGL 2** : un symbole `</>` dessiné en SVG remplace la scène, le reste du site fonctionne.
 - **Mobile** : matériau métal à la place du verre réfractif, résolution limitée, interactions au toucher.

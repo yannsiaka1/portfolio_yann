@@ -137,19 +137,19 @@
   --ratio-video: 1320 / 932; /* vidéo du prototype de l'ERP */
   --ratio-visual: 4 / 3; /* visuel d'un projet quand la carte est en colonne */
   --visual-min-h: 26rem; /* visuel d'un projet à côté du texte */
-  --progress-h: var(--space-5); /* barre « Défilez » sous les projets épinglés */
+  --progress-h: var(--space-5); /* barre « Défilez » des sections parcourues au défilement (projets, compétences) */
   --deck-h: calc(100svh - var(--header-h) - var(--progress-h)); /* fenêtre des projets épinglés, sous la barre et au-dessus de la progression */
   --deck-perspective: 100rem;
-  --progress-bar-w: 17.5rem; /* barre « Défilez » des projets épinglés */
+  --progress-bar-w: 17.5rem; /* longueur de la barre « Défilez » */
   --device-tilt: 4deg; /* téléphones inclinés de la maquette d'Easy Life */
-  --iso-spread: var(--space-4); /* écart ajouté de part et d'autre de la couche choisie */
+  --iso-spread: var(--space-3); /* écart ajouté de part et d'autre de la couche choisie */
 
   /* ---------- pile isométrique, phrase d'accroche, signature ---------- */
   --iso-size: 30rem; /* pile des compétences dès 1024 px */
   --iso-size-sm: 20rem; /* pile sous 1024 px */
   --iso-perspective: 120rem;
   --iso-tilt: rotateX(57deg) rotateZ(-38deg);
-  --iso-mid: 2; /* rang de la couche du milieu (cinq couches, de 0 à 4) : la pile s'écarte autour de lui */
+  --iso-mid: 2.5; /* milieu de la pile (six couches, de 0 à 5) : la pile s'écarte autour de lui */
   --ratio-square: 1;
   --statement-measure: 24em; /* la phrase d'accroche tient en trois ou quatre lignes */
   --signature-gap: 0.25em;

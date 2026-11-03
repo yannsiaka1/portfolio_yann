@@ -1,138 +1,82 @@
-// Compétences : onglets accessibles (flèches, Début, Fin) synchronisés avec la pile isométrique.
-// Sur grand écran, si la couche la plus haute tient dans l'écran, la section s'épingle et le défilement passe
-// d'une couche à l'autre (comme les services de Glorious Hall) ; un onglet cliqué amène la page à sa couche.
-// Ailleurs, ou avec « réduire les animations », les onglets seuls. Sans JavaScript, tous les panneaux restent visibles.
+// Compétences : six couches, de l'analyse du besoin à la mise en ligne, qui se suivent dans la page.
+// La couche lue est celle qui passe au milieu de l'écran : son filet passe à l'accent et la pile isométrique
+// s'ouvre autour d'elle. Sur grand écran, la pile et la progression restent à l'écran (position collante) pendant
+// qu'on parcourt les couches, puis la page passe à la section suivante. Un clic sur une couche de la pile amène
+// la page à son panneau. Aucun épinglage ni contenu masqué : quelle que soit la hauteur de l'écran, tout reste
+// lisible, au clavier comme au lecteur d'écran (titres de niveau 3).
 import { gsap, ScrollTrigger } from '../core/gsap.js';
-import { $, $$, reduced, motionQuery, token, tokenPx } from '../core/env.js';
+import { $, $$, reduced, token } from '../core/env.js';
 import { scrollToY } from '../core/scroll.js';
 
-const PIN_QUERY = '(min-width: 64rem) and (min-height: 40rem)';
-const STEP = 0.6; // défilement consacré à une couche, en hauteurs d'écran
-
 export function initSkills() {
-  const tablist = $('.tabs[role="tablist"]');
-  if (!tablist) return;
   const section = $('#competences');
-  const block = $('.skills', section);
-  const tabs = $$('[role="tab"]', tablist);
-  const panels = tabs.map((tab) => document.getElementById(tab.getAttribute('aria-controls')));
-  const layers = $$('.iso__layer');
+  if (!section) return;
+  const panels = $$('.skills__panel', section);
+  const layers = $$('.iso__layer', section);
   const scene = $('#isoScene');
-  const pinQuery = window.matchMedia(PIN_QUERY);
-  let current = 0;
-  let pin = null; // ScrollTrigger quand la section est épinglée
-  let target = null; // couche visée par un clic : les couches traversées pour y aller ne s'affichent pas
+  const bar = $('#skillsBar');
+  const count = $('#skillsCount');
+  const zone = $('.skills__layers', section);
+  const header = $('.site-header');
+  const headerH = () => (header ? header.offsetHeight : 0);
+  const total = panels.length;
+  const pad = (n) => String(n).padStart(2, '0');
+  let current = -1;
 
-  const select = (index, focus = false) => {
-    const changed = index !== current;
+  const select = (index) => {
+    if (index === current || !panels[index]) return;
     current = index;
-    tabs.forEach((tab, i) => {
-      const on = i === index;
-      tab.setAttribute('aria-selected', String(on));
-      tab.tabIndex = on ? 0 : -1;
-      if (panels[i]) panels[i].hidden = !on;
-    });
+    panels.forEach((panel, i) => panel.classList.toggle('is-current', i === index));
     layers.forEach((layer) => {
       const on = Number(layer.dataset.layer) === index;
       layer.classList.toggle('is-active', on);
       if (on && scene) scene.style.setProperty('--active-z', layer.style.getPropertyValue('--z'));
     });
-    if (focus) tabs[index].focus();
-    if (changed && !reduced() && panels[index]) {
-      gsap.fromTo(panels[index].children, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: parseFloat(token('--slow')), ease: 'expo.out', stagger: 0.05 });
-    }
+    if (count) count.textContent = `${pad(index + 1)} / ${pad(total)}`;
   };
 
-  /** Choisit une couche ; épinglée, la page défile jusqu'à elle. */
-  const choose = (index, focus = false) => {
-    select(index, focus);
-    if (!pin) return;
-    target = index;
-    const n = tabs.length;
-    scrollToY(pin.start + ((index + 0.5) / n) * (pin.end - pin.start), 0.8);
-  };
-
-  tabs.forEach((tab, i) => {
-    tab.addEventListener('click', () => choose(i));
-    tab.addEventListener('keydown', (e) => {
-      const last = tabs.length - 1;
-      let next = null;
-      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') next = i === last ? 0 : i + 1;
-      else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') next = i === 0 ? last : i - 1;
-      else if (e.key === 'Home') next = 0;
-      else if (e.key === 'End') next = last;
-      if (next === null) return;
-      e.preventDefault();
-      choose(next, true);
+  // la couche lue : celle qui traverse le milieu de l'écran
+  panels.forEach((panel, i) => {
+    ScrollTrigger.create({
+      trigger: panel,
+      start: 'top 50%',
+      end: 'bottom 50%',
+      onToggle: (self) => {
+        if (self.isActive) select(i);
+      },
     });
   });
-  layers.forEach((layer) => layer.addEventListener('click', () => choose(Number(layer.dataset.layer))));
   select(0);
 
-  // la pile s'écarte quand la section arrive à l'écran
+  // la barre « Défilez » se remplit du haut de la première couche (sous la barre du site) au bas de la dernière
+  if (bar && zone) {
+    ScrollTrigger.create({
+      trigger: zone,
+      start: () => `top ${headerH()}px`,
+      end: 'bottom bottom',
+      invalidateOnRefresh: true,
+      onUpdate: (self) => {
+        bar.style.transform = `scaleX(${self.progress.toFixed(3)})`;
+      },
+    });
+  }
+
+  // une couche de la pile cliquée amène la page à son panneau, au ras de la barre du site
+  // (position lue sans les transformations : un panneau pas encore révélé est décalé de sa révélation)
+  const docTop = (el) => {
+    let y = 0;
+    for (let node = el; node; node = node.offsetParent) y += node.offsetTop;
+    return y;
+  };
+  layers.forEach((layer) =>
+    layer.addEventListener('click', () => {
+      const panel = panels[Number(layer.dataset.layer)];
+      if (panel) scrollToY(docTop(panel) - headerH(), 0.9);
+    }),
+  );
+
+  // la pile s'écarte quand elle arrive à l'écran
   if (scene && !reduced()) {
-    gsap.fromTo(scene, { '--gap': token('--space-1') }, { '--gap': token('--space-6'), duration: 1.6, ease: 'expo.out', scrollTrigger: { trigger: scene, start: 'top 80%', once: true } });
+    gsap.fromTo(scene, { '--gap': token('--space-1') }, { '--gap': token('--space-5'), duration: 1.6, ease: 'expo.out', scrollTrigger: { trigger: scene, start: 'top 80%', once: true } });
   }
-
-  /* ---------- épinglage : une couche par tranche de défilement ---------- */
-  const header = $('.site-header');
-  const top = () => (header ? header.offsetHeight : 0) + tokenPx('--space-4');
-
-  /** La couche la plus haute (onglets compris) et la pile tiennent-elles dans l'écran ? */
-  function fits() {
-    const shown = panels.map((p) => p.hidden);
-    panels.forEach((p) => (p.hidden = false));
-    const tallest = Math.max(...panels.map((p) => p.offsetHeight));
-    panels.forEach((p, i) => (p.hidden = shown[i]));
-    const tabsH = tablist.offsetHeight + tokenPx('--space-4');
-    const isoH = $('.iso', block) ? $('.iso', block).offsetHeight : 0;
-    return Math.max(tabsH + tallest, isoH) <= window.innerHeight - top() - tokenPx('--space-4');
-  }
-
-  function teardown() {
-    if (pin) pin.kill(true);
-    pin = null;
-    section.classList.remove('is-pinned');
-  }
-
-  function setup() {
-    const want = !reduced() && pinQuery.matches && fits();
-    if (want === !!pin) return;
-    teardown();
-    if (want) {
-      section.classList.add('is-pinned');
-      const n = tabs.length;
-      pin = ScrollTrigger.create({
-        trigger: block,
-        start: () => `top ${top()}px`,
-        end: () => `+=${Math.round(n * STEP * window.innerHeight)}`,
-        pin: true,
-        invalidateOnRefresh: true,
-        anticipatePin: 1,
-        refreshPriority: 1,
-        onUpdate: (self) => {
-          const i = Math.min(n - 1, Math.floor(self.progress * n));
-          if (target !== null) {
-            if (i === target) target = null; // arrivé
-            return;
-          }
-          if (i !== current) select(i);
-        },
-      });
-    }
-    ScrollTrigger.sort();
-    ScrollTrigger.refresh();
-  }
-
-  const ready = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
-  ready.then(setup);
-  let timer;
-  window.addEventListener('resize', () => {
-    clearTimeout(timer);
-    timer = setTimeout(setup, 250);
-  });
-  pinQuery.addEventListener('change', setup);
-  motionQuery.addEventListener('change', setup);
-  // un défilement par la molette annule une couche visée par un clic qui n'aurait pas été atteinte
-  window.addEventListener('wheel', () => (target = null), { passive: true });
 }

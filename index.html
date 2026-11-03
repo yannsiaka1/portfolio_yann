@@ -397,7 +397,7 @@
           </li>
         </ul>
       </div>
-      <p class="projects__progress container" aria-hidden="true"><span>Défilez</span><span class="projects__bar"><i id="projectsBar"></i></span><span class="projects__count" id="projectsCount">01 / 05</span></p>
+      <p class="scroll-progress projects__progress container" aria-hidden="true"><span>Défilez</span><span class="scroll-progress__bar"><i id="projectsBar"></i></span><span class="scroll-progress__count" id="projectsCount">01 / 05</span></p>
     </div>
   </section>
 
@@ -449,39 +449,52 @@
       <div class="section-head">
         <p class="eyebrow" id="competences-label">Compétences</p>
         <h2 id="competences-title" data-reveal="words">Toute la pile, <em>couche par couche.</em></h2>
-        <p class="section-head__intro">Ce que je sais faire à chaque couche, du design à la mise en ligne, avec les outils que j’utilise vraiment. Langages&nbsp;: PHP, JavaScript, TypeScript, Python, SQL, HTML et CSS.</p>
+        <p class="section-head__intro">Ce que je sais faire à chaque couche, de l’analyse du besoin à la mise en ligne, avec les outils que j’utilise vraiment. Langages&nbsp;: PHP, JavaScript, TypeScript, Python, SQL, HTML et CSS.</p>
       </div>
       <div class="skills">
-        <div class="iso" aria-hidden="true">
-          <div class="iso__scene" id="isoScene">
-            <div class="iso__layer" style="--z: 0" data-layer="4"><span class="iso__label">Outils et mise en ligne</span></div>
-            <div class="iso__layer" style="--z: 1" data-layer="3"><span class="iso__label">Données</span></div>
-            <div class="iso__layer" style="--z: 2" data-layer="2"><span class="iso__label">API et back-end</span></div>
-            <div class="iso__layer" style="--z: 3" data-layer="1"><span class="iso__label">Interface</span></div>
-            <div class="iso__layer is-active" style="--z: 4" data-layer="0"><span class="iso__label">Design et expérience</span></div>
+        <div class="skills__aside" aria-hidden="true">
+          <div class="iso">
+            <div class="iso__scene" id="isoScene">
+              <div class="iso__layer" style="--z: 0" data-layer="5"><span class="iso__label">Outils et mise en ligne</span></div>
+              <div class="iso__layer" style="--z: 1" data-layer="4"><span class="iso__label">Données</span></div>
+              <div class="iso__layer" style="--z: 2" data-layer="3"><span class="iso__label">API et back-end</span></div>
+              <div class="iso__layer" style="--z: 3" data-layer="2"><span class="iso__label">Interface</span></div>
+              <div class="iso__layer" style="--z: 4" data-layer="1"><span class="iso__label">Design et expérience</span></div>
+              <div class="iso__layer is-active" style="--z: 5" data-layer="0"><span class="iso__label">Analyse et modélisation</span></div>
+            </div>
           </div>
+          <p class="scroll-progress skills__progress"><span>Défilez</span><span class="scroll-progress__bar"><i id="skillsBar"></i></span><span class="scroll-progress__count" id="skillsCount">01 / 06</span></p>
         </div>
-        <div class="skills__main">
-          <div class="tabs" role="tablist" aria-label="Couches de compétences">
-            <button class="tabs__tab" role="tab" type="button" id="tab-design" aria-controls="panel-design" aria-selected="true">Design et UX</button>
-            <button class="tabs__tab" role="tab" type="button" id="tab-interface" aria-controls="panel-interface" aria-selected="false" tabindex="-1">Interface</button>
-            <button class="tabs__tab" role="tab" type="button" id="tab-api" aria-controls="panel-api" aria-selected="false" tabindex="-1">API et back-end</button>
-            <button class="tabs__tab" role="tab" type="button" id="tab-donnees" aria-controls="panel-donnees" aria-selected="false" tabindex="-1">Données</button>
-            <button class="tabs__tab" role="tab" type="button" id="tab-outils" aria-controls="panel-outils" aria-selected="false" tabindex="-1">Outils et mise en ligne</button>
-          </div>
-
-          <div class="tabs__panel" role="tabpanel" id="panel-design" aria-labelledby="tab-design" tabindex="0">
-            <h3>Design et expérience</h3>
-            <p class="tabs__lead">Ce qu’on imagine avant de coder&nbsp;: des parcours simples et des écrans pensés pour ceux qui les utilisent.</p>
+        <div class="skills__layers">
+          <div class="skills__panel" id="couche-analyse" data-layer="0">
+            <h3>Analyse et modélisation</h3>
+            <p class="skills__lead">Ce qu’on comprend avant de dessiner&nbsp;: le besoin du client, traduit en modèles que toute l’équipe peut lire.</p>
             <ul class="checks" role="list">
-              <li>Partir du besoin&nbsp;: qui utilise le service, pour faire quoi, sur quel appareil</li>
-              <li>Dessiner les parcours, puis les maquettes et un prototype cliquable dans Figma</li>
-              <li>Décliner un design system&nbsp;: couleurs, typographie, composants, thème clair et sombre</li>
-              <li>Vérifier la lisibilité et l’accessibilité&nbsp;: contrastes, tailles, clavier, mobile d’abord</li>
-              <li>Décrire les cas d’utilisation en UML avant de passer au code</li>
+              <li>Écouter le client&nbsp;: le problème à résoudre, qui utilise le service, pour faire quoi, sur quel appareil</li>
+              <li>Analyser l’existant avant de proposer une solution</li>
+              <li>Modéliser en UML&nbsp;: cas d’utilisation, classes et séquences</li>
+              <li>Découper le besoin en jalons et en tâches, pour que chacun sache ce qui vient ensuite</li>
             </ul>
             <ul class="tools" role="list" aria-label="Outils">
-              <li>Figma</li><li>UML</li>
+              <li>UML</li><li>GitHub Projects</li>
+            </ul>
+<pre class="code"><code><span class="c"># récit utilisateur, Easy Life</span>
+<span class="k">En tant que</span> voyageur,
+<span class="k">je veux</span> réserver ma place et payer par Mobile Money
+<span class="k">afin de</span> recevoir mon e-billet QR sans passer au guichet.</code></pre>
+          </div>
+
+          <div class="skills__panel" id="couche-design" data-layer="1">
+            <h3>Design et expérience</h3>
+            <p class="skills__lead">Ce qu’on imagine avant de coder&nbsp;: des parcours simples et des écrans pensés pour ceux qui les utilisent.</p>
+            <ul class="checks" role="list">
+              <li>Dessiner les parcours, puis les maquettes et un prototype cliquable dans Figma</li>
+              <li>Simplifier chaque étape&nbsp;: un accueil guidé, puis une inscription en un seul formulaire</li>
+              <li>Décliner un design system&nbsp;: couleurs, typographie, composants, thème clair et sombre</li>
+              <li>Vérifier la lisibilité et l’accessibilité&nbsp;: contrastes, tailles, clavier, mobile d’abord</li>
+            </ul>
+            <ul class="tools" role="list" aria-label="Outils">
+              <li>Figma</li>
             </ul>
 <pre class="code"><code><span class="c">/* deux thèmes, un seul jeu de jetons */</span>
 :root {
@@ -492,9 +505,9 @@
 [<span class="k">data-theme</span>=<span class="s">"dark"</span>] { --bg: var(--navy); }</code></pre>
           </div>
 
-          <div class="tabs__panel" role="tabpanel" id="panel-interface" aria-labelledby="tab-interface" tabindex="0">
+          <div class="skills__panel" id="couche-interface" data-layer="2">
             <h3>Interface</h3>
-            <p class="tabs__lead">Ce que l’on touche&nbsp;: des écrans rapides, lisibles et accessibles.</p>
+            <p class="skills__lead">Ce que l’on touche&nbsp;: des écrans rapides, lisibles et accessibles.</p>
             <ul class="checks" role="list">
               <li>Intégrer une maquette Figma en composants React réutilisables et responsives</li>
               <li>Brancher une interface sur une API REST&nbsp;: authentification, chargement, erreurs</li>
@@ -514,9 +527,9 @@
 }</code></pre>
           </div>
 
-          <div class="tabs__panel" role="tabpanel" id="panel-api" aria-labelledby="tab-api" tabindex="0">
+          <div class="skills__panel" id="couche-api" data-layer="3">
             <h3>API et back-end</h3>
-            <p class="tabs__lead">Ce qui répond&nbsp;: des règles métier côté serveur, jamais dans l’interface.</p>
+            <p class="skills__lead">Ce qui répond&nbsp;: des règles métier côté serveur, jamais dans l’interface.</p>
             <ul class="checks" role="list">
               <li>Concevoir une API REST avec Laravel&nbsp;: routes, contrôleurs minces, validation, ressources JSON</li>
               <li>Sécuriser l’accès&nbsp;: jetons Sanctum, rôles et autorisations</li>
@@ -534,9 +547,9 @@
 }</code></pre>
           </div>
 
-          <div class="tabs__panel" role="tabpanel" id="panel-donnees" aria-labelledby="tab-donnees" tabindex="0">
+          <div class="skills__panel" id="couche-donnees" data-layer="4">
             <h3>Données</h3>
-            <p class="tabs__lead">Ce qui se souvient&nbsp;: je modélise avant de coder.</p>
+            <p class="skills__lead">Ce qui se souvient&nbsp;: je modélise avant de coder.</p>
             <ul class="checks" role="list">
               <li>Modéliser une base relationnelle&nbsp;: schéma DBML, contraintes, index</li>
               <li>Écrire des migrations ordonnées et réversibles</li>
@@ -556,9 +569,9 @@
 }</code></pre>
           </div>
 
-          <div class="tabs__panel" role="tabpanel" id="panel-outils" aria-labelledby="tab-outils" tabindex="0">
+          <div class="skills__panel" id="couche-outils" data-layer="5">
             <h3>Outils et mise en ligne</h3>
-            <p class="tabs__lead">Ce qui tient en ligne&nbsp;: un travail suivi, versionné et déployé proprement.</p>
+            <p class="skills__lead">Ce qui tient en ligne&nbsp;: un travail suivi, versionné et déployé proprement.</p>
             <ul class="checks" role="list">
               <li>Versionner avec Git et GitHub&nbsp;: branches, pull requests, revues</li>
               <li>Organiser le travail en Scrum ou Kanban, sur GitHub Projects ou Trello</li>
@@ -717,7 +730,7 @@
                   <img src="./proofs/wes-extrait-720.webp" srcset="./proofs/wes-extrait-720.webp 720w, ./proofs/wes-extrait-1200.webp 1200w" sizes="(min-width: 64rem) 40vw, 90vw" width="1200" height="844" alt="Extrait du rapport WES pour IRCC : équivalence canadienne, baccalauréat de quatre ans. Diplôme : licence de technologie (Bachelor of Technology), 2025, Université de Douala, établissement reconnu, spécialité génie logiciel." loading="lazy" decoding="async">
                   <span class="sr-only"> (agrandir l’extrait, nouvel onglet)</span>
                 </a>
-                <figcaption>Extrait du rapport du 25 septembre 2026, sans la date de naissance ni les numéros de dossier.</figcaption>
+                <figcaption>Extrait du rapport du 25 septembre 2026.</figcaption>
               </figure>
               <p class="item__code">Pour le vérifier, WES envoie le rapport officiel directement à l’employeur ou à l’école, à ma demande.</p>
             </li>
@@ -730,7 +743,19 @@
               <h4>Développement web</h4>
               <p class="status status--live">Obtenue en 2025</p>
               <p>Organisation internationale de la Francophonie, programme D-CLIC, avec IncH Class et Simplon&nbsp;: 720 heures en présentiel, de janvier à mai 2025. Maquettage, interfaces statiques et dynamiques, base de données, back-end.</p>
-              <p class="item__code">Code de l’attestation&nbsp;: <code>C03riDduB5</code>. La plateforme D-CLIC réserve la vérification à ses gestionnaires&nbsp;: l’OIF ou IncH Class la confirment sur demande, avec ce code.</p>
+              <figure class="proof">
+                <a class="proof__link" href="./proofs/dclic-attestation-1200.webp" target="_blank" rel="noopener">
+                  <img src="./proofs/dclic-attestation-720.webp" srcset="./proofs/dclic-attestation-720.webp 720w, ./proofs/dclic-attestation-1200.webp 1200w" sizes="(min-width: 64rem) 40vw, 90vw" width="1200" height="841" alt="Attestation de réussite D-CLIC : l’Organisation internationale de la Francophonie et IncH Class (Simplon) attestent que Yann Johan Siaka Siaka a suivi et validé, du 6 janvier au 9 mai 2025, le cursus Développement web de 720 heures en présentiel. Douala, le 20 mai 2025 ; code C03riDduB5 et QR code de vérification." loading="lazy" decoding="async">
+                  <span class="sr-only"> (agrandir l’attestation, nouvel onglet)</span>
+                </a>
+                <figcaption>Attestation de réussite du 20 mai 2025.</figcaption>
+              </figure>
+              <p class="item__code">Code de l’attestation&nbsp;: <code>C03riDduB5</code>. La vérification en ligne, par le QR code, est réservée aux gestionnaires de la plateforme D-CLIC. Pour une confirmation, écrivez avec ce code et le nom Yann Johan Siaka Siaka&nbsp;:</p>
+              <ul class="item__contacts" role="list">
+                <li>Équipe D-CLIC de l’OIF&nbsp;: <a class="link" href="mailto:dclic@francophonie.org?subject=V%C3%A9rification%20d%E2%80%99une%20attestation%20D-CLIC%20%28C03riDduB5%29&amp;body=Bonjour%2C%0A%0APouvez-vous%20confirmer%20l%E2%80%99attestation%20de%20r%C3%A9ussite%20%C2%AB%20D%C3%A9veloppement%20web%20%C2%BB%20%28D-CLIC%2C%20720%20heures%2C%20du%206%20janvier%20au%209%20mai%202025%29%20d%C3%A9livr%C3%A9e%20le%2020%20mai%202025%20%C3%A0%20Yann%20Johan%20Siaka%20Siaka%2C%20code%20C03riDduB5%20%3F%0A%0AMerci.">dclic@francophonie.org</a></li>
+                <li>IncH Class, l’organisme de formation, à Douala&nbsp;: <a class="link" href="mailto:info@inchclass.org?subject=V%C3%A9rification%20d%E2%80%99une%20attestation%20D-CLIC%20%28C03riDduB5%29&amp;body=Bonjour%2C%0A%0APouvez-vous%20confirmer%20l%E2%80%99attestation%20de%20r%C3%A9ussite%20%C2%AB%20D%C3%A9veloppement%20web%20%C2%BB%20%28D-CLIC%2C%20720%20heures%2C%20du%206%20janvier%20au%209%20mai%202025%29%20d%C3%A9livr%C3%A9e%20le%2020%20mai%202025%20%C3%A0%20Yann%20Johan%20Siaka%20Siaka%2C%20code%20C03riDduB5%20%3F%0A%0AMerci.">info@inchclass.org</a></li>
+              </ul>
+              <a class="link link--standalone ext" href="https://dclic.francophonie.org/mod/customcert/verify_certificate.php?code=C03riDduB5&amp;qrcode=1" target="_blank" rel="noopener">Page de vérification D-CLIC<span class="sr-only"> (réservée aux gestionnaires, nouvel onglet)</span></a>
             </li>
             <li class="item">
               <h4>Claude 101</h4>

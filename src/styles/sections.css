@@ -530,34 +530,6 @@ video.browser__shot {
 
 .is-deck .projects__progress {
   display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  height: var(--progress-h);
-  margin: 0;
-  font-size: var(--fs-sm);
-  color: var(--text-2);
-}
-
-.projects__bar {
-  position: relative;
-  flex: 1;
-  max-width: var(--progress-bar-w);
-  height: var(--stroke-strong);
-  overflow: hidden;
-  background: var(--line-strong);
-}
-
-.projects__bar i {
-  position: absolute;
-  inset: 0;
-  background: var(--accent);
-  transform: scaleX(0);
-  transform-origin: left;
-}
-
-.projects__count {
-  font-family: var(--font-code);
-  font-variant-numeric: tabular-nums;
 }
 
 /* ---------- à propos ---------- */
@@ -681,15 +653,48 @@ video.browser__shot {
   }
 }
 
-/* ---------- compétences : la pile interface → API → données → mise en ligne ---------- */
+/* ---------- compétences : six couches, de l'analyse du besoin à la mise en ligne ----------
+   Les panneaux se suivent dans la page ; sur grand écran, la pile reste à l'écran pendant qu'on les parcourt
+   et s'allume sur la couche lue (src/sections/skills.js). Sans JavaScript, tout reste lisible. */
 .skills {
   display: grid;
   gap: var(--space-5);
   align-items: start;
 }
 
-.skills__main {
+.skills__aside {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-3);
+}
+
+.skills__progress {
+  display: none;
+}
+
+.skills__layers {
+  display: grid;
   min-width: 0;
+}
+
+/* un filet relie les couches ; celui de la couche lue passe à l'accent */
+.skills__panel {
+  display: grid;
+  gap: var(--space-3);
+  align-content: center;
+  padding-block: var(--space-5);
+  padding-left: var(--space-4);
+  border-left: var(--stroke-strong) solid var(--line);
+  transition: border-color var(--slow) var(--ease);
+}
+
+.skills__panel.is-current {
+  border-left-color: var(--accent);
+}
+
+.skills__lead {
+  max-width: var(--measure);
+  color: var(--text-2);
 }
 
 .iso {
@@ -701,7 +706,7 @@ video.browser__shot {
 }
 
 .iso__scene {
-  --gap: var(--space-6);
+  --gap: var(--space-5);
   position: absolute;
   inset: 0;
   transform: var(--iso-tilt);
@@ -737,11 +742,11 @@ video.browser__shot {
   box-shadow: 0 0 var(--space-7) var(--accent-glow);
 }
 
-/* étiquettes décoratives (la pile est aria-hidden, les onglets portent l'information) */
+/* étiquettes décoratives (la pile est aria-hidden, les titres des panneaux portent l'information) */
 .iso__label {
   position: absolute;
-  left: 9%;
-  bottom: 9%;
+  left: 8%;
+  bottom: 4%; /* au ras du bord avant : la bande que la couche du dessus laisse voir */
   font-size: var(--fs-lg);
   font-weight: var(--fw-semibold);
   color: var(--text-2);
@@ -758,15 +763,33 @@ video.browser__shot {
   }
 }
 
+/* grand écran : la pile et la progression restent à l'écran, centrées sous la barre, tant qu'il reste des couches ;
+   chaque panneau occupe la hauteur de l'écran, si bien qu'on lit une couche à la fois */
 @media (min-width: 64rem) {
   .skills {
     grid-template-columns: 5fr 7fr;
     gap: var(--space-6);
   }
 
-  .iso {
+  .skills__aside {
     position: sticky;
-    top: calc(var(--header-h) + var(--space-5));
+    top: var(--header-h);
+    height: calc(100svh - var(--header-h));
+    align-content: center;
+  }
+
+  .iso {
+    width: min(100%, var(--iso-size), calc(100svh - var(--header-h) - var(--progress-h) - var(--space-7)));
+  }
+
+  .skills__progress {
+    display: flex;
+    justify-self: stretch;
+    justify-content: center;
+  }
+
+  .skills__panel {
+    min-height: calc(100svh - var(--header-h));
   }
 }
 
@@ -1067,7 +1090,7 @@ video.browser__shot {
   }
 }
 
-/* ---------- signature du pied de page : graisse et chasse suivent le curseur ---------- */
+/* ---------- signature du pied de page : une vague la parcourt tant qu'elle est à l'écran ; graisse et chasse suivent le curseur ---------- */
 .signature {
   display: flex;
   flex-wrap: wrap;
@@ -1098,4 +1121,9 @@ video.browser__shot {
 
 .signature .ch.is-hot {
   color: var(--accent);
+}
+
+/* la vague qui parcourt la signature est calculée à chaque image : pas de transition qui la retarderait */
+.signature.is-waving .ch {
+  transition: color var(--fast) var(--ease);
 }

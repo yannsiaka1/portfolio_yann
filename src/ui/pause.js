@@ -1,5 +1,5 @@
 // Bouton pause du hero : fige tout ce qui bouge ou change seul (scène 3D, bandeau, curseur de l'invite,
-// horloges) — WCAG 2.2.2.
+// horloges, grain, vidéos des prototypes, vague de la signature) — WCAG 2.2.2.
 // Masqué avec « réduire les animations », puisque rien ne bouge alors seul ; suivi en cours de visite.
 import { $, motionQuery } from '../core/env.js';
 import { state, setPaused } from '../core/state.js';
