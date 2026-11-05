@@ -44,7 +44,7 @@ const HINTS = t({
     still: 'Click the symbol to see the next one.',
     stillTouch: 'Tap the symbol to see the next one.',
     charge: '<code>deploy --force</code> running…',
-    blast: 'Everything is broken. Let go for a <b>rollback</b>.',
+    blast: 'Everything is broken. Release to <b>roll back</b>.',
     rollback: '<b>Rollback</b> done, everything is back in order.',
     touchTrace: 'Tap a trace',
   },

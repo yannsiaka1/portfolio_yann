@@ -349,14 +349,18 @@ video.browser__shot {
 }
 
 .card__facts li {
-  display: grid;
-  grid-template-columns: var(--list-indent) minmax(0, 1fr);
+  position: relative;
+  padding-left: var(--list-indent);
 }
 
-/* flèche décorative de la première version, tue pour les lecteurs d'écran */
+/* flèche décorative de la première version, tue pour les lecteurs d'écran ; posée dans la marge pour que le texte
+   reste d'un seul tenant, même avec des balises en ligne */
 .card__facts li::before {
   content: "→";
   content: "→" / "";
+  position: absolute;
+  top: 0;
+  left: 0;
   font-family: var(--font-code);
   color: var(--accent);
 }
@@ -1135,6 +1139,21 @@ video.browser__shot {
 }
 
 /* la vague qui parcourt la signature est calculée à chaque image : pas de transition qui la retarderait */
+.signature.is-waving .ch,
+.signature.is-measuring .ch {
+  transition: none;
+}
+
 .signature.is-waving .ch {
   transition: color var(--fast) var(--ease);
+}
+
+/* une ou deux lignes, choisies une fois pour toutes par src/sections/footer.js : l'animation ne fait plus
+   passer le nom d'une ligne à deux */
+.signature.is-one-line {
+  flex-wrap: nowrap;
+}
+
+.signature.is-stacked {
+  flex-direction: column;
 }

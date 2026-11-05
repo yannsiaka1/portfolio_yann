@@ -46,6 +46,46 @@ export function initFooter() {
     { p: n + 3, duration: SWEEP, ease: 'sine.inOut', repeat: -1, repeatDelay: REST, paused: true, immediateRender: false, onUpdate: paint },
   );
 
+  /* ---------- une ou deux lignes, décidé une fois et jamais pendant l'animation ----------
+     Les lettres gonflées sont plus larges : si le nom tenait tout juste sur une ligne, le passage de la vague le
+     faisait passer sur deux lignes puis revenir, et la page sautait. On rejoue donc la vague hors écran, position
+     par position : si le nom tient sur une ligne à chaque instant, la ligne est figée ; sinon, chaque mot a la sienne.
+     (Le survol à la souris affine les lettres éloignées du curseur : il reste plus étroit que la vague.) */
+  const words = $$('.signature__word', signature);
+  const fit = () => {
+    const saved = letters.map((l) => [l.style.getPropertyValue('--w'), l.style.getPropertyValue('--wd'), l.classList.contains('is-hot')]);
+    const p0 = wave.p;
+    signature.classList.remove('is-one-line', 'is-stacked');
+    signature.classList.add('is-measuring');
+    let oneLine = true;
+    for (let pos = -2; pos <= n + 1 && oneLine; pos += 0.5) {
+      wave.p = pos;
+      paint();
+      oneLine = words.every((w) => w.offsetTop === words[0].offsetTop);
+    }
+    wave.p = p0;
+    letters.forEach((l, i) => {
+      const [w, wd, hot] = saved[i];
+      if (w) l.style.setProperty('--w', w);
+      else l.style.removeProperty('--w');
+      if (wd) l.style.setProperty('--wd', wd);
+      else l.style.removeProperty('--wd');
+      l.classList.toggle('is-hot', hot);
+    });
+    signature.classList.remove('is-measuring');
+    signature.classList.add(oneLine ? 'is-one-line' : 'is-stacked');
+  };
+  fit();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+  let fitTimer;
+  let lastWidth = window.innerWidth;
+  window.addEventListener('resize', () => {
+    if (window.innerWidth === lastWidth) return; // la barre d'adresse mobile ne change que la hauteur
+    lastWidth = window.innerWidth;
+    clearTimeout(fitTimer);
+    fitTimer = setTimeout(fit, 150);
+  });
+
   let visible = false;
   let hovering = false;
   const update = () => {
