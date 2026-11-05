@@ -44,12 +44,24 @@ export function initProjects() {
       const videos = $$('video', visual);
       const btn = $('.card__play', visual);
       if (!videos.length || !btn) return null;
-      return { visual, videos, btn, panel: panels.indexOf(visual.closest('.projects__panel')), seen: false, choice: null };
+      return { visual, videos, btn, panel: panels.indexOf(visual.closest('.projects__panel')), seen: false, choice: null, blocked: false };
     })
     .filter(Boolean);
 
   const isPlaying = (p) => !p.videos[0].paused;
-  const start = (p) => p.videos.forEach((v) => v.play().catch(() => {}));
+  // muettes et en ligne, posé aussi en propriétés : c'est ce que Safari sur iPhone exige pour lire sans geste
+  const start = (p) =>
+    p.videos.forEach((v) => {
+      v.muted = true;
+      v.defaultMuted = true;
+      v.playsInline = true;
+      const playing = v.play();
+      if (playing && playing.catch) {
+        playing.catch((err) => {
+          if (err && err.name === 'NotAllowedError') p.blocked = true;
+        });
+      }
+    });
   const stop = (p) => p.videos.forEach((v) => v.pause());
   const visible = (p) => (mode === 'deck' ? !!deck && deck.st.isActive && active === p.panel : p.seen);
 
@@ -98,9 +110,18 @@ export function initProjects() {
         p.seen = entry.isIntersecting;
         apply(p);
       },
-      { threshold: 0.4 },
+      { threshold: 0.25 },
     ).observe(p.visual);
   });
+  // Certains téléphones refusent la lecture automatique (mode économie d'énergie, données limitées) : la vidéo
+  // à l'écran repart au premier geste de la personne (toucher, clic, touche), qui l'autorise.
+  const retry = () =>
+    players.forEach((p) => {
+      if (!p.blocked) return;
+      p.blocked = false;
+      apply(p);
+    });
+  ['touchend', 'click', 'keydown'].forEach((type) => window.addEventListener(type, retry, { passive: true }));
   window.addEventListener(EVT_PAUSE, () => {
     players.forEach((p) => {
       p.choice = null;

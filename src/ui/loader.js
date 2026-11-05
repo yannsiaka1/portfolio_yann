@@ -2,7 +2,7 @@
 // jamais avec « réduire les animations » (le script de <head> ne pose alors pas .is-loading). Un clic ou
 // n'importe quelle touche (Tab compris) la passe. Elle attend la scène 3D et les polices, avec des délais de secours.
 import { gsap, ScrollTrigger } from '../core/gsap.js';
-import { $, $$, root } from '../core/env.js';
+import { $, $$, root, coarse } from '../core/env.js';
 import { state, EVT_GL_READY, fireIntro } from '../core/state.js';
 import { pauseScroll, resumeScroll } from '../core/scroll.js';
 
@@ -57,8 +57,9 @@ export function runLoader() {
   loader.addEventListener('pointerdown', close, { once: true });
   window.addEventListener('keydown', close, { once: true });
 
+  // sur téléphone, la scène 3D ne démarre qu'après l'intro (src/main.js) : on ne l'attend pas
   const glReady = new Promise((resolve) => {
-    if (state.glReady) return resolve();
+    if (state.glReady || coarse) return resolve();
     window.addEventListener(EVT_GL_READY, resolve, { once: true });
     setTimeout(resolve, GL_TIMEOUT);
   });

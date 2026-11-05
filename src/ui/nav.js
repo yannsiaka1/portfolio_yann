@@ -64,6 +64,7 @@ export function initNav() {
      épinglées (projets, compétences) restent ainsi reconnues pendant tout leur épinglage. */
   const links = $$('.site-nav__link');
   const pathEl = $('#navPath');
+  const prompt = $('.prompt');
   const sections = $$('[data-path]');
   let currentPath = null;
   let queued = false;
@@ -84,6 +85,8 @@ export function initNav() {
     if (path !== currentPath) {
       const first = currentPath === null;
       currentPath = path;
+      // dans une section, l'invite se raccourcit sur les petits écrans (voir layout.css) ; à l'accueil, « yann@siaka:~$ »
+      if (prompt) prompt.classList.toggle('is-deep', path !== '~');
       if (first) pathEl.textContent = path;
       else scramble(pathEl, path, 0.45);
     }

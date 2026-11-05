@@ -28,7 +28,7 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 0 var(--space-3);
+  gap: 0 var(--space-2);
   min-height: var(--header-h);
 }
 
@@ -77,8 +77,82 @@
   }
 }
 
-@media (max-width: 23.5rem) {
+/* Bouton de langue : toujours dans la barre, sur ordinateur comme sur mobile, avec un globe à l'accent.
+   « English » (ou « Français ») dès 1280 px, « EN » (ou « FR ») en dessous ; le mot entier reste lu
+   par les lecteurs d'écran. Il pousse la navigation (ou le bouton Menu) à droite. */
+.lang-switch {
+  margin-left: auto;
+}
+
+.lang-switch__icon {
+  flex: none;
+  width: var(--icon-ui);
+  height: var(--icon-ui);
+  color: var(--accent);
+}
+
+@media (min-width: 80rem) {
+  .lang-switch__short {
+    display: none;
+  }
+}
+
+/* La barre garde une seule ligne à toutes les largeurs, même sur la section au chemin le plus long. */
+@media (max-width: 79.99rem) {
+  .lang-switch__long {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+}
+
+/* petit écran d'ordinateur (1024 à 1279 px) : liens resserrés, invite « yann:~/section$ » */
+@media (min-width: 64rem) and (max-width: 79.99rem) {
   .prompt__host {
+    display: none;
+  }
+
+  .site-nav .site-nav__link {
+    padding-inline: var(--space-1);
+  }
+}
+
+/* Mobile : les deux boutons se resserrent ; dans une section (chemin plus long), l'invite se raccourcit :
+   « yann:~/section$ » sous 480 px, « ~/section$ » sous 400 px. À l'accueil, « yann@siaka:~$ » reste entier
+   jusqu'à 336 px ; en dessous, « yann:~$ » et le globe seul. */
+@media (max-width: 63.99rem) {
+  .site-header .lang-switch,
+  .site-header .menu-toggle {
+    padding-inline: var(--space-2);
+  }
+
+  .lang-switch + .menu-toggle {
+    margin-left: calc(var(--space-1) - var(--space-2));
+  }
+}
+
+@media (max-width: 29.99rem) {
+  .prompt.is-deep .prompt__host {
+    display: none;
+  }
+}
+
+@media (max-width: 24.99rem) {
+  .prompt.is-deep .prompt__user,
+  .prompt.is-deep .prompt__host + .prompt__sep {
+    display: none;
+  }
+}
+
+@media (max-width: 20.99rem) {
+  .prompt__host,
+  .lang-switch__short {
     display: none;
   }
 }
@@ -114,14 +188,6 @@
   text-decoration: underline;
   text-decoration-thickness: var(--stroke-strong);
   text-underline-offset: var(--underline-offset-nav);
-}
-
-/* lien vers l'autre langue (English / Français) : sur grand écran, un filet le sépare des sections */
-@media (min-width: 64rem) {
-  .site-nav__lang {
-    margin-left: var(--space-1);
-    border-left: var(--stroke) solid var(--line);
-  }
 }
 
 .site-nav__cta {

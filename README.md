@@ -63,7 +63,7 @@ src/
 - **Deux pages, une structure** : le français à la racine (`index.html`), l'anglais dans `en/` (`en/index.html`). Mêmes balises, mêmes identifiants, mêmes classes ; seuls changent le texte, les attributs lisibles (`alt`, `aria-label`, `title`, valeurs des choix), la langue (`lang="fr-CA"` ou `lang="en-CA"`) et les chemins (`../` dans `en/`).
 - **Traduction faite à la main**, pas par un traducteur automatique : termes métier et techniques vérifiés (récit utilisateur, idempotence, jalons, projet tutoré traduit par *capstone project*), orthographe canadienne (*colour*, *modelling*, *traveller*). Les visiteurs anglophones lisent ainsi un texte juste au lieu d'une traduction automatique de la page française.
 - **Textes des scripts** (menu mobile, bouton pause, vidéos, formulaire, indications du symbole 3D, horloges) : ils suivent la langue de la page par `src/core/i18n.js`, écrits sous la forme `t({ fr: '…', en: '…' })`.
-- **Passer d'une langue à l'autre** : lien « English » ou « Français » dans le menu, « English version » ou « Version française » dans le pied de page (attributs `hreflang` et `lang`).
+- **Passer d'une langue à l'autre** : un bouton toujours visible dans la barre, sur ordinateur comme sur mobile, avec un globe à l'accent : « English » ou « Français » dès 1280 px, « EN » ou « FR » en dessous (le mot entier reste lu par les lecteurs d'écran). Aussi « English version » ou « Version française » dans le pied de page. Attributs `hreflang` et `lang` sur ces liens. Pour que la barre tienne sur une ligne à toutes les largeurs, l'invite se raccourcit dans les sections sur petit écran (« yann:~/section$ », puis « ~/section$ ») ; à l'accueil, elle reste « yann@siaka:~$ ».
 - **Traducteurs automatiques** : `translate="no"` protège ce qui ne doit jamais être traduit. Il est posé sur les blocs (noms des projets, listes d'outils, extraits de code, invite de commande, adresses des maquettes, courriel, signature) et, dans le texte courant, sur chaque nom propre ou outil au nom de mot ordinaire, par un `<span translate="no">` (Precious, Glorious Hall, EasyTravel, Easy Life, Mobile Money, Vite, Render, Railway, Resend, Postman, Payhip, Flask, Laravel Sail, Search Console, GitHub Projects, IncH Class, World Education Services, le nom, les adresses de courriel). Une page traduite par Chrome ou Google Traduction dans une autre langue garde ces termes intacts. Limite : un texte alternatif (`alt`) ne peut pas être protégé en partie, un nom propre peut donc y être traduit.
 - **Modifier le contenu** : faire le même changement dans `index.html` et dans `en/index.html`, en protégeant les nouveaux noms propres de la même façon, puis lancer `npm run check:i18n`. Le script signale toute balise qui diffère et tout chemin de la page anglaise qui ne remonte pas d'un dossier (`../`).
 - **CV** : le fichier téléchargeable est en français. La page anglaise le dit (« Download my CV (French) »).
@@ -129,7 +129,7 @@ Les mêmes panneaux de verre se recomposent en sept symboles, environ toutes les
 | Méthode | sept étapes, du besoin à la maintenance, lues comme un historique Git (le design et le prototypage avant le développement) | graphe tracé au défilement |
 | Parcours | journal des versions (diplômes, stages, équivalence WES), équivalence avec un extrait du rapport, attestation D-CLIC avec qui contacter pour la faire confirmer, certifications | blocs qui montent |
 | Contact | formulaire qui prépare un courriel, aperçu JSON, courriel direct, LinkedIn, GitHub, CV à télécharger | aperçu mis à jour à la saisie |
-| Pied de page | signature, horloges Montréal et Douala | une vague gonfle les lettres de la signature, en boucle, tant qu'elle est à l'écran ; à la souris, graisse et chasse suivent le curseur |
+| Pied de page | signature, horloges Montréal et Douala | une vague gonfle les lettres de la signature, en boucle, tant qu'elle est à l'écran ; à la souris, graisse et chasse suivent le curseur. Le nom tient sur une ou deux lignes selon la largeur, choisi une fois en rejouant la vague hors écran : l'animation ne le fait jamais changer de ligne (la page ne saute plus) |
 
 ## Projets présentés
 
@@ -144,7 +144,7 @@ Pour rafraîchir une capture : construire le site depuis son dépôt (`npm run b
 | Precious | site client | [precious-jus.com](https://precious-jus.com/) |
 | Glorious Hall | site client | [glorious-hall-4wah.vercel.app](https://glorious-hall-4wah.vercel.app/) (le domaine principal, glorioushall.com, est momentanément indisponible) |
 | EasyTravel | projet d'études | [site](https://easytravel-front-wine.vercel.app/) · [interface](https://github.com/yannsiaka1/easytravel-front) · [API](https://github.com/yannsiaka1/easytravel-back) |
-| Easy Life | produit en construction | [prototype Figma](https://www.figma.com/proto/pEI2qiDReAIOHKae9uUPMA?node-id=381-786&starting-point-node-id=497%3A854) |
+| Easy Life | produit en construction | pas de lien public (dépôt privé ; le prototype est montré en vidéo) |
 | ERP de l'IUT de Douala | projet tutoré | [site](https://projet-tutore-front.vercel.app/) · [prototype Figma](https://www.figma.com/proto/7nfi85vIzlb9tWb1Ba9PSs?node-id=26-330&starting-point-node-id=8%3A2) · [interface](https://github.com/yannsiaka1/projet-tutore-front) · [API](https://github.com/yannsiaka1/projet-tutore-back) |
 
 ## Accessibilité et performance
@@ -157,7 +157,8 @@ Pour rafraîchir une capture : construire le site depuis son dépôt (`npm run b
 - **Compétences** : les six couches sont toutes dans la page, chacune avec son titre de niveau 3 ; la pile isométrique est décorative. Sur grand écran, elle reste à l'écran par une simple position collante, sans épinglage : rien n'est coupé, quelle que soit la hauteur de l'écran.
 - **Code** : les lignes trop longues passent à la ligne, aucune zone ne défile à l'horizontale.
 - **Sans WebGL 2** : un symbole `</>` dessiné en SVG remplace la scène, le reste du site fonctionne.
-- **Mobile** : matériau métal à la place du verre réfractif, résolution limitée, interactions au toucher.
+- **Mobile** : matériau métal à la place du verre réfractif, résolution limitée, interactions au toucher. Le nom du hero apparaît sans flou (un filtre animé sur chaque lettre saccade sur un téléphone), et la scène 3D ne démarre qu'après cette entrée, pour ne pas la ralentir.
+- **Vidéos des prototypes** : lecture automatique, muettes, dès qu'elles arrivent à l'écran, sur ordinateur comme sur mobile ; arrêt hors de l'écran. Si un téléphone refuse la lecture automatique (mode économie d'énergie, données limitées), la vidéo repart au premier toucher. Jamais de lecture automatique avec « réduire les animations » : le bouton de lecture reste là.
 - three.js (≈ 138 ko gzip) est chargé à part : la page est utilisable avant lui.
 - Le rendu 3D s'arrête quand le hero sort de l'écran ou que l'onglet est caché.
 
@@ -165,7 +166,7 @@ Pour rafraîchir une capture : construire le site depuis son dépôt (`npm run b
 
 - **Formulaire de contact** : il ouvre le logiciel de courriel du visiteur (lien mailto:). Pour un envoi direct depuis le site, le brancher sur un service (Formspree, Resend…).
 - **Glorious Hall** : remettre `glorioushall.com` (lien et barre de la maquette) quand le domaine principal sera rétabli.
-- **Prototypes Figma** : les liens « Voir le prototype » ne s'ouvrent pour les visiteurs que si le fichier est partagé en lecture à toute personne qui a le lien.
+- **Prototype Figma de l'ERP** : le lien « Voir le prototype » ne s'ouvre pour les visiteurs que si le fichier est partagé en lecture à toute personne qui a le lien.
 - **Badge WES** : si WES propose un badge numérique (Credly) pour cette évaluation, ajouter son lien de vérification à côté de l'extrait du rapport.
 - **Années du parcours** : la section Parcours n'affiche pas de dates ; à ajouter si souhaité.
 - **Image de partage** (`og:image`) : à créer, pour un bel aperçu sur LinkedIn.
