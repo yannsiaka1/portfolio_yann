@@ -146,11 +146,6 @@
   --device-tilt: 4deg; /* téléphones inclinés de la maquette d'Easy Life */
   --iso-spread: var(--space-3); /* écart ajouté de part et d'autre de la couche choisie */
 
-  /* ---------- journal ---------- */
-  --notes-meta-w: 12rem; /* colonne de la date, dès 768 px */
-  --notes-meta-nudge: 0.375rem; /* la date s'aligne sur la première ligne du titre */
-  --note-head-w: 60rem; /* en-tête d'une note : titre sur deux ou trois lignes */
-
   /* ---------- pile isométrique, phrase d'accroche, signature ---------- */
   --iso-size: 30rem; /* pile des compétences dès 1024 px */
   --iso-size-sm: 20rem; /* pile sous 1024 px */
@@ -167,6 +162,11 @@
   --cursor-ring-hover: 4rem;
   --ring-length: 113.1; /* circonférence du cercle de la jauge (rayon 18 dans sa boîte de 40) */
   --ring-start: -90deg; /* la jauge part du haut */
+
+  /* ---------- journal ---------- */
+  --notes-meta-w: 12rem; /* colonne de la date, dès 768 px */
+  --notes-meta-nudge: 0.375rem; /* la date s'aligne sur la première ligne du titre */
+  --note-head-w: 60rem; /* en-tête d'une note : titre sur deux ou trois lignes */
 
   /* ---------- mouvement ---------- */
   --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
