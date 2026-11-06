@@ -144,6 +144,18 @@
   --device-tilt: 4deg; /* téléphones inclinés de la maquette d'Easy Life */
   --iso-spread: var(--space-3); /* écart ajouté de part et d'autre de la couche choisie */
 
+  /* ---------- pense-bête du hero : un papier jaune adouci, cousin de l'accent ---------- */
+  --paper: #efdc96;
+  --paper-hover: rgb(23 19 10 / 0.08); /* bouton OK survolé */
+  --on-paper: #17130a; /* encre : 13,5:1 sur le papier */
+  --on-paper-2: #463f29; /* titre, tâches faites, contour du bouton : 7,6:1 */
+  --shadow-paper: 0 0.75rem 1.5rem rgb(0 0 0 / 0.5), 0 0.125rem 0.25rem rgb(0 0 0 / 0.35);
+  --postit-w: 15rem; /* 240 px */
+  --postit-tilt: 2deg;
+  --postit-in: 0.9s; /* il se colle */
+  --postit-out: 0.45s; /* il se décolle */
+  --check-length: 20; /* longueur du tracé de la coche, dessinée quand une tâche est faite */
+
   /* ---------- pile isométrique, phrase d'accroche, signature ---------- */
   --iso-size: 30rem; /* pile des compétences dès 1024 px */
   --iso-size-sm: 20rem; /* pile sous 1024 px */
@@ -164,6 +176,8 @@
   /* ---------- mouvement ---------- */
   --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
   --ease-expo: cubic-bezier(0.16, 1, 0.3, 1); /* révélations, comme expo.out de GSAP */
+  --ease-back: cubic-bezier(0.34, 1.56, 0.64, 1); /* léger rebond : le pense-bête qui se colle */
+  --ease-in: cubic-bezier(0.55, 0, 1, 0.45); /* accélère en partant : le pense-bête qui tombe */
   --fast: 0.18s; /* survols */
   --slow: 0.6s; /* apparition de la scène 3D, changement d'onglet */
   --blink: 1.1s; /* curseur de l'invite */
