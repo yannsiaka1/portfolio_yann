@@ -4,6 +4,8 @@
 .hero {
   position: relative;
   isolation: isolate;
+  /* le pense-bête qui se colle (penché, un peu agrandi) ne fait jamais défiler la page de côté sur mobile */
+  overflow-x: clip;
 }
 
 .hero__canvas {
@@ -111,6 +113,14 @@
 .js .postit.is-peeling {
   transform-origin: 15% 0%;
   animation: postit-peel var(--postit-out) var(--ease-in) forwards;
+}
+
+/* sous 1280 px, une fois décollé, sa place dans le hero se referme (hauteur et marge animées par postit.js) */
+.postit.is-collapsing {
+  overflow: hidden;
+  transition:
+    height var(--slow) var(--ease),
+    margin-top var(--slow) var(--ease);
 }
 
 @keyframes postit-stick {

@@ -10,6 +10,7 @@ import { state, EVT_INTRO, EVT_SECTION, EVT_WROTE } from '../core/state.js';
 const KEY = 'pf-postit';
 const STICK_DELAY = 1100; // ms après la fin de l'intro : le nom et les boutons sont arrivés
 const PEEL_FALLBACK = 1000; // ms : plus long que --postit-out
+const COLLAPSE_FALLBACK = 1200; // ms : plus long que --slow, la fermeture de sa place
 const DWELL = 1200; // ms dans une section pour la cocher : la traverser en défilant (lien du menu) ne compte pas
 const DONE = t({ fr: ' (fait)', en: ' (done)' });
 
@@ -73,12 +74,14 @@ export function initPostit() {
     else waiting.add(key);
   };
 
+  // onglet en arrière-plan : le temps ne compte pas, il reprend au retour du visiteur
   let timer = 0;
   const visit = (id) => {
     clearTimeout(timer);
-    if (items.some((el) => el.dataset.todo === id)) timer = setTimeout(() => tick(id), DWELL);
+    if (!document.hidden && items.some((el) => el.dataset.todo === id)) timer = setTimeout(() => tick(id), DWELL);
   };
   window.addEventListener(EVT_SECTION, (e) => visit(e.detail));
+  document.addEventListener('visibilitychange', () => visit(state.section));
   if (state.section) visit(state.section);
   window.addEventListener(EVT_WROTE, () => tick('ecrire'));
   // écrire directement ou copier l'adresse compte aussi
@@ -96,24 +99,44 @@ export function initPostit() {
   const ok = $('.postit__ok', note);
   if (!ok) return;
   ok.addEventListener('click', () => {
+    if (note.classList.contains('is-peeling')) return;
     save({ ...load(), off: true });
     const hadFocus = note.contains(document.activeElement);
-    // sous 1280 px, il occupe une place dans le hero : les sections épinglées doivent se remesurer après lui
+    // sous 1280 px, il occupe une place dans le hero : elle se referme, puis les sections épinglées se remesurent
     const inFlow = getComputedStyle(note).position !== 'absolute';
-    let ended = false;
-    const end = () => {
-      if (ended) return;
-      ended = true;
+    const refocus = () => {
+      if (!hadFocus) return;
+      const next = $('.hero__actions .btn');
+      if (next) next.focus({ preventScroll: true });
+    };
+    let removed = false;
+    const remove = () => {
+      if (removed) return;
+      removed = true;
       note.remove();
-      if (hadFocus) {
-        const next = $('.hero__actions .btn');
-        if (next) next.focus({ preventScroll: true });
-      }
       if (inFlow) ScrollTrigger.refresh();
     };
-    if (reduced()) return end();
-    note.addEventListener('animationend', end, { once: true });
+    if (reduced()) {
+      refocus();
+      return remove();
+    }
+    // 1. il se décolle (transform et opacité) ; 2. sa place se referme en douceur au lieu de faire sauter la page
+    let peeled = false;
+    const collapse = () => {
+      if (peeled) return;
+      peeled = true;
+      refocus();
+      if (!inFlow) return remove();
+      note.classList.add('is-collapsing');
+      note.style.height = `${note.offsetHeight}px`;
+      void note.offsetHeight; // point de départ mesuré avant la transition
+      note.style.height = '0px';
+      note.style.marginTop = '0px';
+      note.addEventListener('transitionend', (e) => e.target === note && remove());
+      setTimeout(remove, COLLAPSE_FALLBACK);
+    };
+    note.addEventListener('animationend', (e) => e.target === note && collapse());
     note.classList.add('is-peeling');
-    setTimeout(end, PEEL_FALLBACK); // filet de sécurité si l'animation ne se termine pas (onglet en arrière-plan)
+    setTimeout(collapse, PEEL_FALLBACK); // filets de sécurité si une animation ne se termine pas (onglet en arrière-plan)
   });
 }
