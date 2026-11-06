@@ -62,7 +62,8 @@ export function initNav() {
   /* ---------- section en cours : celle qui contient le milieu de l'écran ----------
      Mesurée à chaque défilement (une fois par image) plutôt qu'avec un IntersectionObserver : les sections
      épinglées (projets, compétences) restent ainsi reconnues pendant tout leur épinglage. */
-  const links = $$('.site-nav__link');
+  // seulement les ancres de la page : sur une page du journal, le lien « Journal » garde son aria-current
+  const links = $$('.site-nav__link').filter((a) => (a.getAttribute('href') || '').startsWith('#'));
   const pathEl = $('#navPath');
   const prompt = $('.prompt');
   const sections = $$('[data-path]');

@@ -55,6 +55,8 @@
   --fs-signature: clamp(4rem, 1rem + 13vw, 15rem); /* 64 → 240 px : signature du pied de page */
   --fs-card-title: clamp(2rem, 1rem + 2.2vw, 3.25rem); /* 32 → 52 px : nom d'un projet */
   --fs-card-title-short: 2.25rem; /* 36 px : nom d'un projet épinglé sur un écran bas */
+  --fs-note-title: clamp(2.25rem, 1.2rem + 3.6vw, 4.5rem); /* 36 → 72 px : titre d'une note du journal */
+  --fs-code-inline: 0.9em; /* code dans une phrase : à la hauteur du texte qui l'entoure */
   --mock-unit: clamp(0.4375rem, 0.92vw, 0.8125rem); /* 7 → 13 px : l'unité em des maquettes, qui suivent la largeur */
 
   --lh-name: 0.95;
@@ -143,6 +145,11 @@
   --progress-bar-w: 17.5rem; /* longueur de la barre « Défilez » */
   --device-tilt: 4deg; /* téléphones inclinés de la maquette d'Easy Life */
   --iso-spread: var(--space-3); /* écart ajouté de part et d'autre de la couche choisie */
+
+  /* ---------- journal ---------- */
+  --notes-meta-w: 12rem; /* colonne de la date, dès 768 px */
+  --notes-meta-nudge: 0.375rem; /* la date s'aligne sur la première ligne du titre */
+  --note-head-w: 60rem; /* en-tête d'une note : titre sur deux ou trois lignes */
 
   /* ---------- pile isométrique, phrase d'accroche, signature ---------- */
   --iso-size: 30rem; /* pile des compétences dès 1024 px */

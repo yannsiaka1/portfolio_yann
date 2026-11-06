@@ -13,6 +13,7 @@
   <meta property="og:description" content="De l’idée à l’application : j’écoute, je conçois, je planifie et je code des applications web complètes et sur mesure.">
   <meta name="twitter:card" content="summary">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <!-- journal:start --><link rel="alternate" type="application/atom+xml" title="Journal de Yann Siaka" vite-ignore href="./journal/feed.xml"><!-- journal:end -->
   <script>
     // JavaScript présent : le menu mobile, les onglets et l'intro s'activent. L'intro ne joue qu'une fois par visite,
     // jamais avec « réduire les animations », et se retire d'elle-même si un script échoue.
@@ -69,6 +70,7 @@
         <li><a class="site-nav__link" href="#competences">Compétences</a></li>
         <li><a class="site-nav__link" href="#methode">Méthode</a></li>
         <li><a class="site-nav__link" href="#parcours">Parcours</a></li>
+        <!-- journal:start --><li><a class="site-nav__link" href="#journal">Journal</a></li><!-- journal:end -->
         <li><a class="btn btn--secondary site-nav__cta magnetic" href="#contact">Me contacter</a></li>
       </ul>
     </nav>
@@ -779,6 +781,23 @@
       </div>
     </div>
   </section>
+
+  <!-- ============ JOURNAL ============ -->
+  <!-- Rempli au build par scripts/journal.mjs avec les trois dernières notes de content/journal/ ; retiré, avec son
+       lien du menu et le flux de l'en-tête, tant qu'aucune note n'est publiée. -->
+  <!-- journal:start -->
+  <section class="section" id="journal" data-path="~/journal" aria-labelledby="journal-label">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" id="journal-label">Journal</p>
+        <h2 id="journal-title" data-reveal="words">Mes notes, <em>déployées en continu.</em></h2>
+        <p class="section-head__intro">Notes techniques, avis sur des outils et veille&nbsp;: ce que j’apprends en construisant, écrit au fil des projets.</p>
+      </div>
+      <!-- journal:latest -->
+      <p class="journal__all"><a class="link link--standalone" href="./journal/">Toutes les notes</a></p>
+    </div>
+  </section>
+  <!-- journal:end -->
 
   <!-- ============ CONTACT ============ -->
   <section class="section" id="contact" data-path="~/contact" aria-labelledby="contact-label">

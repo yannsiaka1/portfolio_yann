@@ -1,8 +1,8 @@
 # Portfolio de Yann Siaka
 
-Portfolio de Yann Siaka, développeur full-stack à Montréal. Une seule page : qui il est, ses projets en ligne, ce qu'il sait faire, sa méthode, son parcours et comment le joindre. Le motion design s'inspire de [trionn.com](https://trionn.com/) (intro, symbole 3D, révélations au défilement, bandeau, curseur, projets qui défilent un par un) et reprend les codes de la première version du site (titres avec mots d'accent en italique, cartes de projet avec maquettes, grain), sur une hiérarchie et une typographie pensées pour rester lisibles.
+Portfolio de Yann Siaka, développeur full-stack à Montréal. Une page d'accueil : qui il est, ses projets en ligne, ce qu'il sait faire, sa méthode, son parcours et comment le joindre ; et un journal de notes écrites en Markdown. Le motion design s'inspire de [trionn.com](https://trionn.com/) (intro, symbole 3D, révélations au défilement, bandeau, curseur, projets qui défilent un par un) et reprend les codes de la première version du site (titres avec mots d'accent en italique, cartes de projet avec maquettes, grain), sur une hiérarchie et une typographie pensées pour rester lisibles.
 
-**Stack** : [Vite](https://vite.dev) · [three.js](https://threejs.org) · [GSAP](https://gsap.com) + ScrollTrigger · [Lenis](https://lenis.darkroom.engineering) · polices auto-hébergées ([Fontsource](https://fontsource.org)) : Archivo pour le texte, Newsreader en italique pour les mots d'accent, JetBrains Mono pour le code et les petites étiquettes techniques.
+**Stack** : [Vite](https://vite.dev) · [marked](https://marked.js.org) (Markdown du journal, au build) · [three.js](https://threejs.org) · [GSAP](https://gsap.com) + ScrollTrigger · [Lenis](https://lenis.darkroom.engineering) · polices auto-hébergées ([Fontsource](https://fontsource.org)) : Archivo pour le texte, Newsreader en italique pour les mots d'accent, JetBrains Mono pour le code et les petites étiquettes techniques.
 Aucun framework : HTML, CSS et JavaScript en modules.
 
 ## Démarrer
@@ -15,6 +15,7 @@ npm run dev       # serveur de développement sur http://localhost:5173
 npm run build     # build de production dans dist/
 npm run preview   # sert dist/ pour vérifier le build
 npm run check:i18n  # vérifie que les pages française et anglaise gardent la même structure
+JOURNAL_DRAFTS=1 npm run build  # build avec les brouillons du journal (sinon visibles seulement en dev et sur les aperçus Vercel)
 ```
 
 ## Structure
@@ -23,11 +24,16 @@ npm run check:i18n  # vérifie que les pages française et anglaise gardent la m
 index.html                 tout le contenu de la page en français, balises de partage
 en/index.html              la même page en anglais : même balisage, texte traduit à la main
 scripts/check-i18n.mjs     compare la structure des deux pages (npm run check:i18n)
+scripts/journal.mjs        journal : notes Markdown → pages, section de l'accueil, flux Atom (extension Vite)
+content/journal/           les notes du journal : fr/, en/, images/, modele.md et le mode d'emploi (README.md)
+journal/, en/journal/      pages du journal, générées à chaque lancement de Vite (ignorées par Git : ne pas modifier)
+vercel.json                adresses toujours terminées par « / » (/en/, /journal/…), pour que les liens relatifs restent justes
 public/favicon.svg
 public/proofs/             pièces justificatives agrandissables : extrait du rapport WES, attestation D-CLIC (720 et 1200 px)
 public/cv/yann-siaka-cv.pdf CV à télécharger (hero, Contact, pied de page), sans numéro de téléphone ; pour le mettre à jour, remplacer ce fichier en gardant son nom
 src/
 ├── main.js                point d'entrée : polices, styles, interface, puis scène 3D chargée à part
+├── journal.js             point d'entrée des pages du journal : polices, styles, barre (sans 3D ni intro)
 ├── app.js                 assemble l'interface dans le bon ordre
 ├── core/
 │   ├── env.js             préférences de l'appareil (souris, tactile, mouvement réduit), jetons, utilitaires DOM
@@ -55,7 +61,9 @@ src/
     ├── components.css     bouton, lien, statut, outils, sur-titre, compteur, élément à filet, code, progression au défilement, formulaire, progression
     ├── chrome.css         intro, curseur et grain
     ├── hero.css           hero et scène 3D
-    └── sections.css       bandeau, projets, à propos, compétences, méthode, parcours, contact, signature
+    ├── sections.css       bandeau, projets, à propos, compétences, méthode, parcours, contact, signature
+    ├── journal.css        liste des notes (accueil et journal) et page d'une note
+    └── journal-page.css   styles des pages du journal : les communs du site, plus journal.css
 ```
 
 ## Deux langues
@@ -63,7 +71,7 @@ src/
 - **Deux pages, une structure** : le français à la racine (`index.html`), l'anglais dans `en/` (`en/index.html`). Mêmes balises, mêmes identifiants, mêmes classes ; seuls changent le texte, les attributs lisibles (`alt`, `aria-label`, `title`, valeurs des choix), la langue (`lang="fr-CA"` ou `lang="en-CA"`) et les chemins (`../` dans `en/`).
 - **Traduction faite à la main**, pas par un traducteur automatique : termes métier et techniques vérifiés (récit utilisateur, idempotence, jalons, projet tutoré traduit par *capstone project*), orthographe canadienne (*colour*, *modelling*, *traveller*). Les visiteurs anglophones lisent ainsi un texte juste au lieu d'une traduction automatique de la page française.
 - **Textes des scripts** (menu mobile, bouton pause, vidéos, formulaire, indications du symbole 3D, horloges) : ils suivent la langue de la page par `src/core/i18n.js`, écrits sous la forme `t({ fr: '…', en: '…' })`.
-- **Passer d'une langue à l'autre** : un bouton toujours visible dans la barre, sur ordinateur comme sur mobile, avec un globe à l'accent : « English » ou « Français » dès 1280 px, « EN » ou « FR » en dessous (le mot entier reste lu par les lecteurs d'écran). Aussi « English version » ou « Version française » dans le pied de page. Attributs `hreflang` et `lang` sur ces liens. Pour que la barre tienne sur une ligne à toutes les largeurs, l'invite se raccourcit dans les sections sur petit écran (« yann:~/section$ », puis « ~/section$ ») ; à l'accueil, elle reste « yann@siaka:~$ ».
+- **Passer d'une langue à l'autre** : un bouton toujours visible dans la barre, sur ordinateur comme sur mobile, avec un globe à l'accent : « English » ou « Français » dès 1280 px, « EN » ou « FR » en dessous (le mot entier reste lu par les lecteurs d'écran). Aussi « English version » ou « Version française » dans le pied de page. Attributs `hreflang` et `lang` sur ces liens. Pour que la barre tienne sur une ligne à toutes les largeurs, l'invite se raccourcit dans les sections : « ~/section$ » entre 1024 et 1279 px (les liens du menu y sont aussi resserrés), « yann:~/section$ » puis « ~/section$ » sur mobile ; à l'accueil, elle reste « yann@siaka:~$ » (« yann:~$ » entre 1024 et 1279 px).
 - **Traducteurs automatiques** : `translate="no"` protège ce qui ne doit jamais être traduit. Il est posé sur les blocs (noms des projets, listes d'outils, extraits de code, invite de commande, adresses des maquettes, courriel, signature) et, dans le texte courant, sur chaque nom propre ou outil au nom de mot ordinaire, par un `<span translate="no">` (Precious, Glorious Hall, EasyTravel, Easy Life, Mobile Money, Vite, Render, Railway, Resend, Postman, Payhip, Flask, Laravel Sail, Search Console, GitHub Projects, IncH Class, World Education Services, le nom, les adresses de courriel). Une page traduite par Chrome ou Google Traduction dans une autre langue garde ces termes intacts. Limite : un texte alternatif (`alt`) ne peut pas être protégé en partie, un nom propre peut donc y être traduit.
 - **Modifier le contenu** : faire le même changement dans `index.html` et dans `en/index.html`, en protégeant les nouveaux noms propres de la même façon, puis lancer `npm run check:i18n`. Le script signale toute balise qui diffère et tout chemin de la page anglaise qui ne remonte pas d'un dossier (`../`).
 - **CV** : le fichier téléchargeable est en français. La page anglaise le dit (« Download my CV (French) »).
@@ -128,8 +136,20 @@ Les mêmes panneaux de verre se recomposent en sept symboles, environ toutes les
 | Compétences | six couches, de l'analyse du besoin et de la modélisation à la mise en ligne : ce que je sais faire, outils, extrait de code | on parcourt les couches au défilement, une par hauteur d'écran ; sur grand écran, la pile et la progression restent à l'écran et s'allument sur la couche lue, puis la page passe à la suite ; un clic sur la pile mène à sa couche |
 | Méthode | sept étapes, du besoin à la maintenance, lues comme un historique Git (le design et le prototypage avant le développement) | graphe tracé au défilement |
 | Parcours | journal des versions (diplômes, stages, équivalence WES), équivalence avec un extrait du rapport, attestation D-CLIC avec qui contacter pour la faire confirmer, certifications | blocs qui montent |
+| Journal | les trois dernières notes (date dans la marge, durée de lecture, résumé, sujets) et le lien vers toutes les notes ; absente, avec son lien du menu, tant qu'aucune note n'est publiée | blocs qui montent |
 | Contact | formulaire qui prépare un courriel, aperçu JSON, courriel direct, LinkedIn, GitHub, CV à télécharger | aperçu mis à jour à la saisie |
 | Pied de page | signature, horloges Montréal et Douala | une vague gonfle les lettres de la signature, en boucle, tant qu'elle est à l'écran ; à la souris, graisse et chasse suivent le curseur. Le nom tient sur une ou deux lignes selon la largeur, choisi une fois en rejouant la vague hors écran : l'animation ne le fait jamais changer de ligne (la page ne saute plus) |
+
+## Journal
+
+Les notes sont des fichiers Markdown dans `content/journal/` : `fr/` pour le français, `en/` pour l'anglais, `images/` pour leurs images. Le mode d'emploi complet est dans [`content/journal/README.md`](content/journal/README.md), que GitHub affiche en ouvrant le dossier.
+
+- **Publier une note** : copier `content/journal/modele.md` dans `fr/`, le renommer (le nom devient l'adresse), remplir l'en-tête (`title`, `date`, `summary`, `tags`, `draft`), écrire, puis faire un commit sur `main`. Possible depuis github.com, sans ordinateur.
+- **Ce que produit le build** (`scripts/journal.mjs`, branché dans `vite.config.js`) : une page par note (`/journal/<adresse>/`, `/en/journal/<adresse>/`), un index par langue, la section Journal de l'accueil (trois dernières notes) et le flux Atom `/journal/feed.xml`. Les pages reprennent la barre et le pied de page de `index.html` et `en/index.html`, liens recalculés : modifier l'accueil suffit.
+- **Langues** : une note s'écrit dans une seule langue ; l'autre version du site l'affiche avec « In French » ou « En anglais ». Le même nom de fichier dans `fr/` et `en/` relie deux traductions.
+- **Brouillons** (`draft: true`) : visibles avec `npm run dev` et sur les aperçus Vercel des branches, avec la mention « Brouillon » et `noindex` ; jamais sur le site en ligne, ni dans le flux.
+- **Erreurs** : une note mal écrite arrête le build avec le fichier et ce qu'il faut corriger ; en développement, elle est mise de côté et le message s'affiche dans le terminal.
+- **Texte** : noms propres protégés des traducteurs automatiques (même liste que l'accueil), apostrophes typographiques, espace insécable avant le deux-points ; le code n'est jamais traduit. `##` ouvre une partie : le titre de la note est le seul `h1`.
 
 ## Projets présentés
 
@@ -170,7 +190,7 @@ Pour rafraîchir une capture : construire le site depuis son dépôt (`npm run b
 - **Badge WES** : si WES propose un badge numérique (Credly) pour cette évaluation, ajouter son lien de vérification à côté de l'extrait du rapport.
 - **Années du parcours** : la section Parcours n'affiche pas de dates ; à ajouter si souhaité.
 - **Image de partage** (`og:image`) : à créer, pour un bel aperçu sur LinkedIn.
-- **Domaine** : une fois l'adresse du site connue, ajouter dans les deux pages `canonical`, `og:url` et les liens `hreflang` (fr-CA, en-CA, x-default) avec des adresses complètes, comme le demande Google.
+- **Domaine** : une fois l'adresse du site connue, ajouter dans les deux pages `canonical`, `og:url` et les liens `hreflang` (fr-CA, en-CA, x-default) avec des adresses complètes, comme le demande Google ; de même dans les pages du journal (`page()` dans `scripts/journal.mjs`). Le flux Atom, lui, prend déjà l'adresse donnée par Vercel (`VERCEL_PROJECT_PRODUCTION_URL`), ou `SITE_URL` si elle est définie.
 - **CV en anglais** : à déposer dans `public/cv/` et à relier depuis la page anglaise, si souhaité.
 
 ## Déploiement
