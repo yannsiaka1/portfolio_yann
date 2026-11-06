@@ -9,6 +9,7 @@ import { initPause } from './ui/pause.js';
 import { initCursor, initMagnetic } from './ui/cursor.js';
 import { runLoader } from './ui/loader.js';
 import { prepareHero, initHeroIntro } from './sections/hero.js';
+import { initPostit } from './sections/postit.js';
 import { initReveals } from './sections/reveals.js';
 import { initProjects } from './sections/projects.js';
 import { initMarquee, measureMarquee } from './sections/marquee.js';
@@ -51,6 +52,8 @@ export function initApp() {
   initMagnetic();
   prepareHero();
   initHeroIntro();
+  // avant les sections épinglées : un pense-bête déjà retiré pendant la visite disparaît avant leurs mesures
+  initPostit();
   initReveals();
   initProjects();
   initMarquee();

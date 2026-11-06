@@ -93,6 +93,20 @@
           <a class="btn btn--secondary magnetic ext" href="https://github.com/yannsiaka1" target="_blank" rel="noopener">GitHub<span class="sr-only"> (nouvel onglet)</span></a>
         </div>
         <p class="status status--live hero__availability" data-intro>Disponible pour un poste ou une mission, au Canada ou à distance, selon vos besoins.</p>
+        <!-- Pense-bête : trois choses à faire pendant la visite, cochées au fil de la lecture (src/sections/postit.js) -->
+        <div class="postit" id="postit">
+          <div class="postit__paper">
+            <div class="postit__head">
+              <p class="postit__title" id="postit-title"><span aria-hidden="true">// </span>À faire</p>
+              <button class="btn postit__ok" type="button" aria-label="OK, retirer le pense-bête">OK</button>
+            </div>
+            <ul class="postit__list" role="list" aria-labelledby="postit-title">
+              <li class="postit__item" data-todo="projets"><a class="postit__link" href="#projets"><svg class="postit__box" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><rect x="1.75" y="1.75" width="12.5" height="12.5" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path class="postit__check" d="M4.5 8.5l2.5 2.5 5-6.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="postit__label">Parcourir mes projets</span><span class="sr-only postit__state"></span></a></li>
+              <li class="postit__item" data-todo="parcours"><a class="postit__link" href="#parcours"><svg class="postit__box" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><rect x="1.75" y="1.75" width="12.5" height="12.5" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path class="postit__check" d="M4.5 8.5l2.5 2.5 5-6.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="postit__label">Vérifier mes diplômes</span><span class="sr-only postit__state"></span></a></li>
+              <li class="postit__item" data-todo="ecrire"><a class="postit__link" href="#contact"><svg class="postit__box" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><rect x="1.75" y="1.75" width="12.5" height="12.5" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path class="postit__check" d="M4.5 8.5l2.5 2.5 5-6.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="postit__label">M’écrire un mot</span><span class="sr-only postit__state"></span></a></li>
+            </ul>
+          </div>
+        </div>
       </div>
       <div class="hero__stage" id="heroStage">
         <svg class="hero__fallback" viewBox="0 0 120 80" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><path d="M38 18 14 40l24 22M82 18l24 22-24 22M68 10 52 70" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>

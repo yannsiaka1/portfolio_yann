@@ -43,7 +43,7 @@ src/
 │   ├── pause.js           bouton pause de toutes les animations
 │   ├── clocks.js          horloges Montréal et Douala
 │   └── copy.js            bouton « Copier l'adresse » et son message
-├── sections/              hero, révélations, bandeau, projets (épinglés ou empilés, vidéo de l'ERP), compétences (six couches parcourues au défilement), méthode, contact, pied de page
+├── sections/              hero, pense-bête du hero, révélations, bandeau, projets (épinglés ou empilés, vidéo de l'ERP), compétences (six couches parcourues au défilement), méthode, contact, pied de page
 ├── hero/
 │   ├── scene.js           scène three.js : rendu, interactions, boucle d'animation
 │   ├── formations.js      les 7 symboles, décrits panneau par panneau
@@ -82,6 +82,7 @@ Toutes les valeurs viennent de `src/styles/tokens.css` : aucune couleur, taille 
 | `--live` / `--neutral` | `#7CC48E` / `#8A867E` | pastilles de statut |
 | `--surface-2`, `--chrome`, `--bezel` | `#201F1C`, `#1D1C19`, `#23252C` | visuel d'un projet, barre du navigateur et contour du téléphone des maquettes |
 | `--tint-*` | une par projet | lueur du visuel, dans la couleur de la marque du projet |
+| `--paper` / `--on-paper` | `#EFDC96` / `#17130A` | papier et encre du pense-bête du hero (13,5:1 ; tâches faites à 7,6:1) |
 
 - **Typographie** : Archivo pour le texte (chasse 125 % pour le nom, 112 % pour les titres de niveau 3, normale ailleurs) ; Newsreader en italique fin pour les mots d'accent des titres et de la phrase d'À propos ; JetBrains Mono pour le code et les petites étiquettes techniques (sur-titres, outils, compteurs), jamais en capitales. Tailles de lecture : 15, 18, 21 ou 28 px ; tailles d'affichage fluides pour le nom, les titres de section (40 à 100 px, comme la première version), le nom des projets, la phrase d'À propos, les chiffres, le bandeau et la signature. Texte courant en 18 px, interligne 1,6, 62 caractères au plus par ligne. Aucun texte lisible sous 15 px (le texte dessiné dans une maquette fait partie de l'illustration).
 - **Espacement** : base 8 px (8, 16, 24, 32, 48, 64, 96, 128). Toute cible cliquable fait 48 px de haut.
@@ -122,6 +123,7 @@ Les mêmes panneaux de verre se recomposent en sept symboles, environ toutes les
 | --- | --- | --- |
 | Intro | journal de build, compteur | ouverture en huit bandes, une fois par visite |
 | Hero | nom, rôle, accroche, « Voir les projets », CV à télécharger, GitHub, disponibilité, symbole 3D | lettres qui sortent du flou, symbole qui s'assemble |
+| Pense-bête (dans le hero) | « À faire » : parcourir les projets, vérifier les diplômes, écrire un mot ; chaque tâche mène à sa section. À droite du nom dès 1280 px, sous le texte en dessous | il se colle à la fin de l'intro, sans rien bloquer ; une tâche se coche après un peu plus d'une seconde passée dans sa section (la traverser en défilant ne compte pas), ou en préparant un courriel, en écrivant directement ou en copiant l'adresse ; la coche se trace quand le pense-bête revient à l'écran. « OK » le décolle pour le reste de la visite |
 | Bandeau | verbes et outils | défilement infini qui suit la vitesse du scroll |
 | Projets | cinq cartes : Precious, Glorious Hall, EasyTravel, Easy Life (prototype, schéma, jalons), l'ERP de l'IUT (vidéo du prototype) | grand écran : section épinglée, chaque projet arrive par la droite pendant que le précédent bascule à gauche ; ailleurs, cartes empilées qui arrivent par la droite et repartent à gauche |
 | À propos | titre, phrase d'accroche avec mots d'accent, présentation, langues, quatre repères en cartes | phrase éclairée mot par mot (du gris au blanc, lisible à plus de 7:1 à chaque instant), compteurs à rouleaux |
@@ -155,6 +157,7 @@ Pour rafraîchir une capture : construire le site depuis son dépôt (`npm run b
 - **Clavier** : les blocs pas encore révélés restent focalisables ; un élément qui reçoit le focus du clavier est amené à l'écran sous la barre (un clic de souris ne fait jamais défiler la page) ; dans les projets épinglés, sa carte est amenée au repos.
 - **Projets** : épinglés seulement sur un écran d'au moins 1024 × 640 px où chaque carte tient en entier (mesuré au chargement et à chaque redimensionnement : c'est le cas sur les ordinateurs portables courants, jusqu'à une fenêtre de 1280 × 640) ; sinon les cartes s'empilent, et rien n'est jamais coupé. Aux flèches du clavier, un pas suffit pour passer à la carte suivante. La vidéo de l'ERP ne joue que visible, a son propre bouton lecture et pause, et ne se lance jamais seule avec « réduire les animations ».
 - **Compétences** : les six couches sont toutes dans la page, chacune avec son titre de niveau 3 ; la pile isométrique est décorative. Sur grand écran, elle reste à l'écran par une simple position collante, sans épinglage : rien n'est coupé, quelle que soit la hauteur de l'écran.
+- **Pense-bête** : une liste de liens nommée « À faire » (une liste, pas un repère de page) ; une tâche faite est annoncée « (fait) » aux lecteurs d'écran ; sur le papier, l'anneau de focus prend la couleur de l'encre. « OK » au clavier rend le focus à « Voir les projets ». Il se colle et se décolle par une animation CSS, fluide même pendant le chargement de la scène 3D sur téléphone ; avec « réduire les animations », il apparaît et part sans bouger. Sans JavaScript, il reste une simple liste de liens, sans bouton OK.
 - **Code** : les lignes trop longues passent à la ligne, aucune zone ne défile à l'horizontale.
 - **Sans WebGL 2** : un symbole `</>` dessiné en SVG remplace la scène, le reste du site fonctionne.
 - **Mobile** : matériau métal à la place du verre réfractif, résolution limitée, interactions au toucher. Le nom du hero apparaît sans flou (un filtre animé sur chaque lettre saccade sur un téléphone), et la scène 3D ne démarre qu'après cette entrée, pour ne pas la ralentir.

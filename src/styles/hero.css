@@ -4,6 +4,8 @@
 .hero {
   position: relative;
   isolation: isolate;
+  /* le pense-bête qui se colle (penché, un peu agrandi) ne fait jamais défiler la page de côté sur mobile */
+  overflow-x: clip;
 }
 
 .hero__canvas {
@@ -85,6 +87,167 @@
 
 .hero__availability {
   margin-top: var(--space-3);
+}
+
+/* ---------- pense-bête : trois choses à faire pendant la visite (src/sections/postit.js) ----------
+   Sous le texte du hero jusqu'à 1280 px, à droite du nom au-delà. Il apparaît à la fin de l'intro, mais sa
+   place est réservée dès le chargement : rien ne saute quand il se colle. */
+.postit {
+  width: min(100%, var(--postit-w));
+  margin-top: var(--space-5);
+  margin-left: auto;
+}
+
+.js .postit {
+  visibility: hidden;
+}
+
+/* Il se colle (et se décolle) par une animation CSS : jouée hors du fil principal, elle reste fluide sur
+   téléphone pendant que la scène 3D se charge. */
+.js .postit.is-stuck {
+  visibility: visible;
+  transform-origin: 50% 0%;
+  animation: postit-stick var(--postit-in) var(--ease-back) both;
+}
+
+.js .postit.is-peeling {
+  transform-origin: 15% 0%;
+  animation: postit-peel var(--postit-out) var(--ease-in) forwards;
+}
+
+/* sous 1280 px, une fois décollé, sa place dans le hero se referme (hauteur et marge animées par postit.js) */
+.postit.is-collapsing {
+  overflow: hidden;
+  transition:
+    height var(--slow) var(--ease),
+    margin-top var(--slow) var(--ease);
+}
+
+@keyframes postit-stick {
+  from {
+    opacity: 0;
+    transform: translateY(calc(var(--space-4) * -1)) rotate(-7deg) scale(1.06);
+  }
+}
+
+@keyframes postit-peel {
+  to {
+    opacity: 0;
+    transform: translateY(var(--space-5)) rotate(12deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js .postit.is-stuck,
+  .js .postit.is-peeling {
+    animation: none;
+  }
+}
+
+.postit__paper {
+  padding: var(--space-1) var(--space-2) var(--space-2);
+  color: var(--on-paper);
+  background: var(--paper);
+  box-shadow: var(--shadow-paper);
+  transform: rotate(var(--postit-tilt));
+}
+
+.postit__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-1);
+}
+
+.postit__title {
+  font-family: var(--font-code);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-ui);
+  color: var(--on-paper-2);
+}
+
+/* OK : la forme de .btn, à l'encre du papier ; sans JavaScript, rien à retirer */
+.postit__ok {
+  display: none;
+  margin-right: calc(var(--space-1) * -1);
+  padding-inline: var(--space-2);
+  border-color: var(--on-paper-2);
+  font-family: var(--font-code);
+  color: var(--on-paper);
+}
+
+.js .postit__ok {
+  display: inline-flex;
+}
+
+.postit__ok:hover {
+  border-color: var(--on-paper);
+  background: var(--paper-hover);
+}
+
+.postit__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* une tâche : écrite à la main (l'italique des mots d'accent), cible pleine hauteur */
+.postit__link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: var(--target);
+  font-family: var(--font-accent);
+  font-size: var(--fs-lg);
+  font-style: italic;
+  line-height: var(--lh-title);
+  letter-spacing: var(--ls-accent);
+  color: inherit;
+  text-decoration: none;
+}
+
+.postit__link:hover .postit__label {
+  text-decoration: underline;
+  text-decoration-thickness: var(--stroke);
+  text-underline-offset: var(--underline-offset);
+}
+
+/* sur le papier, l'anneau de focus prend l'encre : l'accent n'y tranche pas assez */
+.postit :focus-visible {
+  outline-color: var(--on-paper);
+}
+
+.postit__box {
+  flex: none;
+  width: var(--icon-ui);
+  height: var(--icon-ui);
+}
+
+.postit__check {
+  stroke-dasharray: var(--check-length);
+  stroke-dashoffset: var(--check-length);
+  transition: stroke-dashoffset var(--slow) var(--ease);
+}
+
+/* tâche faite : cochée, puis barrée */
+.is-done .postit__check {
+  stroke-dashoffset: 0;
+}
+
+.is-done .postit__label {
+  color: var(--on-paper-2);
+  text-decoration: line-through;
+  text-decoration-thickness: var(--stroke);
+}
+
+.is-done .postit__link:hover .postit__label {
+  text-decoration: line-through underline;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .postit__check {
+    transition: none;
+  }
 }
 
 /* La scène : sa boîte décide où se pose le symbole (lue par src/hero/scene.js). */
@@ -318,5 +481,20 @@
     align-self: stretch;
     height: auto;
     min-height: var(--stage-min-h);
+  }
+}
+
+/* grand écran : le pense-bête se colle à droite du nom, dans la colonne du texte, loin du symbole */
+@media (min-width: 80rem) {
+  .hero__text {
+    position: relative;
+  }
+
+  /* il déborde sur la gouttière entre les deux colonnes : à 1280 px, la fin du nom garde sa marge */
+  .postit {
+    position: absolute;
+    top: 0;
+    right: calc(var(--space-3) * -1);
+    margin: 0;
   }
 }
