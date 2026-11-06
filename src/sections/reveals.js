@@ -52,7 +52,7 @@ export function initReveals() {
   });
 
   const pending = new Set();
-  const ups = $$('.eyebrow, .section-head__intro, .about__prose, .stat, .skills__panel, .iso, .item, .release, .commit, .form, .contact__side, .subsection > h3, .column > h3, .stats__title, .count, .cmd');
+  const ups = $$('.eyebrow, .section-head__intro, .about__prose, .stat, .skills__panel, .iso, .item, .release, .commit, .form, .contact__side, .subsection > h3, .column > h3, .stats__title, .count, .cmd, .notes__item');
   ups.forEach((el) => {
     pending.add(el);
     gsap.from(el, {

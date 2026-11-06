@@ -1,0 +1,8 @@
+/* Pages du journal (scripts/journal.mjs) : les styles communs du site, sans le hero ni les sections de l'accueil.
+   Ordre d'import = ordre de la cascade, comme index.css. */
+@import './tokens.css';
+@import './base.css';
+@import './layout.css';
+@import './components.css';
+@import './chrome.css';
+@import './journal.css';

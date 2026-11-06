@@ -55,6 +55,8 @@
   --fs-signature: clamp(4rem, 1rem + 13vw, 15rem); /* 64 → 240 px : signature du pied de page */
   --fs-card-title: clamp(2rem, 1rem + 2.2vw, 3.25rem); /* 32 → 52 px : nom d'un projet */
   --fs-card-title-short: 2.25rem; /* 36 px : nom d'un projet épinglé sur un écran bas */
+  --fs-note-title: clamp(2.25rem, 1.2rem + 3.6vw, 4.5rem); /* 36 → 72 px : titre d'une note du journal */
+  --fs-code-inline: 0.9em; /* code dans une phrase : à la hauteur du texte qui l'entoure */
   --mock-unit: clamp(0.4375rem, 0.92vw, 0.8125rem); /* 7 → 13 px : l'unité em des maquettes, qui suivent la largeur */
 
   --lh-name: 0.95;
@@ -172,6 +174,11 @@
   --cursor-ring-hover: 4rem;
   --ring-length: 113.1; /* circonférence du cercle de la jauge (rayon 18 dans sa boîte de 40) */
   --ring-start: -90deg; /* la jauge part du haut */
+
+  /* ---------- journal ---------- */
+  --notes-meta-w: 12rem; /* colonne de la date, dès 768 px */
+  --notes-meta-nudge: 0.375rem; /* la date s'aligne sur la première ligne du titre */
+  --note-head-w: 60rem; /* en-tête d'une note : titre sur deux ou trois lignes */
 
   /* ---------- mouvement ---------- */
   --ease: cubic-bezier(0.2, 0.7, 0.2, 1);

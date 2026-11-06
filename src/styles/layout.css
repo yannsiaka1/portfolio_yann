@@ -112,10 +112,17 @@
   }
 }
 
-/* petit écran d'ordinateur (1024 à 1279 px) : liens resserrés, invite « yann:~/section$ » */
+/* petit écran d'ordinateur (1024 à 1279 px) : liens resserrés et collés (leurs cibles se touchent sans se chevaucher),
+   invite « yann:~$ » à l'accueil et « ~/section$ » dans une section : la barre garde une ligne avec le lien Journal */
 @media (min-width: 64rem) and (max-width: 79.99rem) {
-  .prompt__host {
+  .prompt__host,
+  .prompt.is-deep .prompt__user,
+  .prompt.is-deep .prompt__host + .prompt__sep {
     display: none;
+  }
+
+  .site-nav .site-nav__list {
+    column-gap: 0;
   }
 
   .site-nav .site-nav__link {

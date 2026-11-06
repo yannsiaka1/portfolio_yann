@@ -21,3 +21,7 @@ Thumbs.db
 .vscode/*
 !.vscode/extensions.json
 .idea/
+
+# Journal : pages générées depuis content/journal/ par scripts/journal.mjs
+/journal/
+/en/journal/
