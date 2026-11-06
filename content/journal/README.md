@@ -21,6 +21,8 @@ Chaque fichier Markdown de `fr/` ou de `en/` devient une page du site. Pas de ba
    | `tags` | non | les sujets, entre crochets : `[veille, laravel]` |
    | `draft` | non | `true` tant que la note n'est pas prête ; la ligne peut être supprimée une fois publiée |
 
+   Une valeur s'écrit telle quelle, même avec un deux-points ou une apostrophe (`title: L'IA : mode d'emploi`). Des guillemets droits autour sont retirés ; dans `tags`, ils permettent un sujet qui contient une virgule (`["Laravel, Livewire", veille]`).
+
 4. **Écrire le texte** en Markdown, sous l'en-tête. Le titre de la note est déjà affiché par la page : commencer les parties par `##`, les sous-parties par `###`. `modele.md` montre le reste : gras, italique, liens, listes, code, citations, images.
 5. **Relire** : `npm run dev`, puis ouvrir `http://localhost:5173/journal/`. Les brouillons y sont visibles, avec la mention « Brouillon ». La page se recharge à chaque enregistrement du fichier.
 6. **Publier** : passer `draft` à `false` (ou supprimer la ligne), faire un commit et le pousser sur `main`. Vercel reconstruit le site, et la note apparaît sur l'accueil et dans le journal en une ou deux minutes.
@@ -41,6 +43,13 @@ Déposer l'image dans `images/`, de préférence en WebP, 1200 px de large au pl
 ```
 
 La description entre crochets est lue par les lecteurs d'écran et s'affiche si l'image ne charge pas : toujours la remplir. Le chemin part de la note, comme sur GitHub : l'image s'affiche aussi dans l'aperçu Markdown de GitHub. Au build, Vite l'optimise et lui donne un nom unique. Une image introuvable arrête le build, avec son chemin.
+
+## Liens
+
+- **Vers une autre note** : son fichier, `[titre](autre-note.md)`, ou `[title](../en/other-note.md)` pour une note de l'autre langue. Le lien marche aussi dans l'aperçu de GitHub, et le build vérifie que la note existe.
+- **Vers une page du site** : depuis la page de la note, `[mes projets](../../#projets)`.
+- **Vers un fichier** (PDF…) : le ranger dans `public/`, puis le viser depuis la page de la note : `[mon CV](../../cv/yann-siaka-cv.pdf)`. Le build vérifie qu'il existe.
+- **Vers un autre site** : l'adresse complète, `https://…`. Le lien s'ouvre dans un nouvel onglet, et les lecteurs d'écran l'annoncent.
 
 ## Langues
 

@@ -94,6 +94,8 @@ const slugify = (s) =>
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
+/** Apostrophe typographique entre deux lettres (texte brut, ou HTML où marked l'écrit &#39;). */
+const smart = (s) => String(s).replace(/([\p{L}\p{N}])(?:'|&#39;)(?=[\p{L}\p{N}])/gu, '$1’');
 const formatDate = (iso, lang) =>
   new Intl.DateTimeFormat(TEXT[lang].locale, { dateStyle: 'long', timeZone: 'UTC' }).format(new Date(`${iso}T00:00:00Z`));
 
@@ -131,8 +133,7 @@ function polish(html, lang) {
       out.push(tok);
     } else if (stack.some(([, blocked]) => blocked)) out.push(tok);
     else {
-      // marked écrit l'apostrophe &#39; : les deux formes deviennent ’
-      let text = tok.replace(/([\p{L}\p{N}])(?:'|&#39;)(?=[\p{L}\p{N}])/gu, '$1’');
+      let text = smart(tok);
       if (lang === 'fr') text = text.replace(/ :/g, ' :').replace(/« /g, '« ').replace(/ »/g, ' »');
       out.push(text.replace(PROTECTED, '<span translate="no">$1</span>'));
     }
@@ -142,8 +143,36 @@ function polish(html, lang) {
 
 /* ---------- lecture des notes ---------- */
 
+/** Une valeur entre guillemets droits perd ses guillemets, sauf si le même guillemet revient à l'intérieur
+ *  (« 'x' et 'y' » reste tel quel) ; l'apostrophe d'un mot (« L'IA ») n'est jamais un guillemet. */
+const unquote = (s) => {
+  const q = /^"([^"]*)"$|^'([^']*)'$/.exec(s);
+  return q ? (q[1] ?? q[2]) : s;
+};
+
+/** Liste « [a, "b, c", d] » : une virgule entre guillemets ne coupe pas le sujet. */
+function splitList(s) {
+  const items = [];
+  let cur = '';
+  let quote = '';
+  for (const ch of s) {
+    if (quote) {
+      cur += ch;
+      if (ch === quote) quote = '';
+    } else if ((ch === '"' || ch === "'") && !cur.trim()) {
+      quote = ch;
+      cur += ch;
+    } else if (ch === ',') {
+      items.push(cur);
+      cur = '';
+    } else cur += ch;
+  }
+  items.push(cur);
+  return items.map((t) => unquote(t.trim())).filter(Boolean);
+}
+
 function parseFrontMatter(src, file) {
-  const m = /^﻿?---\r?\n([\s\S]*?)\r?\n---[ \t]*(?:\r?\n|$)/.exec(src);
+  const m = /^\uFEFF?---\r?\n([\s\S]*?)\r?\n---[ \t]*(?:\r?\n|$)/.exec(src);
   if (!m) throw new NoteError(file, 'la note doit commencer par son en-tête, entre deux lignes « --- » (voir content/journal/modele.md).');
   const data = {};
   m[1].split(/\r?\n/).forEach((line, i) => {
@@ -151,10 +180,7 @@ function parseFrontMatter(src, file) {
     const kv = /^([A-Za-z]+)\s*:\s*(.*)$/.exec(line);
     if (!kv) throw new NoteError(file, `ligne ${i + 2} de l’en-tête illisible : « ${line.trim()} ». Écrire « clé: valeur ».`);
     const raw = kv[2].trim();
-    const unquote = (s) => (/^(["']).*\1$/.test(s) ? s.slice(1, -1) : s);
-    data[kv[1]] = /^\[.*\]$/.test(raw)
-      ? raw.slice(1, -1).split(',').map((s) => unquote(s.trim())).filter(Boolean)
-      : raw === 'true' ? true : raw === 'false' ? false : unquote(raw);
+    data[kv[1]] = /^\[.*\]$/.test(raw) ? splitList(raw.slice(1, -1)) : raw === 'true' ? true : raw === 'false' ? false : unquote(raw);
   });
   return { data, body: src.slice(m[0].length) };
 }
@@ -244,14 +270,22 @@ function renderBody(note, notes, root) {
       },
       link({ href, title, tokens }) {
         const inner = this.parser.parseInline(tokens);
-        const t = title ? ` title="${esc(title)}"` : '';
+        const t = title ? ` title="${esc(smart(title))}"` : '';
         // lien vers une autre note : « autre-note.md » ou « ../en/autre-note.md »
-        const md = isRelative(href) && /^(?:\.\.\/(fr|en)\/)?([a-z0-9-]+)\.md(#[\w-]*)?$/.exec(href);
+        const md = isRelative(href) && /^(?:\.\/)?(?:\.\.\/(fr|en)\/)?([a-z0-9-]+)\.md(#[\w-]*)?$/.exec(href);
         if (md) {
           const lang = md[1] || note.lang;
           const target = notes.find((o) => o.lang === lang && o.slug === md[2]);
           if (!target) throw new NoteError(note.file, `lien vers une note introuvable : « ${href} ».`);
           return `<a href="${rel(note.dir, target.dir)}${md[3] || ''}"${t}${lang !== note.lang ? ` hreflang="${lang}"` : ''}>${inner}</a>`;
+        }
+        // lien vers un fichier (« .pdf », « .png »…) : il doit exister dans public/, visé depuis la page de la note
+        const file = isRelative(href) && href.split(/[?#]/)[0];
+        if (file && /\.[a-z0-9]+$/i.test(file)) {
+          const site = posix.normalize(posix.join(note.dir, file));
+          if (site.startsWith('..') || !existsSync(join(root, 'public', site))) {
+            throw new NoteError(note.file, `lien vers un fichier introuvable : « ${href} ». Une image s’écrit ![description](../images/nom.webp) ; un autre fichier se range dans public/ et se vise depuis la page de la note, par exemple « ../../cv/yann-siaka-cv.pdf ».`);
+          }
         }
         if (isExternal(href)) {
           const tab = note.lang === 'fr' ? 'nouvel onglet' : 'new tab';
@@ -267,8 +301,8 @@ function renderBody(note, notes, root) {
           if (!existsSync(join(root, path))) throw new NoteError(note.file, `image introuvable : « ${href} » (cherchée dans ${path}).`);
           src = `/${path}`;
         }
-        const caption = title ? `<figcaption>${esc(title)}</figcaption>` : '';
-        return `<figure class="prose__figure"><img src="${esc(src)}" alt="${esc(text || '')}" loading="lazy" decoding="async">${caption}</figure>`;
+        const caption = title ? `<figcaption>${esc(smart(title))}</figcaption>` : '';
+        return `<figure class="prose__figure"><img src="${esc(src)}" alt="${esc(smart(text || ''))}" loading="lazy" decoding="async">${caption}</figure>`;
       },
       table(token) {
         // un tableau trop large défile dans son cadre, que l'on peut atteindre au clavier
@@ -277,8 +311,16 @@ function renderBody(note, notes, root) {
       },
     },
   });
+  let parsed;
+  try {
+    parsed = marked.parse(note.body);
+  } catch (err) {
+    // marked ajoute « Please report this to … » à toute erreur levée dans un rendu : inutile pour l'auteur d'une note
+    err.message = err.message.replace(/\s*Please report this to https:\/\/github\.com\/markedjs\/marked\.?\s*$/, '');
+    throw err;
+  }
   // une image seule dans son paragraphe devient une figure, pas un paragraphe
-  const html = marked.parse(note.body).replace(/<p>(<figure class="prose__figure">[\s\S]*?<\/figure>)<\/p>/g, '$1');
+  const html = parsed.replace(/<p>(<figure class="prose__figure">[\s\S]*?<\/figure>)<\/p>/g, '$1');
   return polish(html, note.lang);
 }
 
@@ -329,8 +371,10 @@ function chrome(root, lang, pageDir, counterpart, current) {
 }
 
 // hreflang et canonical viendront avec le domaine définitif, en adresses complètes, comme sur l'accueil (README)
-function page({ root, lang, dir, title, description, counterpart, current, main, type, robots, published }) {
+function page({ root, lang, dir, title: rawTitle, description: rawDescription, counterpart, current, main, type, robots, published }) {
   const T = TEXT[lang];
+  const title = smart(rawTitle);
+  const description = smart(rawDescription);
   const c = chrome(root, lang, dir, counterpart, current);
   const toRoot = rel(dir, '');
   const meta = [
@@ -353,7 +397,7 @@ function page({ root, lang, dir, title, description, counterpart, current, main,
   ${meta.join('\n  ')}
   <meta name="twitter:card" content="summary">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-  <link rel="alternate" type="application/atom+xml" title="${esc(TEXT.fr.siteTitle)}" vite-ignore href="${toRoot}${FEED}">
+  <link rel="alternate" type="application/atom+xml" title="${esc(T.siteTitle)}" vite-ignore href="${toRoot}${FEED}">
   <script>document.documentElement.classList.add('js');</script>
   <script type="module" src="/src/journal.js"></script>
 </head>
@@ -384,7 +428,7 @@ function list(notes, lang, fromDir, level) {
       foreign ? `<span class="notes__badge">${T.inOther}</span>` : '',
     ].join('');
     const tags = n.tags.length
-      ? `\n        <ul class="tools notes__tags" role="list" aria-label="${T.tags}">${n.tags.map((t) => `<li${langAttr}>${esc(t)}</li>`).join('')}</ul>`
+      ? `\n        <ul class="tools notes__tags" role="list" aria-label="${T.tags}">${n.tags.map((t) => `<li${langAttr}>${esc(smart(t))}</li>`).join('')}</ul>`
       : '';
     return `      <li class="notes__item">
         <h${level} class="notes__title"><a class="notes__link" href="${rel(fromDir, n.dir)}"${foreign ? ` hreflang="${TEXT[n.lang].htmlLang}"` : ''}${langAttr}>${polish(esc(n.title), n.lang)}</a></h${level}>
@@ -429,10 +473,10 @@ function notePage(root, note, notes) {
   const twin = note.translation;
   const counterpart = twin ? rel(note.dir, twin.dir) : rel(note.dir, OUT[other(lang)]);
   const tags = note.tags.length
-    ? `\n          <ul class="tools notes__tags" role="list" aria-label="${T.tags}">${note.tags.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>`
+    ? `\n          <ul class="tools notes__tags" role="list" aria-label="${T.tags}">${note.tags.map((t) => `<li>${esc(smart(t))}</li>`).join('')}</ul>`
     : '';
   const translation = twin
-    ? `\n          <p class="note__translation"><a class="link" href="${counterpart}" hreflang="${TEXT[twin.lang].htmlLang}" lang="${TEXT[twin.lang].htmlLang}">${T.translation}</a></p>`
+    ? `\n          <p class="note__translation"><a class="link link--standalone" href="${counterpart}" hreflang="${TEXT[twin.lang].htmlLang}" lang="${TEXT[twin.lang].htmlLang}">${T.translation}</a></p>`
     : '';
   const main = `  <article class="section note" aria-labelledby="note-title">
     <div class="container">
@@ -470,12 +514,12 @@ function feed(notes) {
   const updated = published.length ? `${published[0].date}T00:00:00Z` : new Date().toISOString();
   const entries = published.map(
     (n) => `  <entry xml:lang="${TEXT[n.lang].htmlLang}">
-    <title>${esc(n.title)}</title>
+    <title>${esc(smart(n.title))}</title>
     <link href="${site}/${n.dir}/"/>
     <id>${site}/${n.dir}/</id>
     <published>${n.date}T00:00:00Z</published>
     <updated>${n.date}T00:00:00Z</updated>
-    <summary>${esc(n.summary)}</summary>
+    <summary>${esc(smart(n.summary))}</summary>
   </entry>`,
   );
   return `<?xml version="1.0" encoding="utf-8"?>
@@ -538,8 +582,19 @@ export function journal({ root, drafts, strict }) {
   const log = (msg) => console.error(`\n[journal] ${msg}\n`);
   let notes = [];
   const build = () => {
-    notes = readNotes(root, { drafts, strict, log });
-    for (const n of notes) n.html = renderBody(n, notes, root);
+    const all = readNotes(root, { drafts, strict, log });
+    // une image ou un lien introuvable : le build s'arrête ; en développement, la note est mise de côté
+    notes = all.filter((n) => {
+      try {
+        n.html = renderBody(n, all, root);
+        return true;
+      } catch (err) {
+        if (strict) throw err;
+        log(err.message);
+        return false;
+      }
+    });
+    for (const n of notes) n.translation = notes.find((o) => o.slug === n.slug && o.lang !== n.lang) || null;
     return writePages(root, notes);
   };
   let inputs;

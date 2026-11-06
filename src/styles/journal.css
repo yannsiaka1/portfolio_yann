@@ -48,7 +48,11 @@
   text-wrap: balance;
 }
 
+/* titre-lien : cible de 48 px comme toute cible du site, même sur une ligne */
 .notes__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target);
   color: var(--text);
   text-decoration: none;
 }
@@ -130,6 +134,9 @@
 }
 
 .note__crumb {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target);
   color: inherit;
   text-underline-offset: var(--underline-offset);
 }
