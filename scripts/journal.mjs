@@ -205,6 +205,10 @@ class NoteError extends Error {
   }
 }
 
+// la liste de l'accueil, où une note courte se lit en entier, est écrite après le traitement des fichiers par Vite :
+// une image n'y serait pas publiée
+const NOTE_IMAGE = 'une note courte n’a pas d’image : elle se lit aussi sur la page d’accueil. Passer en « type: article » pour garder l’image.';
+
 /* ---------- texte courant : noms protégés, typographie ---------- */
 
 const PROTECTED = new RegExp(
@@ -339,14 +343,10 @@ function readNotes(root, { drafts, strict, log }) {
         const slug = validate(data, file, name);
         if (data.draft && !drafts) continue;
         const type = data.type || 'article';
-        // une note courte se lit d'un trait dans la liste : pas d'intertitre, ni d'image (la liste de l'accueil est
-        // écrite après le traitement des fichiers par Vite : l'image n'y serait pas publiée). Le code ne compte pas.
-        const prose = type === 'note' ? body.replace(/```[\s\S]*?```/g, '').replace(/`[^`\n]*`/g, '') : '';
-        if (/^#{1,6}\s/m.test(prose)) {
+        // une note courte se lit d'un trait dans la liste : pas d'intertitre (les blocs de code ne comptent pas) ; ni
+        // d'image, vérifié au rendu (renderBody et journal())
+        if (type === 'note' && /^#{1,6}\s/m.test(body.replace(/```[\s\S]*?```/g, ''))) {
           throw new NoteError(file, 'une note courte se lit d’un trait, sans intertitre : retirer les « ## », ou passer en « type: article ».');
-        }
-        if (/!\[[^\]]*\]\(|<img\b/i.test(prose)) {
-          throw new NoteError(file, 'une note courte n’a pas d’image : elle se lit aussi sur la page d’accueil. Passer en « type: article » pour garder l’image.');
         }
         const words = body.split(/\s+/).filter(Boolean).length;
         notes.push({
@@ -430,6 +430,7 @@ function renderBody(note, notes, root, fromDir = note.dir) {
       },
       // une image à côté de la note (« ../images/capture.webp ») est vérifiée, puis confiée à Vite qui l'optimise
       image({ href, title, text }) {
+        if (note.type === 'note') throw new NoteError(note.file, NOTE_IMAGE); // Markdown en ligne ou par référence
         let src = href;
         let size = null;
         if (isRelative(href)) {
@@ -798,6 +799,8 @@ export function journal({ root, drafts, strict }) {
     notes = all.filter((n) => {
       try {
         n.html = renderBody(n, all, root);
+        // une image écrite en HTML dans une note courte (<img>) : le code, échappé, ne compte pas
+        if (n.type === 'note' && /<img\b/i.test(n.html)) throw new NoteError(n.file, NOTE_IMAGE);
         if (n.type === 'note') n.listHtml = Object.fromEntries(LIST_DIRS.map((d) => [d, renderBody(n, all, root, d)]));
         return true;
       } catch (err) {
