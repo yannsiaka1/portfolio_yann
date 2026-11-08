@@ -115,12 +115,18 @@ h4 {
   font-weight: var(--fw-semibold);
 }
 
-/* Mots d'accent en italique, repris de la première version : la fin d'un titre, un passage de la phrase d'accroche. */
+/* Mots d'accent en italique, repris de la première version : la fin d'un titre, un passage de la phrase d'accroche.
+   Leur police arrive avec .accent-ready, posée par src/main.js une fois la page chargée (tout de suite sur les pages
+   du journal, journal-page.css) : elle ne dispute pas la bande passante du premier écran, où aucun mot d'accent ne figure. */
+.accent-ready {
+  --font-accent-ready: var(--font-accent);
+}
+
 h1 em,
 h2 em,
 h3 em,
 .statement em {
-  font-family: var(--font-accent);
+  font-family: var(--font-accent-ready, var(--font-accent-fallback));
   font-style: italic;
   font-weight: var(--fw-light);
   font-stretch: normal;

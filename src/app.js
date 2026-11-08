@@ -11,6 +11,7 @@ import { initNav } from './ui/nav.js';
 import { initCopy } from './ui/copy.js';
 import { initPause } from './ui/pause.js';
 import { initCursor, initMagnetic } from './ui/cursor.js';
+import { initPosters } from './ui/posters.js';
 import { initReveals } from './sections/reveals.js';
 import { initProjects } from './sections/projects.js';
 import { initMarquee, measureMarquee } from './sections/marquee.js';
@@ -61,7 +62,7 @@ export async function initApp() {
   // le hero est déjà affiché (son entrée est en CSS) : la scène 3D, quand elle arrive, assemble son symbole aussitôt
   fireIntro();
 
-  const sections = [initReveals, initProjects, initMarquee, initSkills, initMethod, initContact, initClocks, initFooter];
+  const sections = [initPosters, initReveals, initProjects, initMarquee, initSkills, initMethod, initContact, initClocks, initFooter];
   for (const init of sections) {
     await yieldToMain();
     init();

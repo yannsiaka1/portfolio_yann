@@ -343,8 +343,10 @@
   }
 }
 
-/* Entrée du hero, en CSS : elle part au premier affichage, sans attendre JavaScript, et ne cache chaque ligne qu'un
-   instant (le nom d'abord, puis le reste de haut en bas). Rien ne bouge avec « réduire les animations ». */
+/* Entrée du hero, en CSS : elle part au premier affichage, sans attendre JavaScript. Chaque ligne monte à sa place, le
+   nom d'abord, puis le reste de haut en bas ; aucune n'est cachée, même un instant : le texte se lit dès le premier
+   affichage (c'est lui que les navigateurs mesurent comme « plus grand élément affiché »). Rien ne bouge avec
+   « réduire les animations ». */
 @media (prefers-reduced-motion: no-preference) {
   .hero__name-line,
   .hero__role,
@@ -382,7 +384,6 @@
 
 @keyframes hero-in {
   from {
-    opacity: 0;
     transform: translateY(var(--hero-rise));
   }
 }

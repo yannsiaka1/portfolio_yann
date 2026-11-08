@@ -9,7 +9,9 @@ import { initApp } from './app.js';
 import { coarse } from './core/env.js';
 import { signalGlReady } from './core/state.js';
 
-initApp();
+// l'interface démarre juste après le premier affichage : le hero, écrit en HTML et animé en CSS, n'attend pas les
+// scripts, et le navigateur peint la page avant de les exécuter
+requestAnimationFrame(() => setTimeout(initApp, 0));
 
 // three.js (le plus gros fichier du site) arrive après la page : le hero s'affiche et se lit sans l'attendre, et le
 // symbole dessiné tient sa place en attendant (et pour de bon sans WebGL 2).
@@ -30,6 +32,11 @@ const startScene = () => {
 };
 const whenIdle = (fn) => ('requestIdleCallback' in window ? window.requestIdleCallback(fn, { timeout: 2000 }) : setTimeout(fn, 300));
 const afterLoad = (fn) => (document.readyState === 'complete' ? fn() : window.addEventListener('load', fn, { once: true }));
+
+// police des mots d'accent : après le chargement, ou tout de suite si l'adresse vise une section (base.css)
+const accentReady = () => document.documentElement.classList.add('accent-ready');
+if (window.location.hash) accentReady();
+else afterLoad(() => whenIdle(accentReady));
 
 if (navigator.connection && navigator.connection.saveData) {
   signalGlReady(false);

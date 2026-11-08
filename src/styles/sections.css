@@ -739,6 +739,32 @@ video.browser__shot {
   transform-style: preserve-3d;
 }
 
+/* Profondeur de chaque couche dans la pile : la couche 0 (analyse) au sommet, la couche 5 (mise en ligne) en bas.
+   Écrite ici plutôt que dans un attribut style des pages : la politique de sécurité du site refuse les styles en ligne. */
+.iso__layer[data-layer="0"] {
+  --z: 5;
+}
+
+.iso__layer[data-layer="1"] {
+  --z: 4;
+}
+
+.iso__layer[data-layer="2"] {
+  --z: 3;
+}
+
+.iso__layer[data-layer="3"] {
+  --z: 2;
+}
+
+.iso__layer[data-layer="4"] {
+  --z: 1;
+}
+
+.iso__layer[data-layer="5"] {
+  --z: 0;
+}
+
 /* La pile s'ouvre autour de la couche choisie : celles du dessus montent, celles du dessous descendent
    (--active-z est posé par src/sections/skills.js), la couche choisie garde sa place et son étiquette reste lisible. */
 .iso__layer {
