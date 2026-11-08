@@ -140,6 +140,7 @@
   --ratio-shot: 16 / 10; /* captures ordinateur (1440 × 900) */
   --ratio-phone: 360 / 779; /* captures mobiles (390 × 844) */
   --ratio-video: 1320 / 932; /* vidéo du prototype de l'ERP */
+  --ratio-youtube: 16 / 9; /* vidéo d'une ressource du journal */
   --ratio-visual: 4 / 3; /* visuel d'un projet quand la carte est en colonne */
   --visual-min-h: 26rem; /* visuel d'un projet à côté du texte */
   --progress-h: var(--space-5); /* barre « Défilez » des sections parcourues au défilement (projets, compétences) */

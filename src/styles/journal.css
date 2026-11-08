@@ -38,6 +38,11 @@
   color: var(--accent);
 }
 
+/* le format d'une note (note, article, vidéo, ressource), en tête de ses métadonnées */
+.notes__type {
+  color: var(--accent);
+}
+
 .notes__title {
   max-width: var(--measure);
   font-size: var(--fs-xl);
@@ -66,6 +71,11 @@
 .notes__summary {
   max-width: var(--measure);
   color: var(--text-2);
+}
+
+/* une note courte se lit en entier dans la liste, avec les styles du texte d'une note */
+.notes__body {
+  margin-top: var(--space-1);
 }
 
 .notes__tags {
@@ -167,6 +177,91 @@
   margin-top: var(--space-6);
   padding-top: var(--space-3);
   border-top: var(--stroke) solid var(--line);
+}
+
+/* ---------- ressource : la vidéo, chargée au clic (src/ui/video.js), ou le lien vers la page ---------- */
+.video {
+  max-width: var(--note-head-w);
+  margin-bottom: var(--space-3);
+  aspect-ratio: var(--ratio-youtube);
+  overflow: hidden;
+  border: var(--stroke) solid var(--line-strong);
+  border-radius: var(--radius-media);
+  background: var(--surface);
+}
+
+.video__link {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  height: 100%;
+  padding: var(--space-3);
+  color: var(--text);
+  text-align: center;
+  text-decoration: none;
+}
+
+.video__play {
+  display: grid;
+  place-items: center;
+  width: var(--space-6);
+  height: var(--space-6);
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  color: var(--on-accent);
+  transition: background-color var(--fast) var(--ease);
+}
+
+.video__link:hover .video__play {
+  background: var(--accent-hover);
+}
+
+.video__play svg {
+  width: var(--space-4);
+  height: var(--space-4);
+}
+
+.video__text {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.video__label {
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-semibold);
+}
+
+.video__hint {
+  font-size: var(--fs-sm);
+  color: var(--text-2);
+}
+
+.video__frame {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.note__source {
+  margin-bottom: var(--space-5);
+}
+
+/* ---------- page 404 : servie à toute adresse inconnue, en français et en anglais ---------- */
+.notfound {
+  display: grid;
+  align-content: center;
+  min-height: 100svh;
+  border-top: 0;
+}
+
+.notfound__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
 }
 
 /* ---------- texte d'une note (Markdown) ---------- */

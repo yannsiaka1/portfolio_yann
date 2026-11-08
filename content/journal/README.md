@@ -2,14 +2,26 @@
 
 Chaque fichier Markdown de `fr/` ou de `en/` devient une page du site. Pas de base de données ni d'interface d'administration : une note est un fichier, et la publier, c'est faire un commit.
 
+Le but : garder une trace de ce que j'apprends au jour le jour, une séance de code, une documentation lue, une vidéo regardée. Mieux vaut une note courte chaque semaine qu'un long article tous les six mois : les dates se voient.
+
 | Fichier | Page en ligne |
 | --- | --- |
 | `fr/mon-avis-sur-laravel-12.md` | `/journal/mon-avis-sur-laravel-12/` |
 | `en/my-take-on-laravel-12.md` | `/en/journal/my-take-on-laravel-12/` |
 
+## Trois formats
+
+| Format | Pour | Ce qui s'affiche | Modèle |
+| --- | --- | --- | --- |
+| `note` | ce que j'ai appris aujourd'hui, en quelques lignes, sans intertitre | le texte entier, directement dans la liste | `modele-note.md` |
+| `article` | un sujet développé, avec des parties | le titre et le résumé ; le texte sur sa page, avec sa durée de lecture | `modele.md` |
+| `ressource` | une vidéo ou une page à voir, avec ce que j'en retiens | le résumé ; sur sa page, la vidéo YouTube (chargée au clic) ou le lien vers la page | `modele-ressource.md` |
+
+Sans clé `type`, une note est un article.
+
 ## Écrire une note
 
-1. **Copier `modele.md`** dans `fr/`, ou dans `en/` pour une note en anglais.
+1. **Copier le modèle du format choisi** dans `fr/`, ou dans `en/` pour une note en anglais.
 2. **Le renommer** : le nom du fichier devient l'adresse de la page. Minuscules, chiffres et tirets seulement, sans accents (`retour-sur-github-foundations.md`).
 3. **Remplir l'en-tête**, entre les deux lignes `---` :
 
@@ -17,22 +29,28 @@ Chaque fichier Markdown de `fr/` ou de `en/` devient une page du site. Pas de ba
    | --- | --- | --- |
    | `title` | oui | le titre de la note |
    | `date` | oui | la date de publication, au format `AAAA-MM-JJ` ; les notes sont classées de la plus récente à la plus ancienne |
-   | `summary` | oui | une ou deux phrases, montrées dans les listes, sur l'accueil et dans les aperçus de partage (LinkedIn) |
+   | `type` | non | `note`, `article` (par défaut) ou `ressource` |
+   | `summary` | oui, sauf pour une note | une ou deux phrases, montrées dans les listes, sur l'accueil et dans les aperçus de partage (LinkedIn) ; une note sans résumé prend le début de son texte |
+   | `lien` | pour une ressource | l'adresse complète, en `https://`, de la vidéo ou de la page ; une vidéo YouTube se lit alors directement dans la note |
    | `tags` | non | les sujets, entre crochets : `[veille, laravel]` |
    | `draft` | non | `true` tant que la note n'est pas prête ; la ligne peut être supprimée une fois publiée |
 
-   Une valeur s'écrit telle quelle, même avec un deux-points ou une apostrophe (`title: L'IA : mode d'emploi`). Des guillemets droits autour sont retirés ; dans `tags`, ils permettent un sujet qui contient une virgule (`["Laravel, Livewire", veille]`).
+   Une valeur s'écrit telle quelle, même avec un deux-points ou une apostrophe (`title: L'IA : mode d'emploi`). Des guillemets droits autour sont retirés ; dans `tags`, ils permettent un sujet qui contient une virgule (`["Laravel, Livewire", veille]`). Une ligne qui commence par `#` est un commentaire, ignoré.
 
 4. **Écrire le texte** en Markdown, sous l'en-tête. Le titre de la note est déjà affiché par la page : commencer les parties par `##`, les sous-parties par `###`. `modele.md` montre le reste : gras, italique, liens, listes, code, citations, images.
 5. **Relire** : `npm run dev`, puis ouvrir `http://localhost:5173/journal/`. Les brouillons y sont visibles, avec la mention « Brouillon ». La page se recharge à chaque enregistrement du fichier.
 6. **Publier** : passer `draft` à `false` (ou supprimer la ligne), faire un commit et le pousser sur `main`. Vercel reconstruit le site, et la note apparaît sur l'accueil et dans le journal en une ou deux minutes.
 
-## Depuis GitHub, sans ordinateur
+## Depuis GitHub, même sur téléphone
 
-Sur github.com, ouvrir le dossier `content/journal/fr/` du dépôt, puis **Add file › Create new file**. Nommer le fichier, coller le contenu de `modele.md`, écrire la note, puis **Commit changes** :
+Sur github.com, dans le navigateur de l'ordinateur ou du téléphone, ouvrir le dossier `content/journal/fr/` du dépôt, puis **Add file › Create new file**. Nommer le fichier, coller le contenu du modèle, écrire la note, puis **Commit changes** :
 
-- **sur une nouvelle branche** avec une pull request : Vercel construit un aperçu de la branche, où les brouillons sont visibles. C'est la façon de relire la note sur le vrai site avant de la publier. Fusionner la pull request publie la note ;
-- **directement sur `main`** : la note est en ligne dès la fin du build, si `draft` vaut `false`.
+- **directement sur `main`**, la façon normale de publier une note : c'est du contenu, pas du code, il n'a pas besoin de passer par une pull request. La note est en ligne dès la fin du build, une à deux minutes plus tard, si `draft` vaut `false`. Si elle est mal écrite, le build s'arrête et le site reste sur sa version précédente (voir plus bas) ;
+- **sur une nouvelle branche** avec une pull request, pour relire une note sur le vrai site avant de la publier : Vercel construit un aperçu de la branche, où les brouillons sont visibles. Fusionner la pull request publie la note.
+
+## La note du jour avec un assistant IA
+
+À la fin d'une séance de travail avec un assistant (Claude Code, par exemple), lui demander d'écrire le brouillon de la note du jour à partir de ce qui a été fait, avec `draft: true`. Le relire, le réécrire avec ses propres mots, puis passer `draft` à `false`. L'assistant prépare ; ce qui est publié, je l'ai relu et je le signe.
 
 ## Images
 
@@ -60,7 +78,9 @@ La description entre crochets est lue par les lecteurs d'écran et s'affiche si 
 ## Ce que le site fait tout seul
 
 - **Accueil** : la section Journal montre les trois dernières notes, avec un lien vers toutes les autres. Elle n'existe pas, son lien du menu non plus, tant qu'aucune note n'est publiée.
-- **Chaque note** : date en toutes lettres, durée de lecture, sujets, lien vers sa traduction s'il y en a une, retour au journal et lien de contact.
+- **Chaque note** : son format (Note, Article, Vidéo, Ressource), la date en toutes lettres, la durée de lecture pour un article, les sujets, le lien vers sa traduction s'il y en a une, le retour au journal et le lien de contact.
+- **Vidéo** : rien n'est chargé depuis YouTube avant le clic sur « Lire la vidéo », ni requête ni témoin ; sans JavaScript, le lien ouvre la vidéo sur YouTube.
+- **Référencement** : chaque page publiée a son adresse canonique, est reliée à sa traduction, entre dans le plan du site (`/sitemap.xml`) et porte l'image de partage du site ; un article publié porte aussi sa fiche structurée (schema.org). Les brouillons ne sont jamais indexés.
 - **Typographie** : apostrophes typographiques, espace insécable avant le deux-points et dans les guillemets français, comme sur le reste du site.
 - **Flux Atom** (`/journal/feed.xml`) : les lecteurs de flux reçoivent les nouvelles notes. Les brouillons n'y entrent jamais.
 - **Brouillons** : visibles avec `npm run dev` et sur les aperçus Vercel des branches, jamais sur le site en ligne. Pour les voir dans un build local : `JOURNAL_DRAFTS=1 npm run build`.

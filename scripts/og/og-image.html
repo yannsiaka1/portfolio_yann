@@ -1,0 +1,35 @@
+<!doctype html>
+<!-- Source de public/og/yann-siaka.png, l'image affichée quand on partage le site (LinkedIn, messageries).
+     La refaire : ouvrir ce fichier dans un navigateur, fenêtre de 1200 × 630 px, et capturer la page
+     (ou lancer une capture Playwright à cette taille). Couleurs et polices reprises de src/styles/tokens.css. -->
+<html lang="fr-CA">
+<head>
+<meta charset="utf-8">
+<style>
+  @font-face { font-family: "Archivo"; src: url("../../node_modules/@fontsource-variable/archivo/files/archivo-latin-wdth-normal.woff2") format("woff2"); font-weight: 100 900; font-stretch: 62% 125%; }
+  @font-face { font-family: "JetBrains Mono"; src: url("../../node_modules/@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2") format("woff2"); font-weight: 100 800; }
+  html, body { margin: 0; }
+  body { width: 1200px; height: 630px; overflow: hidden; background: #121211; color: #eeece6; font-family: "Archivo", sans-serif; }
+  .card { position: relative; box-sizing: border-box; width: 1200px; height: 630px; padding: 72px 80px; display: grid; align-content: space-between; }
+  .prompt { font-family: "JetBrains Mono", monospace; font-size: 26px; font-weight: 500; }
+  .prompt b { font-weight: 500; color: #aba79e; }
+  .prompt i { font-style: normal; color: #f2b13a; }
+  .prompt span { display: inline-block; width: 13px; height: 26px; margin-left: 6px; vertical-align: -4px; background: #f2b13a; }
+  h1 { margin: 0; font-size: 132px; line-height: 0.95; font-weight: 680; font-stretch: 125%; letter-spacing: -0.03em; }
+  .role { margin: 22px 0 0; font-size: 40px; font-weight: 500; }
+  .motto { margin: 0; font-size: 30px; font-weight: 600; color: #f2b13a; }
+  svg { position: absolute; right: 80px; top: 170px; width: 300px; height: 200px; color: #f2b13a; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <p class="prompt">yann<b>@</b>siaka<b>:</b><i>~</i><b>$</b><span></span></p>
+    <div>
+      <h1>Yann<br>Siaka</h1>
+      <p class="role">Développeur full-stack à Montréal</p>
+    </div>
+    <p class="motto">Votre vision devient mon objectif.</p>
+    <svg viewBox="0 0 120 80" aria-hidden="true"><path d="M38 18 14 40l24 22M82 18l24 22-24 22M68 10 52 70" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </div>
+</body>
+</html>

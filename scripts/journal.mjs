@@ -10,11 +10,14 @@
 //     lien du menu) tant qu'aucune note n'est publiée ;
 //   - produit le flux Atom journal/feed.xml.
 // Les pages reprennent la barre et le pied de page de l'accueil (index.html, en/index.html) : une seule source.
+// Trois formats : la note courte (quelques lignes, lue directement dans la liste), l'article et la ressource (une vidéo
+// ou une page à voir, avec ce que j'en retiens ; une vidéo YouTube se lit dans la note, chargée au clic).
 // Brouillons (draft: true) : visibles avec npm run dev et sur les aperçus Vercel, jamais sur le site en ligne.
 // Mode d'emploi pour écrire une note : content/journal/README.md
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join, posix } from 'node:path';
 import { Marked } from 'marked';
+import { SITE_URL } from '../site.config.js';
 
 const CONTENT = 'content/journal';
 const LANGS = ['fr', 'en'];
@@ -22,10 +25,14 @@ const OUT = { fr: 'journal', en: 'en/journal' }; // dossiers générés, relatif
 const HOME = { fr: 'index.html', en: 'en/index.html' }; // pages d'accueil, sources de la barre et du pied de page
 const MARK = '.genere-par-scripts-journal'; // témoin : seuls les dossiers qui le portent sont effacés et réécrits
 const FEED = 'journal/feed.xml';
-const SITE = 'https://portfolioyann-wine.vercel.app'; // adresse de secours du flux, si Vercel ne donne pas la sienne
 const LATEST = 3; // notes montrées sur l'accueil
 const WORDS_PER_MINUTE = 200;
-const KEYS = ['title', 'date', 'summary', 'tags', 'draft'];
+const KEYS = ['title', 'date', 'type', 'summary', 'lien', 'tags', 'draft'];
+const TYPES = ['note', 'article', 'ressource']; // sans « type », une note est un article
+// une vidéo YouTube (watch, youtu.be, shorts, embed, live) : son identifiant de 11 caractères
+const YOUTUBE = /^https:\/\/(?:www\.|m\.)?(?:youtube\.com\/(?:watch\?(?:[^#]*&)?v=|shorts\/|embed\/|live\/)|youtu\.be\/)([\w-]{11})(?![\w-])/;
+// dossiers d'où une liste de notes est lue : les deux accueils et les deux index du journal
+const LIST_DIRS = ['', 'en', 'journal', 'en/journal'];
 
 // Noms propres et outils au nom de mot ordinaire : un traducteur automatique ne les touche pas (même liste que
 // les pages d'accueil). Pour en protéger un autre dans une note : <span translate="no">Nom</span>.
@@ -41,8 +48,14 @@ const TEXT = {
     locale: 'fr-CA',
     og: 'fr_CA',
     eyebrow: 'Journal',
-    heading: 'Mes notes, <em>déployées en continu.</em>',
-    intro: 'Notes techniques, avis sur des outils et veille&nbsp;: ce que j’apprends en construisant, écrit au fil des projets.',
+    heading: 'Ce que j’apprends, <em>au jour le jour.</em>',
+    intro: 'Une séance de code, une documentation lue, une vidéo regardée&nbsp;: j’en garde l’essentiel ici, en quelques lignes ou en article.',
+    types: { note: 'Note', article: 'Article', video: 'Vidéo', ressource: 'Ressource' },
+    watch: 'Lire la vidéo',
+    watchHint: 'Elle se charge depuis YouTube quand vous cliquez.',
+    watchOn: 'Voir sur YouTube',
+    source: (host) => `Lire la ressource sur ${host}`,
+    newTab: 'nouvel onglet',
     siteTitle: 'Journal de Yann Siaka',
     minutes: (n) => `${n}&nbsp;min de lecture`,
     draft: 'Brouillon',
@@ -53,6 +66,7 @@ const TEXT = {
     contact: 'Me contacter',
     translation: 'Read this note in English',
     promptLabel: 'yann@siaka, retour à l’accueil',
+    ogAlt: 'Yann Siaka, développeur full-stack à Montréal. Votre vision devient mon objectif.',
     switchShort: 'EN',
     switchLong: 'English',
   },
@@ -61,8 +75,14 @@ const TEXT = {
     locale: 'en-CA',
     og: 'en_CA',
     eyebrow: 'Journal',
-    heading: 'My notes, <em>continuously deployed.</em>',
-    intro: 'Technical notes, opinions on tools and tech watch: what I learn while building, written as I go.',
+    heading: 'What I learn, <em>day by day.</em>',
+    intro: 'A coding session, a doc I read, a video I watched: I keep the essentials here, in a few lines or a full article.',
+    types: { note: 'Note', article: 'Article', video: 'Video', ressource: 'Resource' },
+    watch: 'Play the video',
+    watchHint: 'It loads from YouTube when you click.',
+    watchOn: 'Watch on YouTube',
+    source: (host) => `Read the resource on ${host}`,
+    newTab: 'new tab',
     siteTitle: 'Yann Siaka’s journal',
     minutes: (n) => `${n}&nbsp;min read`,
     draft: 'Draft',
@@ -73,6 +93,7 @@ const TEXT = {
     contact: 'Contact me',
     translation: 'Lire cette note en français',
     promptLabel: 'yann@siaka, back to home',
+    ogAlt: 'Yann Siaka, full-stack developer in Montréal. Your vision becomes my goal.',
     switchShort: 'FR',
     switchLong: 'Français',
   },
@@ -98,6 +119,22 @@ const slugify = (s) =>
 const smart = (s) => String(s).replace(/([\p{L}\p{N}])(?:'|&#39;)(?=[\p{L}\p{N}])/gu, '$1’');
 const formatDate = (iso, lang) =>
   new Intl.DateTimeFormat(TEXT[lang].locale, { dateStyle: 'long', timeZone: 'UTC' }).format(new Date(`${iso}T00:00:00Z`));
+
+/** Début du texte d'une note, sans Markdown : la description d'une note courte qui n'a pas de résumé. */
+function excerpt(md, max = 155) {
+  const text = md
+    .replace(/```[\s\S]*?```/g, ' ')
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, ' ')
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
+    .replace(/[`*>#|]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (text.length <= max) return text;
+  return `${text.slice(0, text.lastIndexOf(' ', max)).replace(/[\s,;:.!?–—-]+$/, '')}…`;
+}
+
+/** Données structurées (schema.org) dans la page : « </ » échappé, un texte ne peut pas fermer la balise. */
+const jsonLd = (data) => `<script type="application/ld+json">${JSON.stringify(data).replace(/</g, '\\u003c')}</script>`;
 
 class NoteError extends Error {
   constructor(file, message) {
@@ -196,8 +233,26 @@ function validate(data, file, name) {
   const unknown = Object.keys(data).find((k) => !KEYS.includes(k));
   if (unknown) fail(`clé inconnue « ${unknown} » dans l’en-tête. Clés possibles : ${KEYS.join(', ')}.`);
   if (typeof data.title !== 'string' || !data.title) fail('il manque le titre : « title: Mon titre ».');
-  if (typeof data.summary !== 'string' || !data.summary) {
+  if (data.type !== undefined && !TYPES.includes(data.type)) {
+    fail(`« type » vaut note (quelques lignes), article ou ressource (une vidéo ou une page à voir) ; reçu : « ${data.type} ».`);
+  }
+  const type = data.type || 'article';
+  // une note courte peut se passer de résumé : son début sert de description
+  if (type !== 'note' && (typeof data.summary !== 'string' || !data.summary)) {
     fail('il manque le résumé : « summary: Une ou deux phrases. » Il s’affiche dans les listes et les aperçus de partage.');
+  }
+  if (data.summary !== undefined && typeof data.summary !== 'string') fail('le résumé s’écrit sur une ligne : « summary: Une ou deux phrases. »');
+  if (type === 'ressource' && !data.lien) {
+    fail('une ressource a besoin de son lien : « lien: https://… » (une vidéo YouTube se lit alors directement dans la note).');
+  }
+  if (data.lien !== undefined) {
+    let ok = false;
+    try {
+      ok = new URL(data.lien).protocol === 'https:';
+    } catch (err) {
+      ok = false;
+    }
+    if (!ok) fail(`le lien s’écrit en adresse complète, en https : « lien: https://www.youtube.com/watch?v=… » (reçu : « ${data.lien} »).`);
   }
   const okDate = typeof data.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(data.date) &&
     new Date(`${data.date}T00:00:00Z`).toISOString().startsWith(data.date);
@@ -220,12 +275,21 @@ function readNotes(root, { drafts, strict, log }) {
         const { data, body } = parseFrontMatter(src, file);
         const slug = validate(data, file, name);
         if (data.draft && !drafts) continue;
+        const type = data.type || 'article';
+        // une note courte se lit d'un trait dans la liste : pas d'intertitre (les blocs de code ne comptent pas)
+        if (type === 'note' && /^#{1,6}\s/m.test(body.replace(/```[\s\S]*?```/g, ''))) {
+          throw new NoteError(file, 'une note courte se lit d’un trait, sans intertitre : retirer les « ## », ou passer en « type: article ».');
+        }
         const words = body.split(/\s+/).filter(Boolean).length;
         notes.push({
-          lang, slug, file, body,
+          lang, slug, file, body, type,
           title: data.title,
           date: data.date,
-          summary: data.summary,
+          summary: data.summary || '',
+          description: data.summary || excerpt(body),
+          lien: data.lien || null,
+          video: data.lien ? (YOUTUBE.exec(data.lien) || [])[1] || null : null,
+          host: data.lien ? new URL(data.lien).hostname.replace(/^www\./, '') : null,
           tags: data.tags || [],
           draft: !!data.draft,
           minutes: Math.max(1, Math.round(words / WORDS_PER_MINUTE)),
@@ -247,7 +311,9 @@ function readNotes(root, { drafts, strict, log }) {
 const isExternal = (href) => /^[a-z][a-z0-9+.-]*:/i.test(href) && !/^mailto:|^tel:/i.test(href);
 const isRelative = (href) => !/^([a-z][a-z0-9+.-]*:|\/|#)/i.test(href);
 
-function renderBody(note, notes, root) {
+/** Texte d'une note en HTML. fromDir : dossier de la page qui l'affiche (sa propre page, ou une liste pour une note
+ *  courte, lue en entier dans la liste) ; les liens vers d'autres notes et vers des fichiers en partent. */
+function renderBody(note, notes, root, fromDir = note.dir) {
   const mdDir = posix.dirname(note.file);
   const ids = new Map();
   const marked = new Marked({
@@ -277,7 +343,7 @@ function renderBody(note, notes, root) {
           const lang = md[1] || note.lang;
           const target = notes.find((o) => o.lang === lang && o.slug === md[2]);
           if (!target) throw new NoteError(note.file, `lien vers une note introuvable : « ${href} ».`);
-          return `<a href="${rel(note.dir, target.dir)}${md[3] || ''}"${t}${lang !== note.lang ? ` hreflang="${lang}"` : ''}>${inner}</a>`;
+          return `<a href="${rel(fromDir, target.dir)}${md[3] || ''}"${t}${lang !== note.lang ? ` hreflang="${lang}"` : ''}>${inner}</a>`;
         }
         // lien vers un fichier (« .pdf », « .png »…) : il doit exister dans public/, visé depuis la page de la note
         const file = isRelative(href) && href.split(/[?#]/)[0];
@@ -286,6 +352,7 @@ function renderBody(note, notes, root) {
           if (site.startsWith('..') || !existsSync(join(root, 'public', site))) {
             throw new NoteError(note.file, `lien vers un fichier introuvable : « ${href} ». Une image s’écrit ![description](../images/nom.webp) ; un autre fichier se range dans public/ et se vise depuis la page de la note, par exemple « ../../cv/yann-siaka-cv.pdf ».`);
           }
+          if (fromDir !== note.dir) return `<a href="${esc(posix.relative(fromDir || '.', site) + href.slice(file.length))}"${t}>${inner}</a>`;
         }
         if (isExternal(href)) {
           const tab = note.lang === 'fr' ? 'nouvel onglet' : 'new tab';
@@ -370,20 +437,33 @@ function chrome(root, lang, pageDir, counterpart, current) {
   };
 }
 
-// hreflang et canonical viendront avec le domaine définitif, en adresses complètes, comme sur l'accueil (README)
-function page({ root, lang, dir, title: rawTitle, description: rawDescription, counterpart, current, main, type, robots, published }) {
+/** Une page du journal. path : son adresse depuis la racine du site (« journal/ma-note/ ») ; alternate : celle de sa
+ *  version dans l'autre langue, s'il y en a une. Les adresses complètes partent de __SITE_URL__ (site.config.js). */
+function page({ root, lang, dir, path, alternate, title: rawTitle, description: rawDescription, counterpart, current, main, type, robots, published, data }) {
   const T = TEXT[lang];
   const title = smart(rawTitle);
   const description = smart(rawDescription);
   const c = chrome(root, lang, dir, counterpart, current);
   const toRoot = rel(dir, '');
+  const url = `__SITE_URL__/${path}`;
   const meta = [
+    `<link rel="canonical" href="${url}">`,
+    ...(alternate
+      ? [`<link rel="alternate" hreflang="${T.htmlLang}" href="${url}">`, `<link rel="alternate" hreflang="${TEXT[other(lang)].htmlLang}" href="__SITE_URL__/${alternate}">`]
+      : []),
     `<meta property="og:type" content="${type}">`,
+    `<meta property="og:site_name" content="Yann Siaka">`,
+    `<meta property="og:url" content="${url}">`,
     `<meta property="og:locale" content="${T.og}">`,
     `<meta property="og:title" content="${esc(title)}">`,
     `<meta property="og:description" content="${esc(description)}">`,
+    `<meta property="og:image" content="__SITE_URL__/og/yann-siaka.png">`,
+    `<meta property="og:image:width" content="1200">`,
+    `<meta property="og:image:height" content="630">`,
+    `<meta property="og:image:alt" content="${esc(T.ogAlt)}">`,
     published ? `<meta property="article:published_time" content="${published}">` : '',
     robots ? `<meta name="robots" content="${robots}">` : '',
+    data ? jsonLd(data) : '',
   ].filter(Boolean);
   return `<!doctype html>
 <!-- Page générée par scripts/journal.mjs depuis content/journal/ : modifier la note, pas ce fichier. -->
@@ -395,10 +475,11 @@ function page({ root, lang, dir, title: rawTitle, description: rawDescription, c
   <meta name="description" content="${esc(description)}">
   <meta name="theme-color" content="#121211">
   ${meta.join('\n  ')}
-  <meta name="twitter:card" content="summary">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="alternate" type="application/atom+xml" title="${esc(T.siteTitle)}" vite-ignore href="${toRoot}${FEED}">
-  <script>document.documentElement.classList.add('js');</script>
+  <!-- même script que sur l'accueil, à l'octet près : son empreinte est autorisée par la politique de sécurité -->
+  <script>document.documentElement.classList.add('js')</script>
   <script type="module" src="/src/journal.js"></script>
 </head>
 <body>
@@ -417,6 +498,19 @@ ${c.footer}
 `;
 }
 
+/** Format, date et, pour un article, durée de lecture (une note courte se lit d'un coup d'œil, une ressource renvoie
+ *  à une vidéo ou à une page : pas de durée). */
+function meta(n, lang) {
+  const T = TEXT[lang];
+  const kind = n.type === 'ressource' && n.video ? 'video' : n.type;
+  return [
+    `<span class="notes__type">${T.types[kind]}</span>`,
+    `<time datetime="${n.date}">${formatDate(n.date, lang)}</time>`,
+    n.type === 'article' ? `<span>${T.minutes(n.minutes)}</span>` : '',
+    n.type === 'ressource' && !n.video ? `<span translate="no">${esc(n.host)}</span>` : '',
+  ].join('');
+}
+
 /** Liste de notes : l'accueil (titres h3, sous la section) et l'index du journal (titres h2, sous le h1). */
 function list(notes, lang, fromDir, level) {
   const T = TEXT[lang];
@@ -430,10 +524,14 @@ function list(notes, lang, fromDir, level) {
     const tags = n.tags.length
       ? `\n        <ul class="tools notes__tags" role="list" aria-label="${T.tags}">${n.tags.map((t) => `<li${langAttr}>${esc(smart(t))}</li>`).join('')}</ul>`
       : '';
-    return `      <li class="notes__item">
+    // une note courte se lit en entier dans la liste ; un article et une ressource montrent leur résumé
+    const body = n.type === 'note'
+      ? `<div class="notes__body prose"${langAttr}>\n${n.listHtml[fromDir]}\n        </div>`
+      : `<p class="notes__summary"${langAttr}>${polish(esc(n.summary), n.lang)}</p>`;
+    return `      <li class="notes__item notes__item--${n.type}">
         <h${level} class="notes__title"><a class="notes__link" href="${rel(fromDir, n.dir)}"${foreign ? ` hreflang="${TEXT[n.lang].htmlLang}"` : ''}${langAttr}>${polish(esc(n.title), n.lang)}</a></h${level}>
-        <p class="notes__meta"><time datetime="${n.date}">${formatDate(n.date, lang)}</time><span>${T.minutes(n.minutes)}</span>${badges}</p>
-        <p class="notes__summary"${langAttr}>${polish(esc(n.summary), n.lang)}</p>${tags}
+        <p class="notes__meta">${meta(n, lang)}${badges}</p>
+        ${body}${tags}
       </li>`;
   });
   return `<ol class="notes" role="list">\n${items.join('\n')}\n    </ol>`;
@@ -459,6 +557,8 @@ function indexPage(root, notes, lang) {
   </section>`;
   return page({
     root, lang, dir, main,
+    path: `${dir}/`,
+    alternate: `${OUT[other(lang)]}/`,
     title: T.siteTitle,
     description: T.intro.replace(/&nbsp;/g, ' '),
     counterpart: rel(dir, OUT[other(lang)]),
@@ -478,14 +578,29 @@ function notePage(root, note, notes) {
   const translation = twin
     ? `\n          <p class="note__translation"><a class="link link--standalone" href="${counterpart}" hreflang="${TEXT[twin.lang].htmlLang}" lang="${TEXT[twin.lang].htmlLang}">${T.translation}</a></p>`
     : '';
-  const main = `  <article class="section note" aria-labelledby="note-title">
+  // une vidéo YouTube : un lien vers YouTube, que src/ui/video.js remplace au clic par le lecteur (rien n'est chargé
+  // depuis YouTube avant ce clic) ; une autre ressource : un lien vers la page
+  const resource = note.video
+    ? `
+      <div class="video">
+        <a class="video__link" href="https://www.youtube.com/watch?v=${note.video}" target="_blank" rel="noopener" data-video="${note.video}" data-title="${esc(smart(note.title))}">
+          <span class="video__play" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M8.5 5.75v12.5L18.25 12z" fill="currentColor"/></svg></span>
+          <span class="video__text"><span class="video__label">${T.watch}</span><span class="video__hint">${T.watchHint}</span></span><span class="sr-only video__tab"> (YouTube, ${T.newTab})</span>
+        </a>
+      </div>
+      <p class="note__source"><a class="link link--standalone ext" href="https://www.youtube.com/watch?v=${note.video}" target="_blank" rel="noopener">${T.watchOn}<span class="sr-only"> (${T.newTab})</span></a></p>`
+    : note.lien
+      ? `
+      <p class="note__source"><a class="link link--standalone ext" href="${esc(note.lien)}" target="_blank" rel="noopener">${T.source(`<span translate="no">${esc(note.host)}</span>`)}<span class="sr-only"> (${T.newTab})</span></a></p>`
+      : '';
+  const main = `  <article class="section note note--${note.type}" aria-labelledby="note-title">
     <div class="container">
       <header class="note__head">
         <p class="eyebrow"><a class="note__crumb" href="${rel(note.dir, OUT[lang])}">${T.eyebrow}</a></p>
-        <h1 class="note__title" id="note-title">${polish(esc(note.title), lang)}</h1>
-        <p class="note__summary">${polish(esc(note.summary), lang)}</p>
-        <p class="notes__meta"><time datetime="${note.date}">${formatDate(note.date, lang)}</time><span>${T.minutes(note.minutes)}</span>${note.draft ? `<span class="notes__badge notes__badge--draft">${T.draft}</span>` : ''}</p>${tags}${translation}
-      </header>
+        <h1 class="note__title" id="note-title">${polish(esc(note.title), lang)}</h1>${note.summary ? `
+        <p class="note__summary">${polish(esc(note.summary), lang)}</p>` : ''}
+        <p class="notes__meta">${meta(note, lang)}${note.draft ? `<span class="notes__badge notes__badge--draft">${T.draft}</span>` : ''}</p>${tags}${translation}
+      </header>${resource}
       <div class="prose">
 ${note.html}
       </div>
@@ -495,21 +610,37 @@ ${note.html}
       </footer>
     </div>
   </article>`;
+  const path = `${note.dir}/`;
   return page({
-    root, lang, main,
+    root, lang, main, path,
     dir: note.dir,
+    alternate: twin ? `${twin.dir}/` : null,
     title: `${note.title} · ${T.siteTitle}`,
-    description: note.summary,
+    description: note.description,
     counterpart,
     current: 'true',
     type: 'article',
     robots: note.draft ? 'noindex' : '',
     published: note.date,
+    data: note.draft
+      ? null
+      : {
+          '@context': 'https://schema.org',
+          '@type': 'BlogPosting',
+          headline: smart(note.title),
+          description: smart(note.description),
+          datePublished: note.date,
+          inLanguage: T.htmlLang,
+          url: `__SITE_URL__/${path}`,
+          mainEntityOfPage: `__SITE_URL__/${path}`,
+          image: '__SITE_URL__/og/yann-siaka.png',
+          author: { '@type': 'Person', name: 'Yann Siaka', url: '__SITE_URL__/' },
+        },
   });
 }
 
 function feed(notes) {
-  const site = (process.env.SITE_URL || (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : SITE)).replace(/\/$/, '');
+  const site = SITE_URL.replace(/\/$/, '');
   const published = notes.filter((n) => !n.draft);
   const updated = published.length ? `${published[0].date}T00:00:00Z` : new Date().toISOString();
   const entries = published.map(
@@ -519,7 +650,7 @@ function feed(notes) {
     <id>${site}/${n.dir}/</id>
     <published>${n.date}T00:00:00Z</published>
     <updated>${n.date}T00:00:00Z</updated>
-    <summary>${esc(smart(n.summary))}</summary>
+    <summary>${esc(smart(n.description))}</summary>
   </entry>`,
   );
   return `<?xml version="1.0" encoding="utf-8"?>
@@ -587,6 +718,7 @@ export function journal({ root, drafts, strict }) {
     notes = all.filter((n) => {
       try {
         n.html = renderBody(n, all, root);
+        if (n.type === 'note') n.listHtml = Object.fromEntries(LIST_DIRS.map((d) => [d, renderBody(n, all, root, d)]));
         return true;
       } catch (err) {
         if (strict) throw err;
@@ -634,5 +766,18 @@ export function journal({ root, drafts, strict }) {
       });
     },
   };
-  return { inputs, plugin };
+  /** Pages publiées du journal, pour le plan du site (jamais un brouillon, même sur un aperçu). */
+  const pages = () => {
+    const published = notes.filter((n) => !n.draft);
+    if (!published.length) return [];
+    const indexAlt = { fr: `${OUT.fr}/`, en: `${OUT.en}/` };
+    return [
+      ...LANGS.map((lang) => ({ path: `${OUT[lang]}/`, lastmod: published[0].date, alternates: indexAlt })),
+      ...published.map((n) => {
+        const twin = n.translation && !n.translation.draft ? n.translation : null;
+        return { path: `${n.dir}/`, lastmod: n.date, alternates: twin ? { [n.lang]: `${n.dir}/`, [twin.lang]: `${twin.dir}/` } : null };
+      }),
+    ];
+  };
+  return { inputs, plugin, pages };
 }
