@@ -116,9 +116,8 @@
   --tab-size: 2; /* indentation des extraits de code */
 
   /* ---------- mise en page ---------- */
-  /* Marge de page reprise de Precious : 4,4 % de la largeur de l'écran, de 20 à 88 px, mesurée au bord de l'écran.
-     Le contenu suit jusqu'à 1 920 px de large (écran de 2 096 px) ; au-delà, il cesse de s'élargir et se centre. */
-  --container: 120rem; /* 1920 px de contenu au plus */
+  /* Marge de page reprise de Precious : 4,4 % de la largeur de l'écran, de 20 à 88 px, mesurée au bord de l'écran, à
+     toutes les largeurs (le contenu n'a pas de largeur maximale ; les textes gardent la leur, --measure). */
   --gutter: clamp(1.25rem, 4.4vw, 5.5rem);
   --header-h: 4rem; /* 64 px */
   --target: 3rem; /* 48 px : hauteur de toute cible cliquable */

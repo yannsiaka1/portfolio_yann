@@ -1,7 +1,6 @@
 /* Mise en page : conteneur, barre de navigation (invite de commande), sections, pied de page. */
 .container {
   width: 100%;
-  max-width: calc(var(--container) + 2 * var(--gutter));
   margin-inline: auto;
   padding-inline: max(var(--gutter), env(safe-area-inset-left, 0px)) max(var(--gutter), env(safe-area-inset-right, 0px));
 }

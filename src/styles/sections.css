@@ -79,7 +79,6 @@
 
 .projects__list > .projects__panel {
   width: 100%;
-  max-width: var(--container);
   margin-inline: auto;
   padding-inline: var(--gutter);
 }

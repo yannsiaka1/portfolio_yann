@@ -1,6 +1,6 @@
 # Portfolio de Yann Siaka
 
-Portfolio de Yann Siaka, développeur full-stack à Montréal. Une page d'accueil : qui il est, ses projets en ligne, ce qu'il sait faire, sa méthode, son parcours et comment le joindre ; et un journal de notes écrites en Markdown. Le motion design s'inspire de [trionn.com](https://trionn.com/) (intro, symbole 3D, révélations au défilement, bandeau, curseur, projets qui défilent un par un) et reprend les codes de la première version du site (titres avec mots d'accent en italique, cartes de projet avec maquettes, grain), sur une hiérarchie et une typographie pensées pour rester lisibles.
+Portfolio de Yann Siaka, développeur full-stack à Montréal. Une page d'accueil pensée pour un recruteur : qui il est et ses outils dès le premier écran, ce qu'il sait faire, ses projets en ligne, son parcours, sa méthode, puis qui il est et comment le joindre ; et un journal de ce qu'il apprend, écrit en Markdown. Le motion design s'inspire de [trionn.com](https://trionn.com/) (symbole 3D, révélations au défilement, bandeau, curseur, projets qui défilent un par un) et reprend les codes de la première version du site (titres avec mots d'accent en italique, cartes de projet avec maquettes, grain), sur une hiérarchie et une typographie pensées pour rester lisibles.
 
 **Stack** : [Vite](https://vite.dev) · [marked](https://marked.js.org) (Markdown du journal, au build) · [three.js](https://threejs.org) · [GSAP](https://gsap.com) + ScrollTrigger · [Lenis](https://lenis.darkroom.engineering) · polices auto-hébergées ([Fontsource](https://fontsource.org)) : Archivo pour le texte, Newsreader en italique pour les mots d'accent, JetBrains Mono pour le code et les petites étiquettes techniques.
 Aucun framework : HTML, CSS et JavaScript en modules.
@@ -15,6 +15,7 @@ npm run dev       # serveur de développement sur http://localhost:5173
 npm run build     # build de production dans dist/
 npm run preview   # sert dist/ pour vérifier le build
 npm run check:i18n  # vérifie que les pages française et anglaise gardent la même structure
+npm run verify    # vérification complète, point par point : build, deux langues, référencement, liens, sécurité, navigateur
 JOURNAL_DRAFTS=1 npm run build  # build avec les brouillons du journal (sinon visibles seulement en dev et sur les aperçus Vercel)
 ```
 
@@ -23,18 +24,27 @@ JOURNAL_DRAFTS=1 npm run build  # build avec les brouillons du journal (sinon vi
 ```
 index.html                 tout le contenu de la page en français, balises de partage
 en/index.html              la même page en anglais : même balisage, texte traduit à la main
+404.html                   page servie par Vercel à toute adresse inconnue, en français et en anglais
+site.config.js             l'adresse publique du site, écrite à un seul endroit (canonique, plan du site, partage, flux)
 scripts/check-i18n.mjs     compare la structure des deux pages (npm run check:i18n)
+scripts/verify.mjs         vérification complète, point par point (npm run verify)
 scripts/journal.mjs        journal : notes Markdown → pages, section de l'accueil, flux Atom (extension Vite)
-content/journal/           les notes du journal : fr/, en/, images/, modele.md et le mode d'emploi (README.md)
+scripts/site.mjs           adresse du site dans les pages, sitemap.xml, robots.txt, page 404 (extension Vite)
+scripts/icons.mjs          génère public/icons.svg à partir de Simple Icons (mode d'emploi en tête du fichier)
+scripts/og/og-image.html   source de l'image de partage public/og/yann-siaka.png
+content/journal/           les notes du journal : fr/, en/, images/, trois modèles et le mode d'emploi (README.md)
 journal/, en/journal/      pages du journal, générées à chaque lancement de Vite (ignorées par Git : ne pas modifier)
-vercel.json                adresses toujours terminées par « / » (/en/, /journal/…), pour que les liens relatifs restent justes
+vercel.json                en-têtes de sécurité et de cache ; adresses toujours terminées par « / » (/en/, /journal/…)
 public/favicon.svg
-public/proofs/             pièces justificatives agrandissables : extrait du rapport WES, attestation D-CLIC (720 et 1200 px)
+public/icons.svg           les logos des outils (hero et compétences), une seule couleur, générés par scripts/icons.mjs
+public/og/                 image de partage (LinkedIn, messageries), 1200 × 630
+public/posters/            affiches des vidéos de prototypes, posées à l'approche de leur carte (src/ui/posters.js)
+public/proofs/             pièce justificative agrandissable : attestation D-CLIC (720 et 1200 px)
 public/cv/yann-siaka-cv.pdf CV à télécharger (hero, Contact, pied de page), sans numéro de téléphone ; pour le mettre à jour, remplacer ce fichier en gardant son nom
 src/
 ├── main.js                point d'entrée : polices, styles, interface, puis scène 3D chargée à part
-├── journal.js             point d'entrée des pages du journal : polices, styles, barre (sans 3D ni intro)
-├── app.js                 assemble l'interface dans le bon ordre
+├── journal.js             point d'entrée des pages du journal et de la page 404 : polices, styles, barre (sans 3D)
+├── app.js                 assemble l'interface : le premier écran tout de suite, puis chaque section dans sa propre tâche
 ├── core/
 │   ├── env.js             préférences de l'appareil (souris, tactile, mouvement réduit), jetons, utilitaires DOM
 │   ├── state.js           état partagé avec la scène 3D, pause globale des animations
@@ -43,13 +53,14 @@ src/
 │   ├── scroll.js          défilement doux Lenis, synchronisé avec ScrollTrigger et avec le focus clavier
 │   └── text.js            découpe de texte et effet de brouillage « terminal »
 ├── ui/
-│   ├── loader.js          intro (une fois par visite) : journal de build, compteur, ouverture en bandes
 │   ├── nav.js             invite « yann@siaka:~/section$ », section en cours, menu mobile, ancres
 │   ├── cursor.js          curseur personnalisé et boutons magnétiques (souris seulement)
 │   ├── pause.js           bouton pause de toutes les animations
-│   ├── clocks.js          horloges Montréal et Douala
+│   ├── clocks.js          horloges Montréal et Douala, démarrées à l'approche de l'écran
+│   ├── posters.js         affiches des vidéos de prototypes, posées à l'approche de leur carte
+│   ├── video.js           vidéo d'une ressource du journal : le lecteur YouTube remplace le lien au clic
 │   └── copy.js            bouton « Copier l'adresse » et son message
-├── sections/              hero, pense-bête du hero, révélations, bandeau, projets (épinglés ou empilés, vidéo de l'ERP), compétences (six couches parcourues au défilement), méthode, contact, pied de page
+├── sections/              révélations, bandeau, projets (épinglés ou empilés, vidéo de l'ERP), compétences (six couches parcourues au défilement), méthode, contact, pied de page
 ├── hero/
 │   ├── scene.js           scène three.js : rendu, interactions, boucle d'animation
 │   ├── formations.js      les 7 symboles, décrits panneau par panneau
@@ -59,8 +70,8 @@ src/
     ├── base.css           remise à zéro, titres, focus, utilitaires
     ├── layout.css         conteneur, barre de navigation, sections, pied de page
     ├── components.css     bouton, lien, statut, outils, sur-titre, compteur, élément à filet, code, progression au défilement, formulaire, progression
-    ├── chrome.css         intro, curseur et grain
-    ├── hero.css           hero et scène 3D
+    ├── chrome.css         curseur et grain
+    ├── hero.css           hero (nom, outils, entrée en CSS) et scène 3D
     ├── sections.css       bandeau, projets, à propos, compétences, méthode, parcours, contact, signature
     ├── journal.css        liste des notes (accueil et journal) et page d'une note
     └── journal-page.css   styles des pages du journal : les communs du site, plus journal.css
@@ -90,7 +101,6 @@ Toutes les valeurs viennent de `src/styles/tokens.css` : aucune couleur, taille 
 | `--live` / `--neutral` | `#7CC48E` / `#8A867E` | pastilles de statut |
 | `--surface-2`, `--chrome`, `--bezel` | `#201F1C`, `#1D1C19`, `#23252C` | visuel d'un projet, barre du navigateur et contour du téléphone des maquettes |
 | `--tint-*` | une par projet | lueur du visuel, dans la couleur de la marque du projet |
-| `--paper` / `--on-paper` | `#EFDC96` / `#17130A` | papier et encre du pense-bête du hero (13,5:1 ; tâches faites à 7,6:1) |
 
 - **Typographie** : Archivo pour le texte (chasse 125 % pour le nom, 112 % pour les titres de niveau 3, normale ailleurs) ; Newsreader en italique fin pour les mots d'accent des titres et de la phrase d'À propos ; JetBrains Mono pour le code et les petites étiquettes techniques (sur-titres, outils, compteurs), jamais en capitales. Tailles de lecture : 15, 18, 21 ou 28 px ; tailles d'affichage fluides pour le nom, les titres de section (40 à 100 px, comme la première version), le nom des projets, la phrase d'À propos, les chiffres, le bandeau et la signature. Texte courant en 18 px, interligne 1,6, 62 caractères au plus par ligne. Aucun texte lisible sous 15 px (le texte dessiné dans une maquette fait partie de l'illustration).
 - **Espacement** : base 8 px (8, 16, 24, 32, 48, 64, 96, 128). Toute cible cliquable fait 48 px de haut.
@@ -129,16 +139,16 @@ Les mêmes panneaux de verre se recomposent en sept symboles, environ toutes les
 
 | Section | Contenu | Animation |
 | --- | --- | --- |
-| Intro | journal de build, compteur | ouverture en huit bandes, une fois par visite |
-| Hero | nom, rôle, accroche, « Voir les projets », CV à télécharger, GitHub, disponibilité, symbole 3D | lettres qui sortent du flou, symbole qui s'assemble |
-| Pense-bête (dans le hero) | « À faire » : parcourir les projets, vérifier les diplômes, écrire un mot ; chaque tâche mène à sa section. À droite du nom dès 1280 px, sous le texte en dessous | il se colle à la fin de l'intro, sans rien bloquer ; une tâche se coche après un peu plus d'une seconde passée dans sa section (la traverser en défilant ne compte pas), ou en préparant un courriel, en écrivant directement ou en copiant l'adresse ; la coche se trace quand le pense-bête revient à l'écran. « OK » le décolle pour le reste de la visite |
-| Bandeau | verbes et outils | défilement infini qui suit la vitesse du scroll |
+| Barre | invite « yann@siaka:~/section$ » qui suit la section lue, six onglets (Compétences, Projets, Parcours, Méthode, Journal, À propos), langue, « Me contacter » plein à l'accent | dès 1280 px, onglets centrés sur l'écran ; survol et section lue à l'accent, avec un trait qui se dessine sous l'onglet |
+| Hero | nom, rôle, quinze outils (logo d'une seule couleur et nom écrit, de l'analyse à la mise en ligne, puis les outils d'IA), une phrase et le slogan, « Voir les projets », CV, GitHub, disponibilité, symbole 3D | chaque ligne monte à sa place en CSS, sans jamais être cachée ; symbole qui s'assemble |
+| Bandeau | les étapes, du problème à la maintenance | défilement infini qui suit la vitesse du scroll |
+| Compétences | six couches, de l'analyse du besoin à la mise en ligne ; pour chacune : les outils d'abord, une phrase, trois puces, ce que l'IA y fait et ce que je vérifie, un extrait de code au plus ; l'introduction nomme les méthodes de travail | on parcourt les couches au défilement, une par hauteur d'écran ; sur grand écran, la pile et la progression restent à l'écran et s'allument sur la couche lue ; un clic sur la pile mène à sa couche |
 | Projets | cinq cartes : Precious, Glorious Hall, EasyTravel, Easy Life (prototype, schéma, jalons), l'ERP de l'IUT (vidéo du prototype) | grand écran : section épinglée, chaque projet arrive par la droite pendant que le précédent bascule à gauche ; ailleurs, cartes empilées qui arrivent par la droite et repartent à gauche |
-| À propos | titre, phrase d'accroche avec mots d'accent, présentation, langues, quatre repères en cartes | phrase éclairée mot par mot (du gris au blanc, lisible à plus de 7:1 à chaque instant), compteurs à rouleaux |
-| Compétences | six couches, de l'analyse du besoin et de la modélisation à la mise en ligne : ce que je sais faire, outils, extrait de code | on parcourt les couches au défilement, une par hauteur d'écran ; sur grand écran, la pile et la progression restent à l'écran et s'allument sur la couche lue, puis la page passe à la suite ; un clic sur la pile mène à sa couche |
+| Repères | quatre chiffres en cartes, dont les horloges Montréal et Douala ; ils prolongent les projets (l'onglet Projets reste allumé) | compteurs à rouleaux |
+| Parcours | journal des versions (diplômes, stages ; l'équivalence canadienne en une ligne sous la licence), langues, attestation D-CLIC avec qui contacter pour la faire confirmer, certifications | blocs qui montent |
 | Méthode | sept étapes, du besoin à la maintenance, lues comme un historique Git (le design et le prototypage avant le développement) | graphe tracé au défilement |
-| Parcours | journal des versions (diplômes, stages, équivalence WES), équivalence avec un extrait du rapport, attestation D-CLIC avec qui contacter pour la faire confirmer, certifications | blocs qui montent |
-| Journal | les trois dernières notes (date dans la marge, durée de lecture, résumé, sujets) et le lien vers toutes les notes ; absente, avec son lien du menu, tant qu'aucune note n'est publiée | blocs qui montent |
+| Journal | « Ce que j'apprends, au jour le jour » : les trois dernières entrées (note courte lue en entier, article ou ressource) et le lien vers toutes ; absente, avec son lien du menu, tant qu'aucune note n'est publiée | blocs qui montent |
+| À propos | titre, phrase d'accroche avec mots d'accent, présentation | phrase éclairée mot par mot (du gris au blanc, lisible à plus de 7:1 à chaque instant) |
 | Contact | formulaire qui prépare un courriel, aperçu JSON, courriel direct, LinkedIn, GitHub, CV à télécharger | aperçu mis à jour à la saisie |
 | Pied de page | signature, horloges Montréal et Douala | une vague gonfle les lettres de la signature, en boucle, tant qu'elle est à l'écran ; à la souris, graisse et chasse suivent le curseur. Le nom tient sur une ou deux lignes selon la largeur, choisi une fois en rejouant la vague hors écran : l'animation ne le fait jamais changer de ligne (la page ne saute plus) |
 
@@ -146,10 +156,12 @@ Les mêmes panneaux de verre se recomposent en sept symboles, environ toutes les
 
 Les notes sont des fichiers Markdown dans `content/journal/` : `fr/` pour le français, `en/` pour l'anglais, `images/` pour leurs images. Le mode d'emploi complet est dans [`content/journal/README.md`](content/journal/README.md), que GitHub affiche en ouvrant le dossier.
 
-- **Publier une note** : copier `content/journal/modele.md` dans `fr/`, le renommer (le nom devient l'adresse), remplir l'en-tête (`title`, `date`, `summary`, `tags`, `draft`), écrire, puis faire un commit sur `main`. Possible depuis github.com, sans ordinateur.
+- **Trois formats** : la note courte (`type: note`, quelques lignes lues en entier dans la liste), l'article (par défaut) et la ressource (`type: ressource` et `lien:`, une vidéo ou une page à voir ; une vidéo YouTube se lit dans la note, chargée au clic seulement).
+- **Publier une note** : copier le modèle du format dans `fr/`, le renommer (le nom devient l'adresse), remplir l'en-tête, écrire, puis faire un commit directement sur `main` (c'est du contenu, pas du code). Possible depuis github.com, même sur téléphone.
 - **Ce que produit le build** (`scripts/journal.mjs`, branché dans `vite.config.js`) : une page par note (`/journal/<adresse>/`, `/en/journal/<adresse>/`), un index par langue, la section Journal de l'accueil (trois dernières notes) et le flux Atom `/journal/feed.xml`. Les pages reprennent la barre et le pied de page de `index.html` et `en/index.html`, liens recalculés : modifier l'accueil suffit.
 - **Langues** : une note s'écrit dans une seule langue ; l'autre version du site l'affiche avec « In French » ou « En anglais ». Le même nom de fichier dans `fr/` et `en/` relie deux traductions.
-- **Brouillons** (`draft: true`) : visibles avec `npm run dev` et sur les aperçus Vercel des branches, avec la mention « Brouillon » et `noindex` ; jamais sur le site en ligne, ni dans le flux.
+- **Brouillons** (`draft: true`) : visibles avec `npm run dev` et sur les aperçus Vercel des branches, avec la mention « Brouillon » et `noindex` ; jamais sur le site en ligne, ni dans le flux, ni dans le plan du site.
+- **Référencement** : chaque page publiée a son adresse canonique, est reliée à sa traduction, entre dans `sitemap.xml` et porte l'image de partage ; un article publié porte sa fiche schema.org.
 - **Erreurs** : une note mal écrite arrête le build avec le fichier et ce qu'il faut corriger ; en développement, elle est mise de côté et le message s'affiche dans le terminal.
 - **Texte** : noms propres protégés des traducteurs automatiques (même liste que l'accueil), apostrophes typographiques, espace insécable avant le deux-points ; le code n'est jamais traduit. `##` ouvre une partie : le titre de la note est le seul `h1`.
 
@@ -171,18 +183,19 @@ Pour rafraîchir une capture : construire le site depuis son dépôt (`npm run b
 
 ## Accessibilité et performance
 
-- **Objectif WCAG 2.1 AA** : texte à 7:1 au moins, focus visible sur toute cible, navigation complète au clavier, lien d'évitement, cibles de 48 px, page lisible à 320 px de large sans défilement horizontal.
-- **Mouvement réduit** (réglage système, suivi aussi s'il change pendant la visite) : pas d'intro, pas de défilement doux, contenu visible tout de suite, symbole immobile, projets empilés, vidéos, grain et signature à l'arrêt.
+- **Objectif WCAG 2.2 AA** : texte à 7:1 au moins, focus visible sur toute cible, navigation complète au clavier, lien d'évitement, cibles de 48 px, page lisible de 320 à 2 560 px de large sans défilement horizontal ; le nom de chaque lien contient son texte visible. `npm run verify` le vérifie avec axe sur toutes les pages.
+- **Mouvement réduit** (réglage système, suivi aussi s'il change pendant la visite) : pas de défilement doux, contenu visible tout de suite, hero immobile, symbole immobile, projets empilés, vidéos, grain et signature à l'arrêt.
 - **Pause** : un bouton fige tout ce qui bouge seul (WCAG 2.2.2).
 - **Clavier** : les blocs pas encore révélés restent focalisables ; un élément qui reçoit le focus du clavier est amené à l'écran sous la barre (un clic de souris ne fait jamais défiler la page) ; dans les projets épinglés, sa carte est amenée au repos.
 - **Projets** : épinglés seulement sur un écran d'au moins 1024 × 640 px où chaque carte tient en entier (mesuré au chargement et à chaque redimensionnement : c'est le cas sur les ordinateurs portables courants, jusqu'à une fenêtre de 1280 × 640) ; sinon les cartes s'empilent, et rien n'est jamais coupé. Aux flèches du clavier, un pas suffit pour passer à la carte suivante. La vidéo de l'ERP ne joue que visible, a son propre bouton lecture et pause, et ne se lance jamais seule avec « réduire les animations ».
 - **Compétences** : les six couches sont toutes dans la page, chacune avec son titre de niveau 3 ; la pile isométrique est décorative. Sur grand écran, elle reste à l'écran par une simple position collante, sans épinglage : rien n'est coupé, quelle que soit la hauteur de l'écran.
-- **Pense-bête** : une liste de liens nommée « À faire » (une liste, pas un repère de page) ; une tâche faite est annoncée « (fait) » aux lecteurs d'écran ; sur le papier, l'anneau de focus prend la couleur de l'encre. « OK » au clavier rend le focus à « Voir les projets ». Il se colle et se décolle par une animation CSS, fluide même pendant le chargement de la scène 3D sur téléphone ; avec « réduire les animations », il apparaît et part sans bouger. Sans JavaScript, il reste une simple liste de liens, sans bouton OK.
 - **Code** : les lignes trop longues passent à la ligne, aucune zone ne défile à l'horizontale.
 - **Sans WebGL 2** : un symbole `</>` dessiné en SVG remplace la scène, le reste du site fonctionne.
-- **Mobile** : matériau métal à la place du verre réfractif, résolution limitée, interactions au toucher. Le nom du hero apparaît sans flou (un filtre animé sur chaque lettre saccade sur un téléphone), et la scène 3D ne démarre qu'après cette entrée, pour ne pas la ralentir.
+- **Mobile** : matériau métal à la place du verre réfractif, résolution limitée, interactions au toucher. La scène 3D ne se charge qu'au premier geste du visiteur (toucher, défilement), jamais avec l'économiseur de données ; le symbole dessiné tient sa place en attendant.
 - **Vidéos des prototypes** : lecture automatique, muettes, dès qu'elles arrivent à l'écran, sur ordinateur comme sur mobile ; arrêt hors de l'écran. Si un téléphone refuse la lecture automatique (mode économie d'énergie, données limitées), la vidéo repart au premier toucher. Jamais de lecture automatique avec « réduire les animations » : le bouton de lecture reste là.
-- three.js (≈ 138 ko gzip) est chargé à part : la page est utilisable avant lui.
+- three.js (≈ 140 ko gzip) arrive après la page : à la souris quand le navigateur est libre, au premier geste sur écran tactile.
+- **Ouverture** (Lighthouse, mobile, médiane de cinq passages) : performance 94, accessibilité 100, bonnes pratiques 100, référencement 100 ; plus grand élément affiché à 2,3 s. Le texte du hero se lit dès la première image ; l'interface démarre après le premier affichage, chaque section dans sa propre tâche ; les révélations passent par IntersectionObserver et Web Animations ; affiches des vidéos, police des mots d'accent et horloges arrivent après le premier écran.
+- **Sécurité** (`vercel.json`) : politique de sécurité du contenu stricte (rien ne se charge ni ne s'exécute hors du site, sauf le lecteur YouTube après un clic ; aucun style ni script en ligne, sauf une ligne autorisée par son empreinte, que `npm run verify` contrôle), pas d'intégration dans un cadre, référent limité, caméra, micro et géolocalisation coupés. Aucun service tiers ni témoin.
 - Le rendu 3D s'arrête quand le hero sort de l'écran ou que l'onglet est caché.
 
 ## À remplacer avant la mise en ligne
@@ -190,21 +203,21 @@ Pour rafraîchir une capture : construire le site depuis son dépôt (`npm run b
 - **Formulaire de contact** : il ouvre le logiciel de courriel du visiteur (lien mailto:). Pour un envoi direct depuis le site, le brancher sur un service (Formspree, Resend…).
 - **Glorious Hall** : remettre `glorioushall.com` (lien et barre de la maquette) quand le domaine principal sera rétabli.
 - **Prototype Figma de l'ERP** : le lien « Voir le prototype » ne s'ouvre pour les visiteurs que si le fichier est partagé en lecture à toute personne qui a le lien.
-- **Badge WES** : si WES propose un badge numérique (Credly) pour cette évaluation, ajouter son lien de vérification à côté de l'extrait du rapport.
 - **Années du parcours** : la section Parcours n'affiche pas de dates ; à ajouter si souhaité.
-- **Image de partage** (`og:image`) : à créer, pour un bel aperçu sur LinkedIn.
-- **Domaine** : une fois l'adresse du site connue, ajouter dans les deux pages `canonical`, `og:url` et les liens `hreflang` (fr-CA, en-CA, x-default) avec des adresses complètes, comme le demande Google ; de même dans les pages du journal (`page()` dans `scripts/journal.mjs`). Le flux Atom, lui, prend déjà l'adresse donnée par Vercel (`VERCEL_PROJECT_PRODUCTION_URL`), ou `SITE_URL` si elle est définie.
+- **Domaine** : en cas de nouveau domaine, changer la ligne de `site.config.js` ; adresses canoniques, versions FR et EN, plan du site, image de partage et flux suivent au build.
 - **CV en anglais** : à déposer dans `public/cv/` et à relier depuis la page anglaise, si souhaité.
 
 ## Déploiement
 
 Le build utilise des chemins relatifs (`base: './'`) : `dist/` fonctionne à la racine d'un domaine comme dans un sous-dossier. Il produit deux pages, `dist/index.html` (français) et `dist/en/index.html` (anglais), qui partagent les mêmes fichiers de `dist/assets/`.
 
-- **Vercel / Netlify** : commande `npm run build`, dossier `dist`.
+- **Vercel** : commande `npm run build`, dossier `dist` ; `vercel.json` ajoute les en-têtes de sécurité et de cache, et la page 404.
+- **Netlify** : même build ; les en-têtes de `vercel.json` sont à reporter dans `netlify.toml`.
 - **GitHub Pages** : publier le contenu de `dist/`.
 
 ## Contribuer
 
 1. Créer une branche depuis `main` (`feat/…`, `fix/…`, `docs/…`).
-2. Ouvrir une pull request vers `main`.
-3. Relecture, corrections, validation, puis fusion. Pas de push direct sur `main`.
+2. Lancer `npm run verify` : tous les points doivent passer.
+3. Ouvrir une pull request vers `main`.
+4. Relecture, corrections, validation, puis fusion. Pas de push direct sur `main`, sauf pour une note du journal (du contenu, pas du code).

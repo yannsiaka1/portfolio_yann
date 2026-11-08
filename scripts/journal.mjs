@@ -65,7 +65,7 @@ const TEXT = {
     feed: 'S’abonner au flux Atom',
     contact: 'Me contacter',
     translation: 'Read this note in English',
-    promptLabel: 'yann@siaka, retour à l’accueil',
+    promptBack: 'retour à l’accueil',
     ogAlt: 'Yann Siaka, développeur full-stack à Montréal. Votre vision devient mon objectif.',
     switchShort: 'EN',
     switchLong: 'English',
@@ -92,7 +92,7 @@ const TEXT = {
     feed: 'Subscribe to the Atom feed',
     contact: 'Contact me',
     translation: 'Lire cette note en français',
-    promptLabel: 'yann@siaka, back to home',
+    promptBack: 'back to home',
     ogAlt: 'Yann Siaka, full-stack developer in Montréal. Your vision becomes my goal.',
     switchShort: 'FR',
     switchLong: 'Français',
@@ -422,7 +422,8 @@ function chrome(root, lang, pageDir, counterpart, current) {
       .replace(/href="#accueil"/g, `href="${toHome}"`)
       .replace(/href="#(?!main")([\w-]+)"/g, `href="${toHome}#$1"`);
   const header = fix(pick(/<header class="site-header">[\s\S]*?<\/header>/, 'la barre (<header class="site-header">)'))
-    .replace(/aria-label="yann@siaka,[^"]*"/, `aria-label="${T.promptLabel}"`)
+    // l'invite mène à l'accueil : son texte lu seulement le dit (le texte visible reste le début de son nom)
+    .replace(/(<a class="prompt"[^>]*>[\s\S]*?<span class="sr-only">, )[^<]*(<\/span>)/, `$1${T.promptBack}$2`)
     .replace(/(<span class="prompt__path" id="navPath">)[^<]*(<\/span>)/, '$1~/journal$2');
   const footer = fix(
     pick(/<footer class="site-footer">[\s\S]*?<\/footer>/, 'le pied de page (<footer class="site-footer">)')

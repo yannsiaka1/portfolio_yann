@@ -21,6 +21,9 @@ export default defineConfig(({ command }) => {
       target: 'es2020',
       // three.js est volontairement isolé dans son propre fichier (import dynamique dans main.js)
       chunkSizeWarningLimit: 800,
+      // une police n'est jamais glissée dans la feuille de style en data: (Vite le fait sous 4 ko) : la politique de
+      // sécurité n'accepte que les polices servies par le site (font-src 'self', vercel.json)
+      assetsInlineLimit: (file) => (file.endsWith('.woff2') ? false : undefined),
       // deux pages d'accueil, même structure : le français à la racine, l'anglais dans en/ ; la page 404 ; puis les
       // pages du journal
       rollupOptions: {

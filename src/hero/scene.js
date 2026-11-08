@@ -77,15 +77,21 @@ function start() {
   if (!canvas || !hero || !stage) return signalGlReady(false);
   if (tag && coarse) tag.textContent = HINTS.touchTrace;
 
-  // three.js exige WebGL 2 : on vérifie avant de créer le renderer, pour un repli sans erreur
+  // three.js exige WebGL 2 : on vérifie avant de créer le renderer, pour un repli sans erreur. Sans accélération
+  // matérielle (rendu par le processeur : machine virtuelle, carte graphique désactivée), le navigateur refuse le
+  // contexte (failIfMajorPerformanceCaveat) : chaque image coûterait plus que la page entière, le symbole dessiné reste
   const attrs = { antialias: true, alpha: false, powerPreference: 'high-performance' };
   let context = null;
   try {
-    context = canvas.getContext('webgl2', attrs);
+    context = canvas.getContext('webgl2', { ...attrs, failIfMajorPerformanceCaveat: true });
   } catch (err) {
     context = null;
   }
   if (!context) return signalGlReady(false);
+  // rendu logiciel que le navigateur ne signale pas toujours (SwiftShader, llvmpipe…) : lu dans le nom du moteur
+  const debug = context.getExtension('WEBGL_debug_renderer_info');
+  const gpu = String(context.getParameter(debug ? debug.UNMASKED_RENDERER_WEBGL : context.RENDERER));
+  if (/swiftshader|llvmpipe|softpipe|software|basic render/i.test(gpu)) return signalGlReady(false);
 
   let renderer;
   try {
@@ -839,14 +845,34 @@ function start() {
   let rafId = 0;
   let last = 0;
   let onScreen = true;
+  // garde-fou : si les premières images coûtent trop cher (carte graphique lente, rendu logiciel non signalé), la
+  // scène s'arrête et le symbole dessiné reprend sa place : mieux vaut un symbole immobile qu'une page qui rame
+  const PROBE = 8; // premières images mesurées
+  const SLOW = 50; // ms : au-delà, une image fait manquer plusieurs rafraîchissements de l'écran
+  let probed = 0;
+  let slowFrames = 0;
+  let disabled = false;
+  function giveUp() {
+    disabled = true;
+    cancelAnimationFrame(rafId);
+    rafId = 0;
+    if (symbolBtn) symbolBtn.hidden = true;
+    signalGlReady(false);
+  }
   function loop(now) {
     rafId = requestAnimationFrame(loop);
     const dt = clamp((now - last) / 1000, 0, 0.05);
     last = now;
+    const start = performance.now();
     tick(dt);
+    if (probed < PROBE) {
+      probed += 1;
+      if (performance.now() - start > SLOW) slowFrames += 1;
+      if (slowFrames >= 3) giveUp();
+    }
   }
   function syncLoop() {
-    const run = onScreen && !document.hidden;
+    const run = !disabled && onScreen && !document.hidden;
     if (run && !rafId) {
       last = performance.now();
       rafId = requestAnimationFrame(loop);

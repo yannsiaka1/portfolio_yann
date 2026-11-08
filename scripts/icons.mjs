@@ -17,7 +17,7 @@ const ICONS = [
   'php', 'laravel', 'python', 'flask', 'django', 'nodedotjs', 'postman',
   'postgresql', 'mysql', 'sqlite', 'redis',
   'git', 'docker', 'vercel', 'render', 'railway',
-  'claude',
+  'claude', 'githubcopilot',
 ];
 
 const bySlug = new Map(Object.values(simpleIcons).filter((icon) => icon && icon.slug).map((icon) => [icon.slug, icon]));
