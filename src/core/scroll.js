@@ -63,14 +63,6 @@ export function initScroll() {
 
 export const hasSmoothScroll = () => !!lenis;
 
-export function pauseScroll() {
-  if (lenis) lenis.stop();
-}
-
-export function resumeScroll() {
-  if (lenis) lenis.start();
-}
-
 /** Défile jusqu'à une position précise de la page (projets épinglés : carte suivante, carte qui reçoit le focus). */
 export function scrollToY(y, duration = 0.6) {
   if (lenis) lenis.scrollTo(y, { duration, easing: (t) => 1 - Math.pow(1 - t, 3) });

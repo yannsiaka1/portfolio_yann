@@ -112,8 +112,9 @@
   }
 }
 
-/* petit écran d'ordinateur (1024 à 1279 px) : liens resserrés et collés (leurs cibles se touchent sans se chevaucher),
-   invite « yann:~$ » à l'accueil et « ~/section$ » dans une section : la barre garde une ligne avec le lien Journal */
+/* petit écran d'ordinateur (1024 à 1279 px) : onglets resserrés et collés (leurs cibles se touchent sans se chevaucher),
+   alignés à droite près du bouton ; invite « yann:~$ » à l'accueil et « ~/section$ » dans une section. Six onglets
+   et le bouton ne tiennent pas centrés à ces largeurs, surtout en anglais : le centrage commence à 1280 px. */
 @media (min-width: 64rem) and (max-width: 79.99rem) {
   .prompt__host,
   .prompt.is-deep .prompt__user,
@@ -126,7 +127,27 @@
   }
 
   .site-nav .site-nav__link {
-    padding-inline: var(--space-1);
+    --nav-link-pad: var(--space-1);
+  }
+}
+
+/* grand écran : les onglets se centrent sur l'écran lui-même, pas dans l'espace laissé par l'invite et les boutons.
+   L'invite change de longueur à chaque section : centrés dans l'espace restant, ils bougeraient à chaque fois. */
+@media (min-width: 80rem) {
+  .site-header__inner {
+    position: relative;
+  }
+
+  .site-nav .site-nav__list {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    column-gap: var(--space-4);
+    transform: translate(-50%, -50%);
+  }
+
+  .site-nav .site-nav__link {
+    --nav-link-pad: 0px;
   }
 }
 
@@ -174,11 +195,16 @@
   list-style: none;
 }
 
+/* Un onglet : gris au repos ; au survol et pour la section lue, il passe à l'accent (9,9:1 sur le fond) et un trait se
+   dessine sous son texte, de gauche à droite, comme sur le site de Precious. Le trait suit la marge intérieure de
+   l'onglet (--nav-link-pad), qui change avec la largeur de l'écran. */
 .site-nav__link {
+  --nav-link-pad: var(--space-2);
+  position: relative;
   display: inline-flex;
   align-items: center;
   min-height: var(--target);
-  padding-inline: var(--space-2);
+  padding-inline: var(--nav-link-pad);
   font-size: var(--fs-sm);
   font-weight: var(--fw-medium);
   color: var(--text-2);
@@ -186,19 +212,48 @@
   transition: color var(--fast) var(--ease);
 }
 
-.site-nav__link:hover {
-  color: var(--text);
+.site-nav__link::after {
+  content: "";
+  position: absolute;
+  inset-inline: var(--nav-link-pad);
+  top: calc(50% + var(--nav-underline-drop));
+  height: var(--stroke-strong);
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform var(--slow) var(--ease-expo);
 }
 
-.site-nav__link[aria-current="true"] {
-  color: var(--text);
-  text-decoration: underline;
-  text-decoration-thickness: var(--stroke-strong);
-  text-underline-offset: var(--underline-offset-nav);
+.site-nav__link:hover,
+.site-nav__link[aria-current="true"],
+.site-nav__link[aria-current="page"] {
+  color: var(--accent);
 }
 
+.site-nav__link:hover::after,
+.site-nav__link[aria-current="true"]::after,
+.site-nav__link[aria-current="page"]::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-nav__link::after {
+    transition: none;
+  }
+}
+
+/* le bouton « Me contacter » : plein, à l'accent, à droite de la barre */
 .site-nav__cta {
   margin-left: var(--space-2);
+}
+
+/* la navigation : ses onglets, puis le bouton, sur une ligne */
+@media (min-width: 64rem) {
+  .site-nav {
+    display: flex;
+    align-items: center;
+  }
 }
 
 /* Bouton Menu : l'apparence vient de .btn.btn--secondary, seul son affichage est ici. */
@@ -234,11 +289,20 @@
   }
 
   .js .site-nav__link {
+    --nav-link-pad: 0px;
     display: flex;
-    padding-inline: 0;
     font-size: var(--fs-lg);
     color: var(--text);
     border-bottom: var(--stroke) solid var(--line);
+  }
+
+  /* dans le menu déroulant, la section lue garde l'accent, sans trait : chaque ligne a déjà son filet */
+  .js .site-nav__link::after {
+    content: none;
+  }
+
+  .js .site-nav__link[aria-current="true"] {
+    color: var(--accent);
   }
 
   .js .site-nav__cta {

@@ -2,7 +2,6 @@
 // puis le logiciel de courriel s'ouvre avec le message rédigé (lien mailto:). Rien n'est envoyé par le site.
 import { $ } from '../core/env.js';
 import { t } from '../core/i18n.js';
-import { EVT_WROTE } from '../core/state.js';
 
 const TO = 'yannsiaka1@gmail.com';
 const MIN_MESSAGE = 20;
@@ -101,7 +100,6 @@ export function initContact() {
     const subject = TEXT.subject(data.besoin, data.nom);
     const body = `${data.message}\n\n${data.nom}\n${data.courriel}`;
     if (status) status.textContent = TEXT.sent;
-    window.dispatchEvent(new Event(EVT_WROTE)); // coche « M'écrire un mot » sur le pense-bête
     window.location.href = `mailto:${TO}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   });
 

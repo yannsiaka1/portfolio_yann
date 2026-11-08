@@ -4,18 +4,12 @@ import { root } from './env.js';
 export const EVT_GL_READY = 'pf:gl-ready';
 export const EVT_INTRO = 'pf:intro';
 export const EVT_PAUSE = 'pf:pause';
-/** Section en cours (detail : son id), envoyé par la barre de navigation à chaque changement. */
-export const EVT_SECTION = 'pf:section';
-/** Le visiteur a préparé un courriel avec le formulaire de contact. */
-export const EVT_WROTE = 'pf:wrote';
 
 export const state = {
   /** La scène 3D a rendu sa première image, ou a échoué (repli sans WebGL). */
   glReady: false,
-  /** L'intro est terminée : le hero peut jouer sa propre entrée. */
+  /** Le hero est affiché : la scène 3D peut assembler son symbole dès qu'elle est prête. */
   introFired: false,
-  /** Id de la section en cours (barre de navigation), lu par le pense-bête du hero. */
-  section: null,
   /** Vitesse de défilement, lue par le bandeau. */
   vel: 0,
   /** Bouton pause : tout ce qui bouge seul s'arrête (scène 3D, bandeau, curseur de l'invite). */
@@ -34,7 +28,7 @@ export function signalGlReady(ok) {
   window.dispatchEvent(new Event(EVT_GL_READY));
 }
 
-/** Fin de l'intro : le hero entre en scène, côté page comme côté 3D. */
+/** Le hero est affiché (son entrée est en CSS) : la scène 3D, chargée après la page, peut assembler son symbole. */
 export function fireIntro() {
   if (state.introFired) return;
   state.introFired = true;

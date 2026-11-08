@@ -100,8 +100,10 @@
   --radius-focus: 0.25rem; /* 4 px : anneau de focus autour d'un lien */
   --underline-offset: 0.25em;
   --underline-offset-nav: 0.45em;
+  --nav-underline-drop: 0.7em; /* soulignement d'un onglet : sous le texte, depuis le milieu de sa cible */
   --icon: 0.75em; /* flèche des liens externes */
   --icon-ui: 1rem; /* 16 px : icônes de bouton */
+  --icon-tool: 1.125rem; /* 18 px : logo d'un outil, dans le hero et les compétences */
   --list-indent: 1.25em; /* retrait des listes à puces */
   --caret-w: 0.6em; /* curseur de l'invite : la largeur d'un caractère de code */
   --caret-h: 1.1em;
@@ -112,8 +114,10 @@
   --tab-size: 2; /* indentation des extraits de code */
 
   /* ---------- mise en page ---------- */
-  --container: 90rem; /* 1440 px de contenu */
-  --gutter: var(--space-2); /* 16 px, puis 32 px dès 768 px */
+  /* Marge de page reprise de Precious : 4,4 % de la largeur de l'écran, de 20 à 88 px, mesurée au bord de l'écran.
+     Le contenu suit jusqu'à 1 920 px de large (écran de 2 096 px) ; au-delà, il cesse de s'élargir et se centre. */
+  --container: 120rem; /* 1920 px de contenu au plus */
+  --gutter: clamp(1.25rem, 4.4vw, 5.5rem);
   --header-h: 4rem; /* 64 px */
   --target: 3rem; /* 48 px : hauteur de toute cible cliquable */
   --radius-media: 0.75rem; /* 12 px : captures d'écran, zone du symbole */
@@ -127,7 +131,6 @@
   --z-skip: 30;
   --z-grain: 35; /* grain de la pellicule, au-dessus de tout sauf du curseur et de l'intro */
   --z-cursor: 40;
-  --z-loader: 50;
 
   /* ---------- hero et médias ---------- */
   --hero-min-h: calc(100svh - var(--header-h));
@@ -145,18 +148,6 @@
   --progress-bar-w: 17.5rem; /* longueur de la barre « Défilez » */
   --device-tilt: 4deg; /* téléphones inclinés de la maquette d'Easy Life */
   --iso-spread: var(--space-3); /* écart ajouté de part et d'autre de la couche choisie */
-
-  /* ---------- pense-bête du hero : un papier jaune adouci, cousin de l'accent ---------- */
-  --paper: #efdc96;
-  --paper-hover: rgb(23 19 10 / 0.08); /* bouton OK survolé */
-  --on-paper: #17130a; /* encre : 13,5:1 sur le papier */
-  --on-paper-2: #463f29; /* titre, tâches faites, contour du bouton : 7,6:1 */
-  --shadow-paper: 0 0.75rem 1.5rem rgb(0 0 0 / 0.5), 0 0.125rem 0.25rem rgb(0 0 0 / 0.35);
-  --postit-w: 15rem; /* 240 px */
-  --postit-tilt: 2deg;
-  --postit-in: 0.9s; /* il se colle */
-  --postit-out: 0.45s; /* il se décolle */
-  --check-length: 20; /* longueur du tracé de la coche, dessinée quand une tâche est faite */
 
   /* ---------- pile isométrique, phrase d'accroche, signature ---------- */
   --iso-size: 30rem; /* pile des compétences dès 1024 px */
@@ -183,20 +174,16 @@
   /* ---------- mouvement ---------- */
   --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
   --ease-expo: cubic-bezier(0.16, 1, 0.3, 1); /* révélations, comme expo.out de GSAP */
-  --ease-back: cubic-bezier(0.34, 1.56, 0.64, 1); /* léger rebond : le pense-bête qui se colle */
-  --ease-in: cubic-bezier(0.55, 0, 1, 0.45); /* accélère en partant : le pense-bête qui tombe */
   --fast: 0.18s; /* survols */
   --slow: 0.6s; /* apparition de la scène 3D, changement d'onglet */
+  --hero-in: 0.9s; /* entrée d'une ligne du hero */
+  --hero-step: 0.06s; /* décalage d'une ligne à la suivante */
+  --hero-rise: 1.25rem; /* 20 px : la ligne monte de cette hauteur en entrant */
   --blink: 1.1s; /* curseur de l'invite */
   --grain-opacity: 0.055;
   --grain-step: 1.1s; /* le grain change cinq fois par cycle */
 }
 
-@media (min-width: 48rem) {
-  :root {
-    --gutter: var(--space-4);
-  }
-}
 
 /* écran bas : la barre de progression des projets épinglés rend un peu de hauteur aux cartes */
 @media (max-height: 50rem) {

@@ -1,15 +1,16 @@
-// Assemble l'interface. L'ordre compte : le défilement doux et les découpes de texte doivent exister
-// avant les animations qui s'en servent, et l'intro part en dernier.
+// Assemble l'interface. Ce qui sert au premier écran (défilement doux, barre, pause, curseur) démarre tout de suite ;
+// les sections suivent ensuite, chacune dans sa propre tâche : la page reste réactive pendant le démarrage, aucun
+// long calcul ne bloque un toucher ou un clic. L'ordre reste celui d'origine : les découpes de texte (révélations)
+// existent avant les animations qui s'en servent, et la section épinglée des projets se mesure en premier quoi qu'il
+// arrive (refreshPriority, src/sections/projects.js).
 import { ScrollTrigger } from './core/gsap.js';
 import { initScroll } from './core/scroll.js';
+import { fireIntro } from './core/state.js';
 import { initClocks } from './ui/clocks.js';
 import { initNav } from './ui/nav.js';
 import { initCopy } from './ui/copy.js';
 import { initPause } from './ui/pause.js';
 import { initCursor, initMagnetic } from './ui/cursor.js';
-import { runLoader } from './ui/loader.js';
-import { prepareHero, initHeroIntro } from './sections/hero.js';
-import { initPostit } from './sections/postit.js';
 import { initReveals } from './sections/reveals.js';
 import { initProjects } from './sections/projects.js';
 import { initMarquee, measureMarquee } from './sections/marquee.js';
@@ -17,6 +18,13 @@ import { initSkills } from './sections/skills.js';
 import { initMethod, buildGitGraph } from './sections/method.js';
 import { initContact } from './sections/contact.js';
 import { initFooter } from './sections/footer.js';
+
+/** Rend la main au navigateur entre deux étapes du démarrage, le temps d'afficher ou de répondre à un geste. */
+const yieldToMain = () =>
+  new Promise((resolve) => {
+    if (window.scheduler && typeof window.scheduler.yield === 'function') window.scheduler.yield().then(resolve);
+    else setTimeout(resolve, 0);
+  });
 
 /** Recalcule les mesures après un redimensionnement, le chargement des polices et des images. */
 function initRefresh() {
@@ -39,28 +47,24 @@ function initRefresh() {
     }, 180);
   });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(refresh);
-  window.addEventListener('load', refresh);
+  if (document.readyState === 'complete') refresh();
+  else window.addEventListener('load', refresh, { once: true });
 }
 
-export function initApp() {
+export async function initApp() {
   initScroll();
-  initClocks();
   initNav();
-  initCopy();
   initPause();
   initCursor();
   initMagnetic();
-  prepareHero();
-  initHeroIntro();
-  // avant les sections épinglées : un pense-bête déjà retiré pendant la visite disparaît avant leurs mesures
-  initPostit();
-  initReveals();
-  initProjects();
-  initMarquee();
-  initSkills();
-  initMethod();
-  initContact();
-  initFooter();
+  initCopy();
+  // le hero est déjà affiché (son entrée est en CSS) : la scène 3D, quand elle arrive, assemble son symbole aussitôt
+  fireIntro();
+
+  const sections = [initReveals, initProjects, initMarquee, initSkills, initMethod, initContact, initClocks, initFooter];
+  for (const init of sections) {
+    await yieldToMain();
+    init();
+  }
   initRefresh();
-  runLoader();
 }

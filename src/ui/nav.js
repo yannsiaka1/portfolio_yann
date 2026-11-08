@@ -3,7 +3,6 @@ import { $, $$ } from '../core/env.js';
 import { t } from '../core/i18n.js';
 import { scramble } from '../core/text.js';
 import { scrollToTarget, hasSmoothScroll } from '../core/scroll.js';
-import { EVT_SECTION, state } from '../core/state.js';
 
 export function initNav() {
   const header = $('.site-header');
@@ -69,7 +68,6 @@ export function initNav() {
   const prompt = $('.prompt');
   const sections = $$('[data-path]');
   let currentPath = null;
-  let currentId = null;
   let queued = false;
   const update = () => {
     queued = false;
@@ -78,14 +76,9 @@ export function initNav() {
       const r = el.getBoundingClientRect();
       return r.top <= mid && r.bottom > mid;
     });
-    if (!section) return; // bandeau entre le hero et les projets : on garde la section précédente
-    // le pense-bête du hero coche ce que le visiteur a lu (src/sections/postit.js)
-    if (section.id !== currentId) {
-      currentId = section.id;
-      state.section = currentId;
-      window.dispatchEvent(new CustomEvent(EVT_SECTION, { detail: currentId }));
-    }
-    const id = `#${section.id}`;
+    if (!section) return; // bandeau entre le hero et les compétences : on garde la section précédente
+    // une section sans onglet (les repères chiffrés) allume celui de la section qu'elle prolonge (data-nav)
+    const id = `#${section.dataset.nav || section.id}`;
     links.forEach((a) => {
       if (a.getAttribute('href') === id) a.setAttribute('aria-current', 'true');
       else a.removeAttribute('aria-current');

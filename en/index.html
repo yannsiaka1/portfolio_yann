@@ -14,39 +14,14 @@
   <meta name="twitter:card" content="summary">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <!-- journal:start --><link rel="alternate" type="application/atom+xml" title="Journal de Yann Siaka" vite-ignore href="../journal/feed.xml"><!-- journal:end -->
-  <script>
-    // JavaScript présent : le menu mobile, les onglets et l'intro s'activent. L'intro ne joue qu'une fois par visite,
-    // jamais avec « réduire les animations », et se retire d'elle-même si un script échoue.
-    (function () {
-      var d = document.documentElement;
-      d.classList.add('js');
-      try {
-        if (!matchMedia('(prefers-reduced-motion: reduce)').matches && !sessionStorage.getItem('pf-intro')) d.classList.add('is-loading');
-      } catch (e) {}
-      setTimeout(function () { d.classList.remove('is-loading'); }, 7000);
-    })();
-  </script>
+  <!-- JavaScript présent : les comportements interactifs s’activent (menu mobile, onglets). Ce script est le même
+       sur toutes les pages : son empreinte est autorisée par la politique de sécurité (vercel.json), vérifiée par npm run verify. -->
+  <script>document.documentElement.classList.add('js')</script>
   <script type="module" src="/src/main.js"></script>
 </head>
 <body>
 <a class="btn btn--secondary skip-link" href="#main">Skip to content</a>
 <div class="grain" aria-hidden="true"></div>
-
-<!-- ============ INTRO ============ -->
-<div class="loader" id="loader" aria-hidden="true">
-  <div class="loader__belts"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-  <div class="loader__inner">
-    <div class="loader__log">
-      <p><code>$ npm run build:portfolio</code></p>
-      <p><span>Compiling interfaces</span><b>ok</b></p>
-      <p><span>Starting the API</span><b>ok</b></p>
-      <p><span>PostgreSQL schemas loaded</span><b>ok</b></p>
-      <p><span>3D scene ready</span><b>ok</b></p>
-    </div>
-    <p class="loader__count"><span id="loaderCount">000</span></p>
-    <p class="loader__name" translate="no">Yann Siaka</p>
-  </div>
-</div>
 
 <!-- ============ CURSEUR (souris seulement) ============ -->
 <div class="cursor is-out" id="cursor" aria-hidden="true">
@@ -65,14 +40,14 @@
     <button class="btn btn--secondary menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
     <nav class="site-nav" id="site-nav" aria-label="Sections">
       <ul class="site-nav__list" role="list">
-        <li><a class="site-nav__link" href="#projets">Projects</a></li>
-        <li><a class="site-nav__link" href="#a-propos">About</a></li>
         <li><a class="site-nav__link" href="#competences">Skills</a></li>
-        <li><a class="site-nav__link" href="#methode">Process</a></li>
+        <li><a class="site-nav__link" href="#projets">Projects</a></li>
         <li><a class="site-nav__link" href="#parcours">Background</a></li>
+        <li><a class="site-nav__link" href="#methode">Process</a></li>
         <!-- journal:start --><li><a class="site-nav__link" href="#journal">Journal</a></li><!-- journal:end -->
-        <li><a class="btn btn--secondary site-nav__cta magnetic" href="#contact">Contact me</a></li>
+        <li><a class="site-nav__link" href="#a-propos">About</a></li>
       </ul>
+      <a class="btn btn--primary site-nav__cta magnetic" href="#contact">Contact me</a>
     </nav>
   </div>
 </header>
@@ -85,30 +60,31 @@
     <div class="container hero__inner">
       <div class="hero__text" data-vibrate>
         <h1 class="hero__title" id="hero-title">
-          <span class="hero__name" id="heroName" translate="no"><span class="hero__name-line">Yann</span> <span class="hero__name-line">Siaka<span class="sr-only">,</span></span></span>
-          <span class="hero__role" data-intro>Full-stack developer in Montréal</span>
+          <span class="hero__name" translate="no"><span class="hero__name-line">Yann</span> <span class="hero__name-line">Siaka<span class="sr-only">,</span></span></span>
+          <span class="hero__role">Full-stack developer in Montréal</span>
         </h1>
-        <p class="hero__lede" data-intro>From idea to application: I listen, design, plan and code custom web applications, end to end, from the user interface to the API and the database. <strong class="hero__motto">Your vision becomes my goal.</strong></p>
-        <div class="hero__actions" data-intro>
+        <ul class="stack" role="list" aria-label="My tools, from analysis to deployment" translate="no">
+          <li class="stack__item"><svg class="icon" aria-hidden="true" focusable="false"><use href="../icons.svg#uml"></use></svg>UML</li>
+          <li class="stack__item"><svg class="icon" aria-hidden="true" focusable="false"><use href="../icons.svg#figma"></use></svg>Figma</li>
+          <li class="stack__item"><svg class="icon" aria-hidden="true" focusable="false"><use href="../icons.svg#javascript"></use></svg>JavaScript</li>
+          <li class="stack__item"><svg class="icon" aria-hidden="true" focusable="false"><use href="../icons.svg#typescript"></use></svg>TypeScript</li>
+          <li class="stack__item"><svg class="icon" aria-hidden="true" focusable="false"><use href="../icons.svg#react"></use></svg>React</li>
+          <li class="stack__item"><svg class="icon" aria-hidden="true" focusable="false"><use href="../icons.svg#php"></use></svg>PHP</li>
+          <li class="stack__item"><svg class="icon" aria-hidden="true" focusable="false"><use href="../icons.svg#laravel"></use></svg>Laravel</li>
+          <li class="stack__item"><svg class="icon" aria-hidden="true" focusable="false"><use href="../icons.svg#python"></use></svg>Python</li>
+          <li class="stack__item"><svg class="icon" aria-hidden="true" focusable="false"><use href="../icons.svg#postgresql"></use></svg>PostgreSQL</li>
+          <li class="stack__item"><svg class="icon" aria-hidden="true" focusable="false"><use href="../icons.svg#github"></use></svg>GitHub</li>
+          <li class="stack__item"><svg class="icon" aria-hidden="true" focusable="false"><use href="../icons.svg#docker"></use></svg>Docker</li>
+          <li class="stack__item"><svg class="icon" aria-hidden="true" focusable="false"><use href="../icons.svg#vercel"></use></svg>Vercel</li>
+          <li class="stack__item"><svg class="icon" aria-hidden="true" focusable="false"><use href="../icons.svg#claude"></use></svg>Claude Code</li>
+        </ul>
+        <p class="hero__lede">From idea to launch, I build complete, custom web applications. <strong class="hero__motto">Your vision becomes my goal.</strong></p>
+        <div class="hero__actions">
           <a class="btn btn--primary magnetic" href="#projets">See the projects</a>
           <a class="btn btn--secondary magnetic" href="../cv/yann-siaka-cv.pdf" download="Yann-Siaka-CV.pdf" type="application/pdf">Download my CV (French)<span class="sr-only">, PDF, 85&nbsp;KB</span></a>
           <a class="btn btn--secondary magnetic ext" href="https://github.com/yannsiaka1" target="_blank" rel="noopener">GitHub<span class="sr-only"> (new tab)</span></a>
         </div>
-        <p class="status status--live hero__availability" data-intro>Available for a job or a contract, in Canada or remotely, depending on your needs.</p>
-        <!-- Pense-bête : trois choses à faire pendant la visite, cochées au fil de la lecture (src/sections/postit.js) -->
-        <div class="postit" id="postit">
-          <div class="postit__paper">
-            <div class="postit__head">
-              <p class="postit__title" id="postit-title"><span aria-hidden="true">// </span>To do</p>
-              <button class="btn postit__ok" type="button" aria-label="OK, remove the sticky note">OK</button>
-            </div>
-            <ul class="postit__list" role="list" aria-labelledby="postit-title">
-              <li class="postit__item" data-todo="projets"><a class="postit__link" href="#projets"><svg class="postit__box" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><rect x="1.75" y="1.75" width="12.5" height="12.5" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path class="postit__check" d="M4.5 8.5l2.5 2.5 5-6.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="postit__label">Browse my projects</span><span class="sr-only postit__state"></span></a></li>
-              <li class="postit__item" data-todo="parcours"><a class="postit__link" href="#parcours"><svg class="postit__box" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><rect x="1.75" y="1.75" width="12.5" height="12.5" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path class="postit__check" d="M4.5 8.5l2.5 2.5 5-6.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="postit__label">Check my credentials</span><span class="sr-only postit__state"></span></a></li>
-              <li class="postit__item" data-todo="ecrire"><a class="postit__link" href="#contact"><svg class="postit__box" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><rect x="1.75" y="1.75" width="12.5" height="12.5" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path class="postit__check" d="M4.5 8.5l2.5 2.5 5-6.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="postit__label">Drop me a line</span><span class="sr-only postit__state"></span></a></li>
-            </ul>
-          </div>
-        </div>
+        <p class="status status--live hero__availability">Available for a job or a contract, in Canada or remotely, depending on your needs.</p>
       </div>
       <div class="hero__stage" id="heroStage">
         <svg class="hero__fallback" viewBox="0 0 120 80" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><path d="M38 18 14 40l24 22M82 18l24 22-24 22M68 10 52 70" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -145,12 +121,156 @@
         <span class="marquee__word">Maintenance<code>&gt;_</code></span>
       </div>
     </div>
-    <div class="marquee__row" data-speed="45" data-dir="1" translate="no">
-      <div class="marquee__set">
-        <span class="marquee__tool">Figma<i>/</i></span><span class="marquee__tool">Python<i>/</i></span><span class="marquee__tool">JavaScript<i>/</i></span><span class="marquee__tool">TypeScript<i>/</i></span><span class="marquee__tool">PHP<i>/</i></span><span class="marquee__tool">React<i>/</i></span><span class="marquee__tool">Laravel<i>/</i></span><span class="marquee__tool">Git<i>/</i></span><span class="marquee__tool">GitHub<i>/</i></span><span class="marquee__tool">SQL<i>/</i></span><span class="marquee__tool">PostgreSQL<i>/</i></span><span class="marquee__tool">Redis<i>/</i></span><span class="marquee__tool">WSL<i>/</i></span><span class="marquee__tool">Docker<i>/</i></span><span class="marquee__tool">UML<i>/</i></span><span class="marquee__tool">SEO<i>/</i></span>
+  </div>
+
+  <!-- ============ COMPÉTENCES ============ -->
+  <section class="section" id="competences" data-path="~/skills" aria-labelledby="competences-label">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" id="competences-label">Skills</p>
+        <h2 id="competences-title" data-reveal="words">The whole stack, <em>layer by layer.</em></h2>
+        <p class="section-head__intro">What I can do at each layer, from requirements analysis to going live, with the tools I actually use. Languages: PHP, JavaScript, TypeScript, Python, SQL, HTML and CSS.</p>
+      </div>
+      <div class="skills">
+        <div class="skills__aside" aria-hidden="true">
+          <div class="iso">
+            <div class="iso__scene" id="isoScene">
+              <div class="iso__layer" style="--z: 0" data-layer="5"><span class="iso__label">Tools and deployment</span></div>
+              <div class="iso__layer" style="--z: 1" data-layer="4"><span class="iso__label">Data</span></div>
+              <div class="iso__layer" style="--z: 2" data-layer="3"><span class="iso__label">API and back end</span></div>
+              <div class="iso__layer" style="--z: 3" data-layer="2"><span class="iso__label">Interface</span></div>
+              <div class="iso__layer" style="--z: 4" data-layer="1"><span class="iso__label">Design and experience</span></div>
+              <div class="iso__layer is-active" style="--z: 5" data-layer="0"><span class="iso__label">Analysis and modelling</span></div>
+            </div>
+          </div>
+          <p class="scroll-progress skills__progress"><span>Scroll</span><span class="scroll-progress__bar"><i id="skillsBar"></i></span><span class="scroll-progress__count" id="skillsCount">01 / 06</span></p>
+        </div>
+        <div class="skills__layers">
+          <div class="skills__panel" id="couche-analyse" data-layer="0">
+            <h3>Analysis and modelling</h3>
+            <p class="skills__lead">What we understand before drawing anything: the client’s requirements, turned into models the whole team can read.</p>
+            <ul class="checks" role="list">
+              <li>Listen to the client: the problem to solve, who uses the service, for what, on which device</li>
+              <li>Analyze what already exists before proposing a solution</li>
+              <li>Model in UML: use cases, classes and sequences</li>
+              <li>Break the requirements down into milestones and tasks, so everyone knows what comes next</li>
+            </ul>
+            <ul class="tools" translate="no" role="list" aria-label="Tools">
+              <li>UML</li><li>GitHub Projects</li>
+            </ul>
+<pre class="code" translate="no"><code><span class="c"># user story, Easy Life</span>
+<span class="k">As a</span> traveller,
+<span class="k">I want</span> to book my seat and pay with Mobile Money
+<span class="k">so that</span> I get my QR e-ticket without going to the counter.</code></pre>
+          </div>
+
+          <div class="skills__panel" id="couche-design" data-layer="1">
+            <h3>Design and experience</h3>
+            <p class="skills__lead">What we imagine before coding: simple journeys and screens designed for the people who use them.</p>
+            <ul class="checks" role="list">
+              <li>Map the user journeys, then design the mockups and a clickable prototype in Figma</li>
+              <li>Simplify every step: guided onboarding, then sign-up in a single form</li>
+              <li>Build out a design system: colours, typography, components, light and dark themes</li>
+              <li>Check readability and accessibility: contrast, sizes, keyboard, mobile first</li>
+            </ul>
+            <ul class="tools" translate="no" role="list" aria-label="Tools">
+              <li>Figma</li>
+            </ul>
+<pre class="code" translate="no"><code><span class="c">/* two themes, one set of tokens */</span>
+:root {
+  --navy: <span class="s">#0e1b3d</span>;
+  --sun: <span class="s">#ffc72c</span>;
+  --bg: <span class="s">#ffffff</span>;
+}
+[<span class="k">data-theme</span>=<span class="s">"dark"</span>] { --bg: var(--navy); }</code></pre>
+          </div>
+
+          <div class="skills__panel" id="couche-interface" data-layer="2">
+            <h3>Interface</h3>
+            <p class="skills__lead">What you touch: fast, readable and accessible screens.</p>
+            <ul class="checks" role="list">
+              <li>Turn a Figma mockup into reusable, responsive React components</li>
+              <li>Connect an interface to a REST API: authentication, loading states, errors</li>
+              <li>Test every screen on an entry-level phone and a slow connection</li>
+              <li>Animate with restraint (GSAP, three.js) while respecting accessibility</li>
+            </ul>
+            <ul class="tools" translate="no" role="list" aria-label="Tools">
+              <li>React</li><li>JavaScript</li><li>TypeScript</li><li>HTML</li><li>CSS</li><li>Tailwind</li><li>Bootstrap</li><li>Figma</li><li>Vite</li>
+            </ul>
+<pre class="code" translate="no"><code><span class="k">export function</span> <span class="f">TripCard</span>({ trip }) {
+  <span class="k">return</span> (
+    &lt;<span class="k">article</span> className=<span class="s">"trip"</span>&gt;
+      &lt;<span class="k">h3</span>&gt;{trip.from} → {trip.to}&lt;/<span class="k">h3</span>&gt;
+      &lt;<span class="f">SeatsLeft</span> count={trip.seats} /&gt;
+    &lt;/<span class="k">article</span>&gt;
+  );
+}</code></pre>
+          </div>
+
+          <div class="skills__panel" id="couche-api" data-layer="3">
+            <h3>API and back end</h3>
+            <p class="skills__lead">What responds: business rules on the server, never in the interface.</p>
+            <ul class="checks" role="list">
+              <li>Design a REST API with Laravel: routes, thin controllers, validation, JSON resources</li>
+              <li>Secure access: Sanctum tokens, roles and permissions</li>
+              <li>Process payments asynchronously: queues, idempotency, retries</li>
+              <li>Write tools and services in Python (<span translate="no">Flask</span>, Django, Tkinter)</li>
+            </ul>
+            <ul class="tools" translate="no" role="list" aria-label="Tools">
+              <li>PHP</li><li>Laravel</li><li>Sanctum</li><li>Python</li><li>Flask</li><li>Django</li><li>Node.js</li><li>Postman</li>
+            </ul>
+<pre class="code" translate="no"><code><span class="k">public function</span> <span class="f">store</span>(StoreBookingRequest $request)
+{
+    $booking = Booking::<span class="f">create</span>($request-&gt;<span class="f">validated</span>());
+
+    <span class="k">return new</span> <span class="f">BookingResource</span>($booking);
+}</code></pre>
+          </div>
+
+          <div class="skills__panel" id="couche-donnees" data-layer="4">
+            <h3>Data</h3>
+            <p class="skills__lead">What remembers: I model the data before I code.</p>
+            <ul class="checks" role="list">
+              <li>Model a relational database: DBML schema, constraints, indexes</li>
+              <li>Write ordered, reversible migrations</li>
+              <li>Organize PostgreSQL into schemas, with PostGIS for location data</li>
+              <li>Speed up frequent reads with Redis</li>
+            </ul>
+            <ul class="tools" translate="no" role="list" aria-label="Tools">
+              <li>SQL</li><li>PostgreSQL</li><li>PostGIS</li><li>MySQL</li><li>SQLite</li><li>Redis</li><li>DBML</li>
+            </ul>
+<pre class="code" translate="no"><code><span class="k">Table</span> trips {
+  id uuid [pk]
+  route_id uuid [ref: &gt; routes.id]
+  travel_class_id uuid [ref: &gt; travel_classes.id]
+  departs_at timestamptz [<span class="k">not null</span>]
+
+  <span class="k">indexes</span> { (route_id, departs_at) }
+}</code></pre>
+          </div>
+
+          <div class="skills__panel" id="couche-outils" data-layer="5">
+            <h3>Tools and deployment</h3>
+            <p class="skills__lead">What stays online: work that is tracked, versioned and deployed cleanly.</p>
+            <ul class="checks" role="list">
+              <li>Use version control with Git and GitHub: branches, pull requests, reviews</li>
+              <li>Organize work with Scrum or Kanban, on <span translate="no">GitHub Projects</span> or Trello</li>
+              <li>Containerize with Docker and <span translate="no">Laravel Sail</span></li>
+              <li>Deploy on Vercel, <span translate="no">Render</span> or <span translate="no">Railway</span>: domain, authenticated email (SPF, DKIM, DMARC), SEO and <span translate="no">Search Console</span></li>
+              <li>Document and test: functional tests, <span translate="no">Postman</span>, architecture decisions</li>
+            </ul>
+            <ul class="tools" translate="no" role="list" aria-label="Tools">
+              <li>Git</li><li>GitHub</li><li>GitHub Projects</li><li>Docker</li><li>WSL</li><li>Vercel</li><li>Render</li><li>Railway</li><li>Trello</li>
+            </ul>
+<pre class="code" translate="no"><code><span class="c">$</span> git switch -c <span class="s">feat/ux-redesign</span>
+<span class="c">$</span> git commit -m <span class="s">"feat(redesign): readable, well-structured page"</span>
+<span class="c">$</span> gh pr create --base <span class="s">main</span>
+<span class="c">#</span> review, fixes, approval, then merge</code></pre>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
+  </section>
 
   <!-- ============ PROJETS ============ -->
   <!-- Grand écran : la section s'épingle, chaque projet arrive par la droite et le précédent bascule à gauche.
@@ -417,20 +537,14 @@
     </div>
   </section>
 
-  <!-- ============ À PROPOS ============ -->
-  <section class="section" id="a-propos" data-path="~/about" aria-labelledby="a-propos-label">
+  <!-- ============ REPÈRES ============ -->
+  <!-- Les repères chiffrés prolongent les projets : l’invite garde leur chemin et l’onglet Projets reste actif. -->
+  <section class="section" id="reperes" data-path="~/projects" data-nav="projets" aria-labelledby="reperes-label">
     <div class="container">
       <div class="section-head">
-        <p class="eyebrow" id="a-propos-label">About</p>
-        <h2 id="a-propos-title" data-reveal="words">My name is <em>Yann.</em></h2>
+        <p class="eyebrow" id="reperes-label">Highlights</p>
+        <h2 id="reperes-title" data-reveal="words">The work, <em>in numbers.</em></h2>
       </div>
-      <p class="statement" id="statement">A software engineering graduate, I build complete web products, from the screen you touch to the database that remembers. I digitize everyday services, from <em>intercity transport in Cameroon</em> to <em>Montréal businesses</em>.</p>
-      <div class="prose about__prose">
-        <p>As a junior full-stack developer, I have hands-on experience with Laravel, React and Python: web applications and REST APIs, database modelling, testing, Git and GitHub, deployment. What I enjoy most is the back end, application architecture and code quality.</p>
-        <p>Right now, I’m building <span translate="no">Easy Life</span> and finishing my preparation for the GitHub Foundations certification.</p>
-        <p>French: native language. English: B2 level.</p>
-      </div>
-      <h3 class="stats__title">The work, <em>in numbers.</em></h3>
       <ul class="stats" role="list">
         <li class="stat">
           <p class="stat__num"><span data-odo>4</span></p>
@@ -459,150 +573,102 @@
     </div>
   </section>
 
-  <!-- ============ COMPÉTENCES ============ -->
-  <section class="section" id="competences" data-path="~/skills" aria-labelledby="competences-label">
+  <!-- ============ PARCOURS ============ -->
+  <section class="section" id="parcours" data-path="~/background" aria-labelledby="parcours-label">
     <div class="container">
       <div class="section-head">
-        <p class="eyebrow" id="competences-label">Skills</p>
-        <h2 id="competences-title" data-reveal="words">The whole stack, <em>layer by layer.</em></h2>
-        <p class="section-head__intro">What I can do at each layer, from requirements analysis to going live, with the tools I actually use. Languages: PHP, JavaScript, TypeScript, Python, SQL, HTML and CSS.</p>
+        <p class="eyebrow" id="parcours-label">Background</p>
+        <h2 id="parcours-title" data-reveal="words">My background, <em>versioned.</em></h2>
+        <p class="section-head__intro">A diploma and a degree from Douala, two internships and more certifications on the way.</p>
       </div>
-      <div class="skills">
-        <div class="skills__aside" aria-hidden="true">
-          <div class="iso">
-            <div class="iso__scene" id="isoScene">
-              <div class="iso__layer" style="--z: 0" data-layer="5"><span class="iso__label">Tools and deployment</span></div>
-              <div class="iso__layer" style="--z: 1" data-layer="4"><span class="iso__label">Data</span></div>
-              <div class="iso__layer" style="--z: 2" data-layer="3"><span class="iso__label">API and back end</span></div>
-              <div class="iso__layer" style="--z: 3" data-layer="2"><span class="iso__label">Interface</span></div>
-              <div class="iso__layer" style="--z: 4" data-layer="1"><span class="iso__label">Design and experience</span></div>
-              <div class="iso__layer is-active" style="--z: 5" data-layer="0"><span class="iso__label">Analysis and modelling</span></div>
-            </div>
+      <div class="columns">
+        <div class="column">
+          <h3>Experience and education</h3>
+          <div class="changelog">
+            <p class="changelog__bar"><code>CHANGELOG.md</code><span>5 entries</span></p>
+            <ol class="changelog__list" role="list">
+              <li class="release release--next">
+                <h4>Specialization in data and applied AI</h4>
+                <p class="release__tag"><code>[Unreleased]</code><span>Planned</span></p>
+                <p class="release__meta">Montréal</p>
+                <p class="release__text">Going back to school to specialize in data engineering and applied AI.</p>
+              </li>
+              <li class="release">
+                <h4>Bachelor of Technology in software engineering</h4>
+                <p class="release__tag"><code>[2.1.0]</code><span>Degree</span></p>
+                <p class="release__meta">IUT de Douala, Université de Douala, 2025</p>
+                <p class="release__text">Software design, programming and project management. Capstone project: the IUT ERP.</p>
+                <p class="release__text">Equivalent to a four-year Canadian bachelor’s degree (WES evaluation, 2026).</p>
+              </li>
+              <li class="release">
+                <h4>Web developer</h4>
+                <p class="release__tag"><code>[2.0.0]</code><span>Internship</span></p>
+                <p class="release__meta"><span translate="no">IncH Class</span>, Douala, January to May 2025</p>
+                <p class="release__text">Responsive web interfaces with Laravel and React, following Agile practices: Git and GitHub, task tracking on Trello.</p>
+              </li>
+              <li class="release">
+                <h4>DUT in computer engineering</h4>
+                <p class="release__tag"><code>[1.1.0]</code><span>Diploma</span></p>
+                <p class="release__meta">IUT de Douala, 2024</p>
+                <p class="release__text">Two-year computer engineering program, the foundation for the software engineering degree that followed.</p>
+              </li>
+              <li class="release">
+                <h4>Python developer</h4>
+                <p class="release__tag"><code>[1.0.0]</code><span>Internship</span></p>
+                <p class="release__meta">CCN Technology, Douala, April to June 2024</p>
+                <p class="release__text">Internal tools and interfaces in Python (Tkinter, <span translate="no">Flask</span>), technical documentation and functional testing.</p>
+              </li>
+            </ol>
           </div>
-          <p class="scroll-progress skills__progress"><span>Scroll</span><span class="scroll-progress__bar"><i id="skillsBar"></i></span><span class="scroll-progress__count" id="skillsCount">01 / 06</span></p>
         </div>
-        <div class="skills__layers">
-          <div class="skills__panel" id="couche-analyse" data-layer="0">
-            <h3>Analysis and modelling</h3>
-            <p class="skills__lead">What we understand before drawing anything: the client’s requirements, turned into models the whole team can read.</p>
-            <ul class="checks" role="list">
-              <li>Listen to the client: the problem to solve, who uses the service, for what, on which device</li>
-              <li>Analyze what already exists before proposing a solution</li>
-              <li>Model in UML: use cases, classes and sequences</li>
-              <li>Break the requirements down into milestones and tasks, so everyone knows what comes next</li>
-            </ul>
-            <ul class="tools" translate="no" role="list" aria-label="Tools">
-              <li>UML</li><li>GitHub Projects</li>
-            </ul>
-<pre class="code" translate="no"><code><span class="c"># user story, Easy Life</span>
-<span class="k">As a</span> traveller,
-<span class="k">I want</span> to book my seat and pay with Mobile Money
-<span class="k">so that</span> I get my QR e-ticket without going to the counter.</code></pre>
-          </div>
-
-          <div class="skills__panel" id="couche-design" data-layer="1">
-            <h3>Design and experience</h3>
-            <p class="skills__lead">What we imagine before coding: simple journeys and screens designed for the people who use them.</p>
-            <ul class="checks" role="list">
-              <li>Map the user journeys, then design the mockups and a clickable prototype in Figma</li>
-              <li>Simplify every step: guided onboarding, then sign-up in a single form</li>
-              <li>Build out a design system: colours, typography, components, light and dark themes</li>
-              <li>Check readability and accessibility: contrast, sizes, keyboard, mobile first</li>
-            </ul>
-            <ul class="tools" translate="no" role="list" aria-label="Tools">
-              <li>Figma</li>
-            </ul>
-<pre class="code" translate="no"><code><span class="c">/* two themes, one set of tokens */</span>
-:root {
-  --navy: <span class="s">#0e1b3d</span>;
-  --sun: <span class="s">#ffc72c</span>;
-  --bg: <span class="s">#ffffff</span>;
-}
-[<span class="k">data-theme</span>=<span class="s">"dark"</span>] { --bg: var(--navy); }</code></pre>
-          </div>
-
-          <div class="skills__panel" id="couche-interface" data-layer="2">
-            <h3>Interface</h3>
-            <p class="skills__lead">What you touch: fast, readable and accessible screens.</p>
-            <ul class="checks" role="list">
-              <li>Turn a Figma mockup into reusable, responsive React components</li>
-              <li>Connect an interface to a REST API: authentication, loading states, errors</li>
-              <li>Test every screen on an entry-level phone and a slow connection</li>
-              <li>Animate with restraint (GSAP, three.js) while respecting accessibility</li>
-            </ul>
-            <ul class="tools" translate="no" role="list" aria-label="Tools">
-              <li>React</li><li>JavaScript</li><li>TypeScript</li><li>HTML</li><li>CSS</li><li>Tailwind</li><li>Bootstrap</li><li>Figma</li><li>Vite</li>
-            </ul>
-<pre class="code" translate="no"><code><span class="k">export function</span> <span class="f">TripCard</span>({ trip }) {
-  <span class="k">return</span> (
-    &lt;<span class="k">article</span> className=<span class="s">"trip"</span>&gt;
-      &lt;<span class="k">h3</span>&gt;{trip.from} → {trip.to}&lt;/<span class="k">h3</span>&gt;
-      &lt;<span class="f">SeatsLeft</span> count={trip.seats} /&gt;
-    &lt;/<span class="k">article</span>&gt;
-  );
-}</code></pre>
-          </div>
-
-          <div class="skills__panel" id="couche-api" data-layer="3">
-            <h3>API and back end</h3>
-            <p class="skills__lead">What responds: business rules on the server, never in the interface.</p>
-            <ul class="checks" role="list">
-              <li>Design a REST API with Laravel: routes, thin controllers, validation, JSON resources</li>
-              <li>Secure access: Sanctum tokens, roles and permissions</li>
-              <li>Process payments asynchronously: queues, idempotency, retries</li>
-              <li>Write tools and services in Python (<span translate="no">Flask</span>, Django, Tkinter)</li>
-            </ul>
-            <ul class="tools" translate="no" role="list" aria-label="Tools">
-              <li>PHP</li><li>Laravel</li><li>Sanctum</li><li>Python</li><li>Flask</li><li>Django</li><li>Node.js</li><li>Postman</li>
-            </ul>
-<pre class="code" translate="no"><code><span class="k">public function</span> <span class="f">store</span>(StoreBookingRequest $request)
-{
-    $booking = Booking::<span class="f">create</span>($request-&gt;<span class="f">validated</span>());
-
-    <span class="k">return new</span> <span class="f">BookingResource</span>($booking);
-}</code></pre>
-          </div>
-
-          <div class="skills__panel" id="couche-donnees" data-layer="4">
-            <h3>Data</h3>
-            <p class="skills__lead">What remembers: I model the data before I code.</p>
-            <ul class="checks" role="list">
-              <li>Model a relational database: DBML schema, constraints, indexes</li>
-              <li>Write ordered, reversible migrations</li>
-              <li>Organize PostgreSQL into schemas, with PostGIS for location data</li>
-              <li>Speed up frequent reads with Redis</li>
-            </ul>
-            <ul class="tools" translate="no" role="list" aria-label="Tools">
-              <li>SQL</li><li>PostgreSQL</li><li>PostGIS</li><li>MySQL</li><li>SQLite</li><li>Redis</li><li>DBML</li>
-            </ul>
-<pre class="code" translate="no"><code><span class="k">Table</span> trips {
-  id uuid [pk]
-  route_id uuid [ref: &gt; routes.id]
-  travel_class_id uuid [ref: &gt; travel_classes.id]
-  departs_at timestamptz [<span class="k">not null</span>]
-
-  <span class="k">indexes</span> { (route_id, departs_at) }
-}</code></pre>
-          </div>
-
-          <div class="skills__panel" id="couche-outils" data-layer="5">
-            <h3>Tools and deployment</h3>
-            <p class="skills__lead">What stays online: work that is tracked, versioned and deployed cleanly.</p>
-            <ul class="checks" role="list">
-              <li>Use version control with Git and GitHub: branches, pull requests, reviews</li>
-              <li>Organize work with Scrum or Kanban, on <span translate="no">GitHub Projects</span> or Trello</li>
-              <li>Containerize with Docker and <span translate="no">Laravel Sail</span></li>
-              <li>Deploy on Vercel, <span translate="no">Render</span> or <span translate="no">Railway</span>: domain, authenticated email (SPF, DKIM, DMARC), SEO and <span translate="no">Search Console</span></li>
-              <li>Document and test: functional tests, <span translate="no">Postman</span>, architecture decisions</li>
-            </ul>
-            <ul class="tools" translate="no" role="list" aria-label="Tools">
-              <li>Git</li><li>GitHub</li><li>GitHub Projects</li><li>Docker</li><li>WSL</li><li>Vercel</li><li>Render</li><li>Railway</li><li>Trello</li>
-            </ul>
-<pre class="code" translate="no"><code><span class="c">$</span> git switch -c <span class="s">feat/ux-redesign</span>
-<span class="c">$</span> git commit -m <span class="s">"feat(redesign): readable, well-structured page"</span>
-<span class="c">$</span> gh pr create --base <span class="s">main</span>
-<span class="c">#</span> review, fixes, approval, then merge</code></pre>
-          </div>
+        <div class="column">
+          <h3>Languages and certifications</h3>
+          <ul class="items" role="list">
+            <li class="item">
+              <h4>Languages</h4>
+              <p>French: native language. English: B2 level.</p>
+            </li>
+            <li class="item">
+              <h4>GitHub Foundations</h4>
+              <p class="status status--progress">In preparation</p>
+              <p class="progress"><progress id="progress-github" value="85" max="100" aria-label="GitHub Foundations preparation">85%</progress><span>85% prepared; the AWS certification path comes next.</span></p>
+            </li>
+            <li class="item">
+              <h4>Web development</h4>
+              <p class="status status--live">Earned in 2025</p>
+              <p>Organisation internationale de la Francophonie (OIF), D-CLIC program, with <span translate="no">IncH Class</span> and Simplon: 720 hours in person, from January to May 2025. Mockups, static and dynamic interfaces, databases, back end.</p>
+              <figure class="proof">
+                <a class="proof__link" href="../proofs/dclic-attestation-1200.webp" target="_blank" rel="noopener">
+                  <img src="../proofs/dclic-attestation-720.webp" srcset="../proofs/dclic-attestation-720.webp 720w, ../proofs/dclic-attestation-1200.webp 1200w" sizes="(min-width: 64rem) 40vw, 90vw" width="1200" height="841" alt="D-CLIC certificate of achievement, in French: the Organisation internationale de la Francophonie and IncH Class (Simplon) certify that Yann Johan Siaka Siaka completed and passed, from January 6 to May 9, 2025, the 720-hour in-person Web Development program. Douala, May 20, 2025; code C03riDduB5 and verification QR code." loading="lazy" decoding="async">
+                  <span class="sr-only"> (enlarge the certificate, new tab)</span>
+                </a>
+                <figcaption>Certificate of achievement dated May 20, 2025, in French.</figcaption>
+              </figure>
+              <p class="item__code">Certificate code: <code>C03riDduB5</code>. Online verification, through the QR code, is reserved for D-CLIC platform administrators. For confirmation, write with this code and the name <span translate="no">Yann Johan Siaka Siaka</span> (the links open a message already written in French):</p>
+              <ul class="item__contacts" role="list">
+                <li>OIF D-CLIC team: <a class="link" href="mailto:dclic@francophonie.org?subject=V%C3%A9rification%20d%E2%80%99une%20attestation%20D-CLIC%20%28C03riDduB5%29&amp;body=Bonjour%2C%0A%0APouvez-vous%20confirmer%20l%E2%80%99attestation%20de%20r%C3%A9ussite%20%C2%AB%20D%C3%A9veloppement%20web%20%C2%BB%20%28D-CLIC%2C%20720%20heures%2C%20du%206%20janvier%20au%209%20mai%202025%29%20d%C3%A9livr%C3%A9e%20le%2020%20mai%202025%20%C3%A0%20Yann%20Johan%20Siaka%20Siaka%2C%20code%20C03riDduB5%20%3F%0A%0AMerci."><span translate="no">dclic@francophonie.org</span></a></li>
+                <li><span translate="no">IncH Class</span>, the training provider, in Douala: <a class="link" href="mailto:info@inchclass.org?subject=V%C3%A9rification%20d%E2%80%99une%20attestation%20D-CLIC%20%28C03riDduB5%29&amp;body=Bonjour%2C%0A%0APouvez-vous%20confirmer%20l%E2%80%99attestation%20de%20r%C3%A9ussite%20%C2%AB%20D%C3%A9veloppement%20web%20%C2%BB%20%28D-CLIC%2C%20720%20heures%2C%20du%206%20janvier%20au%209%20mai%202025%29%20d%C3%A9livr%C3%A9e%20le%2020%20mai%202025%20%C3%A0%20Yann%20Johan%20Siaka%20Siaka%2C%20code%20C03riDduB5%20%3F%0A%0AMerci."><span translate="no">info@inchclass.org</span></a></li>
+              </ul>
+              <a class="link link--standalone ext" href="https://dclic.francophonie.org/mod/customcert/verify_certificate.php?code=C03riDduB5&amp;qrcode=1" target="_blank" rel="noopener">D-CLIC verification page<span class="sr-only"> (administrators only, new tab)</span></a>
+            </li>
+            <li class="item">
+              <h4>Claude 101</h4>
+              <p class="status status--live">Earned</p>
+              <p>Claude Academy</p>
+              <a class="link link--standalone ext" href="https://academy.claude.com/verify/2288f78bee750b054e1b241e0e951dc4" target="_blank" rel="noopener">Verify the certificate<span class="sr-only"> (Claude 101, new tab)</span></a>
+            </li>
+            <li class="item">
+              <h4>Claude Code 101</h4>
+              <p class="status status--live">Earned</p>
+              <p>Claude Academy</p>
+              <a class="link link--standalone ext" href="https://academy.claude.com/verify/1cc82d5d5ac5c93efeb46356500d65ce" target="_blank" rel="noopener">Verify the certificate<span class="sr-only"> (Claude Code 101, new tab)</span></a>
+            </li>
+            <li class="item">
+              <h4>AWS Cloud Practitioner</h4>
+              <p class="status">Planned after GitHub Foundations</p>
+              <p>Amazon Web Services, then Solutions Architect and Data Engineer.</p>
+            </li>
+          </ul>
         </div>
       </div>
     </div>
@@ -681,121 +747,6 @@
     </div>
   </section>
 
-  <!-- ============ PARCOURS ============ -->
-  <section class="section" id="parcours" data-path="~/background" aria-labelledby="parcours-label">
-    <div class="container">
-      <div class="section-head">
-        <p class="eyebrow" id="parcours-label">Background</p>
-        <h2 id="parcours-title" data-reveal="words">My background, <em>versioned.</em></h2>
-        <p class="section-head__intro">A diploma and a degree from Douala, two internships, a credential evaluation in Montréal and more certifications on the way.</p>
-      </div>
-      <div class="columns">
-        <div class="column">
-          <h3>Experience and education</h3>
-          <div class="changelog">
-            <p class="changelog__bar"><code>CHANGELOG.md</code><span>6 entries</span></p>
-            <ol class="changelog__list" role="list">
-              <li class="release release--next">
-                <h4>Specialization in data and applied AI</h4>
-                <p class="release__tag"><code>[Unreleased]</code><span>Planned</span></p>
-                <p class="release__meta">Montréal</p>
-                <p class="release__text">Going back to school to specialize in data engineering and applied AI.</p>
-              </li>
-              <li class="release">
-                <h4>Move to Montréal and WES evaluation</h4>
-                <p class="release__tag"><code>[3.0.0]</code><span>Major change</span></p>
-                <p class="release__meta"><span translate="no">World Education Services</span>, 2026</p>
-                <p class="release__text">My Bachelor of Technology in software engineering is recognized as equivalent to a four-year Canadian bachelor’s degree. The report is shown with the certifications.</p>
-              </li>
-              <li class="release">
-                <h4>Bachelor of Technology in software engineering</h4>
-                <p class="release__tag"><code>[2.1.0]</code><span>Degree</span></p>
-                <p class="release__meta">IUT de Douala, Université de Douala, 2025</p>
-                <p class="release__text">Software design, programming and project management. Capstone project: the IUT ERP.</p>
-              </li>
-              <li class="release">
-                <h4>Web developer</h4>
-                <p class="release__tag"><code>[2.0.0]</code><span>Internship</span></p>
-                <p class="release__meta"><span translate="no">IncH Class</span>, Douala, January to May 2025</p>
-                <p class="release__text">Responsive web interfaces with Laravel and React, following Agile practices: Git and GitHub, task tracking on Trello.</p>
-              </li>
-              <li class="release">
-                <h4>DUT in computer engineering</h4>
-                <p class="release__tag"><code>[1.1.0]</code><span>Diploma</span></p>
-                <p class="release__meta">IUT de Douala, 2024</p>
-                <p class="release__text">Two-year computer engineering program, the foundation for the software engineering degree that followed.</p>
-              </li>
-              <li class="release">
-                <h4>Python developer</h4>
-                <p class="release__tag"><code>[1.0.0]</code><span>Internship</span></p>
-                <p class="release__meta">CCN Technology, Douala, April to June 2024</p>
-                <p class="release__text">Internal tools and interfaces in Python (Tkinter, <span translate="no">Flask</span>), technical documentation and functional testing.</p>
-              </li>
-            </ol>
-          </div>
-        </div>
-        <div class="column">
-          <h3>Credential evaluation and certifications</h3>
-          <ul class="items" role="list">
-            <li class="item">
-              <h4>Canadian degree equivalency</h4>
-              <p class="status status--live">Received in 2026</p>
-              <p><span translate="no">World Education Services</span> (WES): my Bachelor of Technology in software engineering (Université de Douala, 2025) is equivalent to a four-year Canadian bachelor’s degree. The documents were sent directly by the university, a recognized institution.</p>
-              <figure class="proof">
-                <a class="proof__link" href="../proofs/wes-extrait-1200.webp" target="_blank" rel="noopener">
-                  <img src="../proofs/wes-extrait-720.webp" srcset="../proofs/wes-extrait-720.webp 720w, ../proofs/wes-extrait-1200.webp 1200w" sizes="(min-width: 64rem) 40vw, 90vw" width="1200" height="844" alt="Excerpt of the WES report for IRCC: Canadian equivalency, four-year bachelor’s degree. Credential: Bachelor of Technology (licence de technologie), 2025, Université de Douala, recognized institution, major in software engineering." loading="lazy" decoding="async">
-                  <span class="sr-only"> (enlarge the excerpt, new tab)</span>
-                </a>
-                <figcaption>Excerpt of the report dated September 25, 2026.</figcaption>
-              </figure>
-              <p class="item__code">To verify it, WES sends the official report directly to the employer or school, at my request.</p>
-            </li>
-            <li class="item">
-              <h4>GitHub Foundations</h4>
-              <p class="status status--progress">In preparation</p>
-              <p class="progress"><progress id="progress-github" value="85" max="100" aria-label="GitHub Foundations preparation">85%</progress><span>85% prepared; the AWS certification path comes next.</span></p>
-            </li>
-            <li class="item">
-              <h4>Web development</h4>
-              <p class="status status--live">Earned in 2025</p>
-              <p>Organisation internationale de la Francophonie (OIF), D-CLIC program, with <span translate="no">IncH Class</span> and Simplon: 720 hours in person, from January to May 2025. Mockups, static and dynamic interfaces, databases, back end.</p>
-              <figure class="proof">
-                <a class="proof__link" href="../proofs/dclic-attestation-1200.webp" target="_blank" rel="noopener">
-                  <img src="../proofs/dclic-attestation-720.webp" srcset="../proofs/dclic-attestation-720.webp 720w, ../proofs/dclic-attestation-1200.webp 1200w" sizes="(min-width: 64rem) 40vw, 90vw" width="1200" height="841" alt="D-CLIC certificate of achievement, in French: the Organisation internationale de la Francophonie and IncH Class (Simplon) certify that Yann Johan Siaka Siaka completed and passed, from January 6 to May 9, 2025, the 720-hour in-person Web Development program. Douala, May 20, 2025; code C03riDduB5 and verification QR code." loading="lazy" decoding="async">
-                  <span class="sr-only"> (enlarge the certificate, new tab)</span>
-                </a>
-                <figcaption>Certificate of achievement dated May 20, 2025, in French.</figcaption>
-              </figure>
-              <p class="item__code">Certificate code: <code>C03riDduB5</code>. Online verification, through the QR code, is reserved for D-CLIC platform administrators. For confirmation, write with this code and the name <span translate="no">Yann Johan Siaka Siaka</span> (the links open a message already written in French):</p>
-              <ul class="item__contacts" role="list">
-                <li>OIF D-CLIC team: <a class="link" href="mailto:dclic@francophonie.org?subject=V%C3%A9rification%20d%E2%80%99une%20attestation%20D-CLIC%20%28C03riDduB5%29&amp;body=Bonjour%2C%0A%0APouvez-vous%20confirmer%20l%E2%80%99attestation%20de%20r%C3%A9ussite%20%C2%AB%20D%C3%A9veloppement%20web%20%C2%BB%20%28D-CLIC%2C%20720%20heures%2C%20du%206%20janvier%20au%209%20mai%202025%29%20d%C3%A9livr%C3%A9e%20le%2020%20mai%202025%20%C3%A0%20Yann%20Johan%20Siaka%20Siaka%2C%20code%20C03riDduB5%20%3F%0A%0AMerci."><span translate="no">dclic@francophonie.org</span></a></li>
-                <li><span translate="no">IncH Class</span>, the training provider, in Douala: <a class="link" href="mailto:info@inchclass.org?subject=V%C3%A9rification%20d%E2%80%99une%20attestation%20D-CLIC%20%28C03riDduB5%29&amp;body=Bonjour%2C%0A%0APouvez-vous%20confirmer%20l%E2%80%99attestation%20de%20r%C3%A9ussite%20%C2%AB%20D%C3%A9veloppement%20web%20%C2%BB%20%28D-CLIC%2C%20720%20heures%2C%20du%206%20janvier%20au%209%20mai%202025%29%20d%C3%A9livr%C3%A9e%20le%2020%20mai%202025%20%C3%A0%20Yann%20Johan%20Siaka%20Siaka%2C%20code%20C03riDduB5%20%3F%0A%0AMerci."><span translate="no">info@inchclass.org</span></a></li>
-              </ul>
-              <a class="link link--standalone ext" href="https://dclic.francophonie.org/mod/customcert/verify_certificate.php?code=C03riDduB5&amp;qrcode=1" target="_blank" rel="noopener">D-CLIC verification page<span class="sr-only"> (administrators only, new tab)</span></a>
-            </li>
-            <li class="item">
-              <h4>Claude 101</h4>
-              <p class="status status--live">Earned</p>
-              <p>Claude Academy</p>
-              <a class="link link--standalone ext" href="https://academy.claude.com/verify/2288f78bee750b054e1b241e0e951dc4" target="_blank" rel="noopener">Verify the certificate<span class="sr-only"> (Claude 101, new tab)</span></a>
-            </li>
-            <li class="item">
-              <h4>Claude Code 101</h4>
-              <p class="status status--live">Earned</p>
-              <p>Claude Academy</p>
-              <a class="link link--standalone ext" href="https://academy.claude.com/verify/1cc82d5d5ac5c93efeb46356500d65ce" target="_blank" rel="noopener">Verify the certificate<span class="sr-only"> (Claude Code 101, new tab)</span></a>
-            </li>
-            <li class="item">
-              <h4>AWS Cloud Practitioner</h4>
-              <p class="status">Planned after GitHub Foundations</p>
-              <p>Amazon Web Services, then Solutions Architect and Data Engineer.</p>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- ============ JOURNAL ============ -->
   <!-- Rempli au build par scripts/journal.mjs avec les trois dernières notes de content/journal/ ; retiré, avec son
        lien du menu et le flux de l'en-tête, tant qu'aucune note n'est publiée. -->
@@ -812,6 +763,21 @@
     </div>
   </section>
   <!-- journal:end -->
+
+  <!-- ============ À PROPOS ============ -->
+  <section class="section" id="a-propos" data-path="~/about" aria-labelledby="a-propos-label">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" id="a-propos-label">About</p>
+        <h2 id="a-propos-title" data-reveal="words">My name is <em>Yann.</em></h2>
+      </div>
+      <p class="statement" id="statement">A software engineering graduate, I build complete web products, from the screen you touch to the database that remembers. I digitize everyday services, from <em>intercity transport in Cameroon</em> to <em>Montréal businesses</em>.</p>
+      <div class="prose about__prose">
+        <p>As a junior full-stack developer, I have hands-on experience with Laravel, React and Python: web applications and REST APIs, database modelling, testing, Git and GitHub, deployment. What I enjoy most is the back end, application architecture and code quality.</p>
+        <p>Right now, I’m building <span translate="no">Easy Life</span> and finishing my preparation for the GitHub Foundations certification.</p>
+      </div>
+    </div>
+  </section>
 
   <!-- ============ CONTACT ============ -->
   <section class="section" id="contact" data-path="~/contact" aria-labelledby="contact-label">
