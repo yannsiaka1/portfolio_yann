@@ -136,6 +136,27 @@ function excerpt(md, max = 155) {
 /** Données structurées (schema.org) dans la page : « </ » échappé, un texte ne peut pas fermer la balise. */
 const jsonLd = (data) => `<script type="application/ld+json">${JSON.stringify(data).replace(/</g, '\\u003c')}</script>`;
 
+/** Largeur et hauteur d'une image WebP, PNG, JPEG ou GIF, lues dans son en-tête (null pour un autre format). */
+function imageSize(file) {
+  const b = readFileSync(file);
+  if (b.toString('ascii', 0, 4) === 'RIFF' && b.toString('ascii', 8, 12) === 'WEBP') {
+    const chunk = b.toString('ascii', 12, 16);
+    if (chunk === 'VP8 ') return { w: b.readUInt16LE(26) & 0x3fff, h: b.readUInt16LE(28) & 0x3fff };
+    if (chunk === 'VP8L') return { w: 1 + (((b[22] & 0x3f) << 8) | b[21]), h: 1 + (((b[24] & 0xf) << 10) | (b[23] << 2) | ((b[22] & 0xc0) >> 6)) };
+    if (chunk === 'VP8X') return { w: 1 + b.readUIntLE(24, 3), h: 1 + b.readUIntLE(27, 3) };
+  }
+  if (b.readUInt32BE(0) === 0x89504e47) return { w: b.readUInt32BE(16), h: b.readUInt32BE(20) };
+  if (b.toString('ascii', 0, 3) === 'GIF') return { w: b.readUInt16LE(6), h: b.readUInt16LE(8) };
+  if (b[0] === 0xff && b[1] === 0xd8) {
+    for (let i = 2; i + 9 < b.length; ) {
+      const marker = b[i + 1];
+      if (marker >= 0xc0 && marker <= 0xcf && ![0xc4, 0xc8, 0xcc].includes(marker)) return { w: b.readUInt16BE(i + 7), h: b.readUInt16BE(i + 5) };
+      i += 2 + b.readUInt16BE(i + 2);
+    }
+  }
+  return null;
+}
+
 class NoteError extends Error {
   constructor(file, message) {
     super(`${file} : ${message}`);
@@ -363,13 +384,17 @@ function renderBody(note, notes, root, fromDir = note.dir) {
       // une image à côté de la note (« ../images/capture.webp ») est vérifiée, puis confiée à Vite qui l'optimise
       image({ href, title, text }) {
         let src = href;
+        let size = null;
         if (isRelative(href)) {
           const path = posix.normalize(posix.join(mdDir, href));
           if (!existsSync(join(root, path))) throw new NoteError(note.file, `image introuvable : « ${href} » (cherchée dans ${path}).`);
           src = `/${path}`;
+          size = imageSize(join(root, path));
         }
+        // ses dimensions réservent sa place avant le chargement : le texte en dessous ne saute pas
+        const dims = size ? ` width="${size.w}" height="${size.h}"` : '';
         const caption = title ? `<figcaption>${esc(smart(title))}</figcaption>` : '';
-        return `<figure class="prose__figure"><img src="${esc(src)}" alt="${esc(smart(text || ''))}" loading="lazy" decoding="async">${caption}</figure>`;
+        return `<figure class="prose__figure"><img src="${esc(src)}" alt="${esc(smart(text || ''))}"${dims} loading="lazy" decoding="async">${caption}</figure>`;
       },
       table(token) {
         // un tableau trop large défile dans son cadre, que l'on peut atteindre au clavier
@@ -424,7 +449,10 @@ function chrome(root, lang, pageDir, counterpart, current) {
   const header = fix(pick(/<header class="site-header">[\s\S]*?<\/header>/, 'la barre (<header class="site-header">)'))
     // l'invite mène à l'accueil : son texte lu seulement le dit (le texte visible reste le début de son nom)
     .replace(/(<a class="prompt"[^>]*>[\s\S]*?<span class="sr-only">, )[^<]*(<\/span>)/, `$1${T.promptBack}$2`)
-    .replace(/(<span class="prompt__path" id="navPath">)[^<]*(<\/span>)/, '$1~/journal$2');
+    .replace(/(<span class="prompt__path" id="navPath">)[^<]*(<\/span>)/, '$1~/journal$2')
+    // dans une section, l'invite se raccourcit sur petit écran (layout.css) : écrit dans la page, pour que la barre ne
+    // passe pas sur deux lignes avant que le script ne s'en charge (le contenu sauterait au chargement)
+    .replace('<a class="prompt"', '<a class="prompt is-deep"');
   const footer = fix(
     pick(/<footer class="site-footer">[\s\S]*?<\/footer>/, 'le pied de page (<footer class="site-footer">)')
       .replace(/\s*<p class="signature"[\s\S]*?<\/p>/, '')
