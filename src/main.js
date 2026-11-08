@@ -6,14 +6,8 @@ import '@fontsource-variable/jetbrains-mono'; // le code et les petites étiquet
 import './styles/index.css';
 
 import { initApp } from './app.js';
-import { coarse, hashTarget } from './core/env.js';
-import { scrollToTarget } from './core/scroll.js';
+import { coarse } from './core/env.js';
 import { signalGlReady } from './core/state.js';
-
-// arrivée par un lien vers une section (/#contact) : la page s'ouvre sur elle dès le premier affichage, sans attendre
-// le navigateur ; src/app.js la garde ensuite en place pendant le démarrage
-const arrival = hashTarget();
-if (arrival && arrival.id !== 'accueil') scrollToTarget(arrival, { immediate: true });
 
 // l'interface démarre juste après le premier affichage : le hero, écrit en HTML et animé en CSS, n'attend pas les
 // scripts, et le navigateur peint la page avant de les exécuter
