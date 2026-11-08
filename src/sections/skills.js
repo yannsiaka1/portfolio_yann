@@ -30,7 +30,8 @@ export function initSkills() {
     layers.forEach((layer) => {
       const on = Number(layer.dataset.layer) === index;
       layer.classList.toggle('is-active', on);
-      if (on && scene) scene.style.setProperty('--active-z', layer.style.getPropertyValue('--z'));
+      // la profondeur de la couche vient de la feuille de style (sections.css) : lue sur son style calculé
+      if (on && scene) scene.style.setProperty('--active-z', getComputedStyle(layer).getPropertyValue('--z').trim());
     });
     if (count) count.textContent = `${pad(index + 1)} / ${pad(total)}`;
   };

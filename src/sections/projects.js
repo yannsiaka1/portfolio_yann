@@ -262,10 +262,11 @@ export function initProjects() {
   /* ---------- mode empilé, avec mouvement ---------- */
   function buildFlow() {
     cards.forEach((card) => {
-      // arrivée par la droite pendant que la carte entre par le bas, terminée avant qu'on lise son texte
+      // arrivée par la droite pendant que la carte entre par le bas, terminée avant qu'on lise son texte ; hors de
+      // l'écran, elle est entièrement transparente plutôt qu'à demi visible : un texte à moitié effacé n'est pas lisible
       gsap.fromTo(
         card,
-        { xPercent: 16, rotationY: -9, opacity: 0.25 },
+        { xPercent: 16, rotationY: -9, opacity: 0 },
         {
           xPercent: 0,
           rotationY: 0,
@@ -281,7 +282,7 @@ export function initProjects() {
         xPercent: -14,
         rotationY: 10,
         scale: 0.94,
-        opacity: 0.25,
+        opacity: 0,
         ease: 'none',
         transformPerspective: 1200,
         transformOrigin: '0% 50%',

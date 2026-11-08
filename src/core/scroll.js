@@ -63,14 +63,6 @@ export function initScroll() {
 
 export const hasSmoothScroll = () => !!lenis;
 
-export function pauseScroll() {
-  if (lenis) lenis.stop();
-}
-
-export function resumeScroll() {
-  if (lenis) lenis.start();
-}
-
 /** Défile jusqu'à une position précise de la page (projets épinglés : carte suivante, carte qui reçoit le focus). */
 export function scrollToY(y, duration = 0.6) {
   if (lenis) lenis.scrollTo(y, { duration, easing: (t) => 1 - Math.pow(1 - t, 3) });
@@ -79,8 +71,9 @@ export function scrollToY(y, duration = 0.6) {
 
 /** Défile jusqu'à une position (nombre) ou un élément, sous la barre collante.
  *  Une section épinglée (projets) se vise par son espace d'épinglage, au ras de la barre : on arrive au début
- *  de la section, pas là où elle se trouve après l'épinglage. */
-export function scrollToTarget(target) {
+ *  de la section, pas là où elle se trouve après l'épinglage.
+ *  immediate : saut sans animation (arrivée par un lien vers une section, src/app.js). */
+export function scrollToTarget(target, { immediate = false } = {}) {
   const header = document.querySelector('.site-header');
   const headerH = header ? header.offsetHeight : 0;
   let offset = typeof target === 'number' ? 0 : -(headerH + tokenPx('--space-3'));
@@ -90,7 +83,13 @@ export function scrollToTarget(target) {
   }
   // position calculée depuis la page elle-même (window.scrollY), pas depuis l'état interne de Lenis
   const y = typeof target === 'number' ? target : target.getBoundingClientRect().top + window.scrollY + offset;
-  if (lenis) lenis.scrollTo(y, { duration: 1.3, easing: (t) => 1 - Math.pow(1 - t, 4) });
+  if (lenis && immediate) {
+    // Lenis ne remesure la page qu'un quart de seconde après un changement de hauteur : sans cette mesure, un saut
+    // juste après l'épinglage des projets s'arrêterait à l'ancienne fin de page
+    lenis.resize();
+    lenis.scrollTo(y, { immediate: true, force: true });
+  } else if (lenis) lenis.scrollTo(y, { duration: 1.3, easing: (t) => 1 - Math.pow(1 - t, 4) });
+  else if (immediate) window.scrollTo({ top: Math.max(0, y), behavior: 'instant' });
   else if (typeof target === 'number') window.scrollTo({ top: target, behavior: reduced() ? 'auto' : 'smooth' });
   else target.scrollIntoView({ behavior: reduced() ? 'auto' : 'smooth' });
 }

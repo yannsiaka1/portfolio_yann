@@ -130,6 +130,7 @@
 .tools li {
   display: inline-flex;
   align-items: center;
+  gap: var(--space-1);
   min-height: var(--space-4);
   padding-inline: var(--space-2);
   border: var(--stroke) solid var(--line-strong);
@@ -138,6 +139,19 @@
   font-size: var(--fs-sm);
   line-height: var(--lh-ui);
   color: var(--text);
+}
+
+/* le logo d'un outil, quand il en a un, précède son nom, un ton plus discret */
+.tools .icon {
+  color: var(--text-2);
+}
+
+/* ---------- logo d'un outil : un symbole de public/icons.svg, dans la couleur du texte autour ---------- */
+.icon {
+  flex: none;
+  width: var(--icon-tool);
+  height: var(--icon-tool);
+  fill: currentColor;
 }
 
 /* ---------- sur-titre d'une section : son nom dans le menu, précédé d'un trait ---------- */

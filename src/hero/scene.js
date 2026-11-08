@@ -77,15 +77,21 @@ function start() {
   if (!canvas || !hero || !stage) return signalGlReady(false);
   if (tag && coarse) tag.textContent = HINTS.touchTrace;
 
-  // three.js exige WebGL 2 : on vérifie avant de créer le renderer, pour un repli sans erreur
+  // three.js exige WebGL 2 : on vérifie avant de créer le renderer, pour un repli sans erreur. Sans accélération
+  // matérielle (rendu par le processeur : machine virtuelle, carte graphique désactivée), le navigateur refuse le
+  // contexte (failIfMajorPerformanceCaveat) : chaque image coûterait plus que la page entière, le symbole dessiné reste
   const attrs = { antialias: true, alpha: false, powerPreference: 'high-performance' };
   let context = null;
   try {
-    context = canvas.getContext('webgl2', attrs);
+    context = canvas.getContext('webgl2', { ...attrs, failIfMajorPerformanceCaveat: true });
   } catch (err) {
     context = null;
   }
   if (!context) return signalGlReady(false);
+  // rendu logiciel que le navigateur ne signale pas toujours (SwiftShader, llvmpipe…) : lu dans le nom du moteur
+  const debug = context.getExtension('WEBGL_debug_renderer_info');
+  const gpu = String(context.getParameter(debug ? debug.UNMASKED_RENDERER_WEBGL : context.RENDERER));
+  if (/swiftshader|llvmpipe|softpipe|software|basic render/i.test(gpu)) return signalGlReady(false);
 
   let renderer;
   try {
@@ -93,6 +99,9 @@ function start() {
   } catch (err) {
     return signalGlReady(false);
   }
+  // les écouteurs de la scène partagent ce signal : giveUp() les retire tous d'un coup
+  const teardown = new AbortController();
+  const { signal } = teardown;
 
   // pas de valeur de repli : un jeton renommé doit se voir, pas retomber sur une ancienne couleur
   const BG = new THREE.Color(token('--bg'));
@@ -498,56 +507,84 @@ function start() {
       // au doigt, glisser annule l'appui long : la page doit pouvoir défiler
       if (st.holding && e.pointerType !== 'mouse' && Math.hypot(e.clientX - st.downX, e.clientY - st.downY) > 14) release(null, true);
     },
-    { passive: true },
+    { passive: true, signal },
   );
-  document.addEventListener('pointerleave', () => {
-    st.hasPointer = false;
-  });
+  document.addEventListener(
+    'pointerleave',
+    () => {
+      st.hasPointer = false;
+    },
+    { signal },
+  );
   // au doigt, toucher une piste n'importe où dans le hero lance les étincelles
-  hero.addEventListener('pointerdown', (e) => {
-    if (e.pointerType === 'mouse' || st.traceProg < 0.99 || still()) return;
-    if (e.target.closest('a, button, input, textarea, label')) return;
-    setPointer(e);
-    const hit = hitTrace(st.px, st.py);
-    if (hit) {
-      st.hoverTrace = -1;
-      sparkAt(hit);
-      st.active = true;
-    }
-  });
+  hero.addEventListener(
+    'pointerdown',
+    (e) => {
+      if (e.pointerType === 'mouse' || st.traceProg < 0.99 || still()) return;
+      if (e.target.closest('a, button, input, textarea, label')) return;
+      setPointer(e);
+      const hit = hitTrace(st.px, st.py);
+      if (hit) {
+        st.hoverTrace = -1;
+        sparkAt(hit);
+        st.active = true;
+      }
+    },
+    { signal },
+  );
 
   if (symbolBtn) {
-    symbolBtn.addEventListener('pointerenter', () => {
-      st.onSymbol = true;
-    });
-    symbolBtn.addEventListener('pointerleave', () => {
-      st.onSymbol = false;
-    });
-    symbolBtn.addEventListener('pointerdown', (e) => {
-      if (e.button > 0) return;
-      setPointer(e);
-      st.suppressClick = false;
-      if (still() || st.scrollP > 0.15 || st.introAmt > 0.2) return;
-      st.holding = true;
-      st.holdTime = 0;
-      st.blasted = false;
-      st.downX = e.clientX;
-      st.downY = e.clientY;
-      setHint('charge');
-    });
+    symbolBtn.addEventListener(
+      'pointerenter',
+      () => {
+        st.onSymbol = true;
+      },
+      { signal },
+    );
+    symbolBtn.addEventListener(
+      'pointerleave',
+      () => {
+        st.onSymbol = false;
+      },
+      { signal },
+    );
+    symbolBtn.addEventListener(
+      'pointerdown',
+      (e) => {
+        if (e.button > 0) return;
+        setPointer(e);
+        st.suppressClick = false;
+        if (still() || st.scrollP > 0.15 || st.introAmt > 0.2) return;
+        st.holding = true;
+        st.holdTime = 0;
+        st.blasted = false;
+        st.downX = e.clientX;
+        st.downY = e.clientY;
+        setHint('charge');
+      },
+      { signal },
+    );
     // clic, toucher, Entrée ou Espace : symbole suivant (sauf à la fin d'un appui long ;
     // un clic venu du clavier a detail = 0 et passe toujours)
-    symbolBtn.addEventListener('click', (e) => {
-      if (st.suppressClick && e.detail !== 0) {
+    symbolBtn.addEventListener(
+      'click',
+      (e) => {
+        if (st.suppressClick && e.detail !== 0) {
+          st.suppressClick = false;
+          return;
+        }
         st.suppressClick = false;
-        return;
-      }
-      st.suppressClick = false;
-      if (!st.morphing) nextForm();
-    });
-    symbolBtn.addEventListener('contextmenu', (e) => {
-      if (st.holding || st.blasted) e.preventDefault();
-    });
+        if (!st.morphing) nextForm();
+      },
+      { signal },
+    );
+    symbolBtn.addEventListener(
+      'contextmenu',
+      (e) => {
+        if (st.holding || st.blasted) e.preventDefault();
+      },
+      { signal },
+    );
   }
   function release(e, cancelled) {
     if (!st.holding) return;
@@ -557,22 +594,22 @@ function start() {
     if (st.blasted || cancelled) st.suppressClick = true;
     if (e && e.pointerType !== 'mouse') st.hasPointer = false;
   }
-  window.addEventListener('pointerup', (e) => release(e, false));
-  window.addEventListener('pointercancel', () => release(null, true));
+  window.addEventListener('pointerup', (e) => release(e, false), { signal });
+  window.addEventListener('pointercancel', () => release(null, true), { signal });
 
   const refreshStill = () => {
     st.hint = '';
     setHint('idle');
     st.dirty = true;
   };
-  window.addEventListener(EVT_PAUSE, refreshStill);
-  if (motionQuery.addEventListener) motionQuery.addEventListener('change', refreshStill);
+  window.addEventListener(EVT_PAUSE, refreshStill, { signal });
+  if (motionQuery.addEventListener) motionQuery.addEventListener('change', refreshStill, { signal });
   else motionQuery.addListener(refreshStill);
 
   const onIntro = () => {
     if (st.introStart < 0) st.introStart = st.time;
   };
-  window.addEventListener(EVT_INTRO, onIntro);
+  window.addEventListener(EVT_INTRO, onIntro, { signal });
   if (state.introFired) onIntro();
 
   /* ---------- boucle ---------- */
@@ -839,14 +876,46 @@ function start() {
   let rafId = 0;
   let last = 0;
   let onScreen = true;
+  let screenIo = null;
+  let sizeRo = null;
+  // garde-fou : si les premières images arrivent trop lentement (carte graphique lente, rendu logiciel non signalé),
+  // la scène s'arrête et le symbole dessiné reprend sa place : mieux vaut un symbole immobile qu'une page qui rame.
+  // On mesure l'écart entre deux images, ce que voit le visiteur : une carte graphique lente espace les images sans
+  // allonger le calcul de tick(). La première image ne compte pas (dernières préparations de la carte graphique).
+  const PROBE = 8; // images mesurées après la première
+  const SLOW = 50; // ms entre deux images : au-delà, l'écran a manqué plusieurs rafraîchissements
+  const SLOW_LIMIT = 3; // à la troisième image lente parmi les mesurées, la scène s'arrête
+  let frames = 0;
+  let slowFrames = 0;
+  let disabled = false;
+  /** Arrête la scène pour de bon : boucle, écouteurs et observateurs retirés, mémoire de la carte graphique rendue. */
+  function giveUp() {
+    disabled = true;
+    cancelAnimationFrame(rafId);
+    rafId = 0;
+    teardown.abort();
+    if (screenIo) screenIo.disconnect();
+    if (sizeRo) sizeRo.disconnect();
+    if (symbolBtn) symbolBtn.hidden = true;
+    if (tag) tag.classList.remove('is-on');
+    renderer.dispose();
+    renderer.forceContextLoss();
+    signalGlReady(false);
+  }
   function loop(now) {
     rafId = requestAnimationFrame(loop);
-    const dt = clamp((now - last) / 1000, 0, 0.05);
+    const gap = now - last;
+    const dt = clamp(gap / 1000, 0, 0.05);
     last = now;
     tick(dt);
+    if (frames <= PROBE) {
+      frames += 1;
+      if (frames > 1 && gap > SLOW) slowFrames += 1;
+      if (slowFrames >= SLOW_LIMIT) giveUp();
+    }
   }
   function syncLoop() {
-    const run = onScreen && !document.hidden;
+    const run = !disabled && onScreen && !document.hidden;
     if (run && !rafId) {
       last = performance.now();
       rafId = requestAnimationFrame(loop);
@@ -858,12 +927,13 @@ function start() {
     }
   }
   if ('IntersectionObserver' in window) {
-    new IntersectionObserver(([entry]) => {
+    screenIo = new IntersectionObserver(([entry]) => {
       onScreen = entry.isIntersecting;
       syncLoop();
-    }).observe(hero);
+    });
+    screenIo.observe(hero);
   }
-  document.addEventListener('visibilitychange', syncLoop);
+  document.addEventListener('visibilitychange', syncLoop, { signal });
 
   // la taille du hero change avec la fenêtre, le chargement de la police ou la barre d'adresse mobile
   let layoutQueued = false;
@@ -872,15 +942,15 @@ function start() {
     layoutQueued = true;
     requestAnimationFrame(() => {
       layoutQueued = false;
-      layout();
+      if (!disabled) layout();
     });
   };
   if ('ResizeObserver' in window) {
-    const ro = new ResizeObserver(queueLayout);
-    ro.observe(canvas);
-    ro.observe(stage);
-    if (controls) ro.observe(controls);
-  } else window.addEventListener('resize', queueLayout);
+    sizeRo = new ResizeObserver(queueLayout);
+    sizeRo.observe(canvas);
+    sizeRo.observe(stage);
+    if (controls) sizeRo.observe(controls);
+  } else window.addEventListener('resize', queueLayout, { signal });
 
   if (symbolBtn) symbolBtn.hidden = false;
   setHint('idle');

@@ -21,9 +21,9 @@ function makeFormatter(timeZone) {
 }
 
 export function initClocks() {
-  const formatters = { mtl: makeFormatter(ZONES.mtl), dla: makeFormatter(ZONES.dla) };
   const clocks = $$('[data-clock]');
   if (!clocks.length) return;
+  let formatters = null;
   const tick = () => {
     if (state.paused) return;
     const now = new Date();
@@ -34,6 +34,19 @@ export function initClocks() {
       el.dateTime = now.toISOString();
     });
   };
-  tick();
-  setInterval(tick, 1000);
+  // les horloges démarrent quand elles approchent de l'écran : préparer les fuseaux horaires coûte un long calcul au
+  // démarrage d'un téléphone, pour des horloges placées loin sous le premier écran
+  const start = () => {
+    if (formatters) return;
+    formatters = { mtl: makeFormatter(ZONES.mtl), dla: makeFormatter(ZONES.dla) };
+    tick();
+    setInterval(tick, 1000);
+  };
+  if (!('IntersectionObserver' in window)) return start();
+  const io = new IntersectionObserver((entries) => {
+    if (!entries.some((entry) => entry.isIntersecting)) return;
+    io.disconnect();
+    start();
+  }, { rootMargin: '50%' });
+  clocks.forEach((el) => io.observe(el));
 }

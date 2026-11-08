@@ -1,4 +1,7 @@
 ---
+# Modèle d'un article : un sujet développé, avec des parties. Pour quelques lignes : modele-note.md ;
+# pour une vidéo ou une page à voir : modele-ressource.md. Les lignes qui commencent par # sont ignorées.
+type: article
 title: Le titre de la note
 date: 2026-11-06
 summary: Une ou deux phrases qui donnent envie de lire. Elles s'affichent dans les listes et dans les aperçus de partage.

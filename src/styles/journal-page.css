@@ -6,3 +6,8 @@
 @import './components.css';
 @import './chrome.css';
 @import './journal.css';
+
+/* les pages du journal affichent un mot d'accent dès leur titre : sa police se charge tout de suite */
+:root {
+  --font-accent-ready: var(--font-accent);
+}

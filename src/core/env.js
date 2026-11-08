@@ -20,11 +20,29 @@ export const $ = (selector, context = document) => context.querySelector(selecto
 export const $$ = (selector, context = document) => Array.from(context.querySelectorAll(selector));
 export const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
 
-/** Lit un jeton de tokens.css ; tokenPx convertit rem ou px en pixels. */
+/** Lit un jeton de tokens.css ; tokenPx convertit rem ou px en pixels, tokenMs une durée (s ou ms) en millisecondes. */
 const rootStyle = () => getComputedStyle(root);
 export const token = (name) => rootStyle().getPropertyValue(name).trim();
 export function tokenPx(name) {
   const value = token(name);
   const n = parseFloat(value) || 0;
   return value.endsWith('rem') ? n * (parseFloat(rootStyle().fontSize) || 16) : n;
+}
+export function tokenMs(name) {
+  const value = token(name);
+  const n = parseFloat(value) || 0;
+  return value.endsWith('ms') ? n : n * 1000;
+}
+
+/** L'élément que vise l'adresse de la page (/#contact, un onglet du journal, un lien du CV), s'il existe. */
+export function hashTarget() {
+  const hash = window.location.hash.slice(1);
+  if (!hash) return null;
+  let id = hash;
+  try {
+    id = decodeURIComponent(hash);
+  } catch (err) {
+    /* adresse mal encodée : prise telle quelle */
+  }
+  return document.getElementById(id);
 }

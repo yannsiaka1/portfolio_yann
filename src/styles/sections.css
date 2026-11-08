@@ -79,7 +79,6 @@
 
 .projects__list > .projects__panel {
   width: 100%;
-  max-width: var(--container);
   margin-inline: auto;
   padding-inline: var(--gutter);
 }
@@ -712,6 +711,17 @@ video.browser__shot {
   color: var(--text-2);
 }
 
+/* ce que l'IA fait à cette couche, et ce que je garde : l'étiquette à l'accent (9,9:1), le reste en texte secondaire */
+.skills__ai {
+  max-width: var(--measure);
+  color: var(--text-2);
+}
+
+.skills__ai-label {
+  font-weight: var(--fw-semibold);
+  color: var(--accent);
+}
+
 .iso {
   position: relative;
   width: min(100%, var(--iso-size));
@@ -726,6 +736,32 @@ video.browser__shot {
   inset: 0;
   transform: var(--iso-tilt);
   transform-style: preserve-3d;
+}
+
+/* Profondeur de chaque couche dans la pile : la couche 0 (analyse) au sommet, la couche 5 (mise en ligne) en bas.
+   Écrite ici plutôt que dans un attribut style des pages : la politique de sécurité du site refuse les styles en ligne. */
+.iso__layer[data-layer="0"] {
+  --z: 5;
+}
+
+.iso__layer[data-layer="1"] {
+  --z: 4;
+}
+
+.iso__layer[data-layer="2"] {
+  --z: 3;
+}
+
+.iso__layer[data-layer="3"] {
+  --z: 2;
+}
+
+.iso__layer[data-layer="4"] {
+  --z: 1;
+}
+
+.iso__layer[data-layer="5"] {
+  --z: 0;
 }
 
 /* La pile s'ouvre autour de la couche choisie : celles du dessus montent, celles du dessous descendent
