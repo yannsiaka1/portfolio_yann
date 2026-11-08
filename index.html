@@ -129,7 +129,8 @@
       <div class="section-head">
         <p class="eyebrow" id="competences-label">Compétences</p>
         <h2 id="competences-title" data-reveal="words">Toute la pile, <em>couche par couche.</em></h2>
-        <p class="section-head__intro">Ce que je sais faire à chaque couche, de l’analyse du besoin à la mise en ligne, avec les outils que j’utilise vraiment. Langages&nbsp;: PHP, JavaScript, TypeScript, Python, SQL, HTML et CSS.</p>
+        <p class="section-head__intro">Six couches, de l’analyse du besoin à la mise en ligne, avec les outils que j’utilise vraiment.</p>
+        <p class="section-head__intro">Je travaille comme une équipe actuelle&nbsp;: branches, pull requests et revue de code, Scrum ou Kanban, mise en ligne à chaque fusion. L’IA accélère l’écriture&nbsp;; je garde la main sur l’architecture, la relecture et les tests, et je réponds de chaque ligne fusionnée.</p>
       </div>
       <div class="skills">
         <div class="skills__aside" aria-hidden="true">
@@ -148,16 +149,16 @@
         <div class="skills__layers">
           <div class="skills__panel" id="couche-analyse" data-layer="0">
             <h3>Analyse et modélisation</h3>
-            <p class="skills__lead">Ce qu’on comprend avant de dessiner&nbsp;: le besoin du client, traduit en modèles que toute l’équipe peut lire.</p>
-            <ul class="checks" role="list">
-              <li>Écouter le client&nbsp;: le problème à résoudre, qui utilise le service, pour faire quoi, sur quel appareil</li>
-              <li>Analyser l’existant avant de proposer une solution</li>
-              <li>Modéliser en UML&nbsp;: cas d’utilisation, classes et séquences</li>
-              <li>Découper le besoin en jalons et en tâches, pour que chacun sache ce qui vient ensuite</li>
-            </ul>
             <ul class="tools" translate="no" role="list" aria-label="Outils">
-              <li>UML</li><li>GitHub Projects</li>
+              <li><svg class="icon" aria-hidden="true" focusable="false"><use href="./icons.svg#uml"></use></svg>UML</li><li><svg class="icon" aria-hidden="true" focusable="false"><use href="./icons.svg#github"></use></svg>GitHub Projects</li><li><svg class="icon" aria-hidden="true" focusable="false"><use href="./icons.svg#trello"></use></svg>Trello</li>
             </ul>
+            <p class="skills__lead">Comprendre le besoin avant de dessiner, et le traduire en modèles que toute l’équipe peut lire.</p>
+            <ul class="checks" role="list">
+              <li>Écouter le client&nbsp;: le problème à résoudre, qui utilise le service, sur quel appareil</li>
+              <li>Modéliser en UML&nbsp;: cas d’utilisation, classes et séquences</li>
+              <li>Découper le besoin en jalons et en tâches, en Scrum ou en Kanban</li>
+            </ul>
+            <p class="skills__ai"><strong class="skills__ai-label">Avec l’IA&nbsp;:</strong> je rédige le besoin et les critères d’acceptation, l’IA les questionne et relève les zones floues&nbsp;; je tranche avec le client.</p>
 <pre class="code" translate="no"><code><span class="c"># récit utilisateur, Easy Life</span>
 <span class="k">En tant que</span> voyageur,
 <span class="k">je veux</span> réserver ma place et payer par Mobile Money
@@ -166,59 +167,44 @@
 
           <div class="skills__panel" id="couche-design" data-layer="1">
             <h3>Design et expérience</h3>
-            <p class="skills__lead">Ce qu’on imagine avant de coder&nbsp;: des parcours simples et des écrans pensés pour ceux qui les utilisent.</p>
-            <ul class="checks" role="list">
-              <li>Dessiner les parcours, puis les maquettes et un prototype cliquable dans Figma</li>
-              <li>Simplifier chaque étape&nbsp;: un accueil guidé, puis une inscription en un seul formulaire</li>
-              <li>Décliner un design system&nbsp;: couleurs, typographie, composants, thème clair et sombre</li>
-              <li>Vérifier la lisibilité et l’accessibilité&nbsp;: contrastes, tailles, clavier, mobile d’abord</li>
-            </ul>
             <ul class="tools" translate="no" role="list" aria-label="Outils">
-              <li>Figma</li>
+              <li><svg class="icon" aria-hidden="true" focusable="false"><use href="./icons.svg#figma"></use></svg>Figma</li>
             </ul>
-<pre class="code" translate="no"><code><span class="c">/* deux thèmes, un seul jeu de jetons */</span>
-:root {
-  --navy: <span class="s">#0e1b3d</span>;
-  --sun: <span class="s">#ffc72c</span>;
-  --bg: <span class="s">#ffffff</span>;
-}
-[<span class="k">data-theme</span>=<span class="s">"dark"</span>] { --bg: var(--navy); }</code></pre>
+            <p class="skills__lead">Des parcours simples et des écrans pensés pour ceux qui les utilisent, avant la première ligne de code.</p>
+            <ul class="checks" role="list">
+              <li>Parcours, maquettes et prototype cliquable dans Figma</li>
+              <li>Un design system&nbsp;: couleurs, typographie, composants, thème clair et sombre</li>
+              <li>Lisibilité et accessibilité vérifiées&nbsp;: contrastes, clavier, mobile d’abord</li>
+            </ul>
+            <p class="skills__ai"><strong class="skills__ai-label">Avec l’IA&nbsp;:</strong> un audit automatique des contrastes et de l’accessibilité à chaque version&nbsp;; chaque correction passe par moi.</p>
           </div>
 
           <div class="skills__panel" id="couche-interface" data-layer="2">
             <h3>Interface</h3>
-            <p class="skills__lead">Ce que l’on touche&nbsp;: des écrans rapides, lisibles et accessibles.</p>
-            <ul class="checks" role="list">
-              <li>Intégrer une maquette Figma en composants React réutilisables et responsives</li>
-              <li>Brancher une interface sur une API REST&nbsp;: authentification, chargement, erreurs</li>
-              <li>Tester chaque écran sur un téléphone d’entrée de gamme et une connexion lente</li>
-              <li>Animer avec retenue (GSAP, three.js) en respectant l’accessibilité</li>
-            </ul>
             <ul class="tools" translate="no" role="list" aria-label="Outils">
-              <li>React</li><li>JavaScript</li><li>TypeScript</li><li>HTML</li><li>CSS</li><li>Tailwind</li><li>Bootstrap</li><li>Figma</li><li>Vite</li>
+              <li><svg class="icon" aria-hidden="true" focusable="false"><use href="./icons.svg#react"></use></svg>React</li><li><svg class="icon" aria-hidden="true" focusable="false"><use href="./icons.svg#javascript"></use></svg>JavaScript</li><li><svg class="icon" aria-hidden="true" focusable="false"><use href="./icons.svg#typescript"></use></svg>TypeScript</li><li><svg class="icon" aria-hidden="true" focusable="false"><use href="./icons.svg#html5"></use></svg>HTML</li><li><svg class="icon" aria-hidden="true" focusable="false"><use href="./icons.svg#css"></use></svg>CSS</li><li><svg class="icon" aria-hidden="true" focusable="false"><use href="./icons.svg#tailwindcss"></use></svg>Tailwind</li><li><svg class="icon" aria-hidden="true" focusable="false"><use href="./icons.svg#bootstrap"></use></svg>Bootstrap</li><li><svg class="icon" aria-hidden="true" focusable="false"><use href="./icons.svg#vite"></use></svg>Vite</li>
             </ul>
-<pre class="code" translate="no"><code><span class="k">export function</span> <span class="f">TripCard</span>({ trip }) {
-  <span class="k">return</span> (
-    &lt;<span class="k">article</span> className=<span class="s">"trip"</span>&gt;
-      &lt;<span class="k">h3</span>&gt;{trip.from} → {trip.to}&lt;/<span class="k">h3</span>&gt;
-      &lt;<span class="f">SeatsLeft</span> count={trip.seats} /&gt;
-    &lt;/<span class="k">article</span>&gt;
-  );
-}</code></pre>
+            <p class="skills__lead">Des écrans rapides, lisibles et accessibles, branchés sur une API.</p>
+            <ul class="checks" role="list">
+              <li>Composants React réutilisables et responsives, à partir d’une maquette Figma</li>
+              <li>Branchement sur une API REST&nbsp;: authentification, chargement, erreurs</li>
+              <li>Animations sobres (GSAP, three.js) qui respectent l’accessibilité</li>
+            </ul>
+            <p class="skills__ai"><strong class="skills__ai-label">Avec l’IA&nbsp;:</strong> Claude Code écrit une première version des composants&nbsp;; je relis l’aperçu, je demande les corrections et je valide avant de fusionner.</p>
           </div>
 
           <div class="skills__panel" id="couche-api" data-layer="3">
             <h3>API et back-end</h3>
-            <p class="skills__lead">Ce qui répond&nbsp;: des règles métier côté serveur, jamais dans l’interface.</p>
-            <ul class="checks" role="list">
-              <li>Concevoir une API REST avec Laravel&nbsp;: routes, contrôleurs minces, validation, ressources JSON</li>
-              <li>Sécuriser l’accès&nbsp;: jetons Sanctum, rôles et autorisations</li>
-              <li>Traiter un paiement de façon asynchrone&nbsp;: files d’attente, idempotence, relances</li>
-              <li>Écrire des outils et des services en Python (<span translate="no">Flask</span>, Django, Tkinter)</li>
-            </ul>
             <ul class="tools" translate="no" role="list" aria-label="Outils">
-              <li>PHP</li><li>Laravel</li><li>Sanctum</li><li>Python</li><li>Flask</li><li>Django</li><li>Node.js</li><li>Postman</li>
+              <li><svg class="icon" aria-hidden="true" focusable="false"><use href="./icons.svg#php"></use></svg>PHP</li><li><svg class="icon" aria-hidden="true" focusable="false"><use href="./icons.svg#laravel"></use></svg>Laravel</li><li>Sanctum</li><li><svg class="icon" aria-hidden="true" focusable="false"><use href="./icons.svg#python"></use></svg>Python</li><li><svg class="icon" aria-hidden="true" focusable="false"><use href="./icons.svg#flask"></use></svg>Flask</li><li><svg class="icon" aria-hidden="true" focusable="false"><use href="./icons.svg#django"></use></svg>Django</li><li><svg class="icon" aria-hidden="true" focusable="false"><use href="./icons.svg#nodedotjs"></use></svg>Node.js</li><li><svg class="icon" aria-hidden="true" focusable="false"><use href="./icons.svg#postman"></use></svg>Postman</li>
             </ul>
+            <p class="skills__lead">Les règles métier vivent côté serveur, jamais dans l’interface.</p>
+            <ul class="checks" role="list">
+              <li>API REST avec Laravel&nbsp;: routes, contrôleurs minces, validation, ressources JSON</li>
+              <li>Accès sécurisé&nbsp;: jetons Sanctum, rôles et autorisations</li>
+              <li>Paiements traités de façon asynchrone&nbsp;: files d’attente, idempotence, relances</li>
+            </ul>
+            <p class="skills__ai"><strong class="skills__ai-label">Avec l’IA&nbsp;:</strong> des brouillons de tests et de documentation&nbsp;; chaque règle d’accès, je la relis moi-même.</p>
 <pre class="code" translate="no"><code><span class="k">public function</span> <span class="f">store</span>(StoreBookingRequest $request)
 {
     $booking = Booking::<span class="f">create</span>($request-&gt;<span class="f">validated</span>());
@@ -229,16 +215,16 @@
 
           <div class="skills__panel" id="couche-donnees" data-layer="4">
             <h3>Données</h3>
+            <ul class="tools" translate="no" role="list" aria-label="Outils">
+              <li>SQL</li><li><svg class="icon" aria-hidden="true" focusable="false"><use href="./icons.svg#postgresql"></use></svg>PostgreSQL</li><li>PostGIS</li><li><svg class="icon" aria-hidden="true" focusable="false"><use href="./icons.svg#mysql"></use></svg>MySQL</li><li><svg class="icon" aria-hidden="true" focusable="false"><use href="./icons.svg#sqlite"></use></svg>SQLite</li><li><svg class="icon" aria-hidden="true" focusable="false"><use href="./icons.svg#redis"></use></svg>Redis</li><li>DBML</li>
+            </ul>
             <p class="skills__lead">Ce qui se souvient&nbsp;: je modélise avant de coder.</p>
             <ul class="checks" role="list">
-              <li>Modéliser une base relationnelle&nbsp;: schéma DBML, contraintes, index</li>
-              <li>Écrire des migrations ordonnées et réversibles</li>
-              <li>Organiser PostgreSQL en schémas, avec PostGIS pour les données de localisation</li>
-              <li>Accélérer les lectures fréquentes avec Redis</li>
+              <li>Base relationnelle modélisée en DBML&nbsp;: contraintes et index</li>
+              <li>Migrations ordonnées et réversibles</li>
+              <li>PostgreSQL en schémas, PostGIS pour la localisation, Redis pour les lectures fréquentes</li>
             </ul>
-            <ul class="tools" translate="no" role="list" aria-label="Outils">
-              <li>SQL</li><li>PostgreSQL</li><li>PostGIS</li><li>MySQL</li><li>SQLite</li><li>Redis</li><li>DBML</li>
-            </ul>
+            <p class="skills__ai"><strong class="skills__ai-label">Avec l’IA&nbsp;:</strong> des propositions d’index et de requêtes&nbsp;; je les vérifie avant de les adopter.</p>
 <pre class="code" translate="no"><code><span class="k">Table</span> trips {
   id uuid [pk]
   route_id uuid [ref: &gt; routes.id]
@@ -251,21 +237,16 @@
 
           <div class="skills__panel" id="couche-outils" data-layer="5">
             <h3>Outils et mise en ligne</h3>
-            <p class="skills__lead">Ce qui tient en ligne&nbsp;: un travail suivi, versionné et déployé proprement.</p>
-            <ul class="checks" role="list">
-              <li>Versionner avec Git et GitHub&nbsp;: branches, pull requests, revues</li>
-              <li>Organiser le travail en Scrum ou Kanban, sur <span translate="no">GitHub Projects</span> ou Trello</li>
-              <li>Conteneuriser avec Docker et <span translate="no">Laravel Sail</span></li>
-              <li>Déployer sur Vercel, <span translate="no">Render</span> ou <span translate="no">Railway</span>&nbsp;: domaine, courriel authentifié (SPF, DKIM, DMARC), référencement (SEO) et <span translate="no">Search Console</span></li>
-              <li>Documenter et tester&nbsp;: tests fonctionnels, <span translate="no">Postman</span>, décisions d’architecture</li>
-            </ul>
             <ul class="tools" translate="no" role="list" aria-label="Outils">
-              <li>Git</li><li>GitHub</li><li>GitHub Projects</li><li>Docker</li><li>WSL</li><li>Vercel</li><li>Render</li><li>Railway</li><li>Trello</li>
+              <li><svg class="icon" aria-hidden="true" focusable="false"><use href="./icons.svg#git"></use></svg>Git</li><li><svg class="icon" aria-hidden="true" focusable="false"><use href="./icons.svg#github"></use></svg>GitHub</li><li><svg class="icon" aria-hidden="true" focusable="false"><use href="./icons.svg#docker"></use></svg>Docker</li><li>WSL</li><li><svg class="icon" aria-hidden="true" focusable="false"><use href="./icons.svg#vercel"></use></svg>Vercel</li><li><svg class="icon" aria-hidden="true" focusable="false"><use href="./icons.svg#render"></use></svg>Render</li><li><svg class="icon" aria-hidden="true" focusable="false"><use href="./icons.svg#railway"></use></svg>Railway</li>
             </ul>
-<pre class="code" translate="no"><code><span class="c">$</span> git switch -c <span class="s">feat/refonte-ux</span>
-<span class="c">$</span> git commit -m <span class="s">"feat(refonte): page lisible et hiérarchisée"</span>
-<span class="c">$</span> gh pr create --base <span class="s">main</span>
-<span class="c">#</span> relecture, corrections, validation, puis fusion</code></pre>
+            <p class="skills__lead">Un travail suivi, versionné et mis en ligne proprement.</p>
+            <ul class="checks" role="list">
+              <li>Git et GitHub&nbsp;: branches, pull requests, revue de code</li>
+              <li>Conteneurs Docker et <span translate="no">Laravel Sail</span>&nbsp;; mise en ligne sur Vercel, <span translate="no">Render</span> ou <span translate="no">Railway</span></li>
+              <li>Domaine, courriel authentifié (SPF, DKIM, DMARC), référencement et <span translate="no">Search Console</span></li>
+            </ul>
+            <p class="skills__ai"><strong class="skills__ai-label">Avec l’IA&nbsp;:</strong> chaque pull request passe une relecture indépendante en plus de la mienne&nbsp;; la fusion reste ma décision.</p>
           </div>
         </div>
       </div>
@@ -755,8 +736,8 @@
     <div class="container">
       <div class="section-head">
         <p class="eyebrow" id="journal-label">Journal</p>
-        <h2 id="journal-title" data-reveal="words">Mes notes, <em>déployées en continu.</em></h2>
-        <p class="section-head__intro">Notes techniques, avis sur des outils et veille&nbsp;: ce que j’apprends en construisant, écrit au fil des projets.</p>
+        <h2 id="journal-title" data-reveal="words">Ce que j’apprends, <em>au jour le jour.</em></h2>
+        <p class="section-head__intro">Une séance de code, une documentation lue, une vidéo regardée&nbsp;: j’en garde l’essentiel ici, en quelques lignes ou en article.</p>
       </div>
       <!-- journal:latest -->
       <p class="journal__all"><a class="link link--standalone" href="./journal/">Toutes les notes</a></p>

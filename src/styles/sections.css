@@ -712,6 +712,17 @@ video.browser__shot {
   color: var(--text-2);
 }
 
+/* ce que l'IA fait à cette couche, et ce que je garde : l'étiquette à l'accent (9,9:1), le reste en texte secondaire */
+.skills__ai {
+  max-width: var(--measure);
+  color: var(--text-2);
+}
+
+.skills__ai-label {
+  font-weight: var(--fw-semibold);
+  color: var(--accent);
+}
+
 .iso {
   position: relative;
   width: min(100%, var(--iso-size));

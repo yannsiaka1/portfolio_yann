@@ -129,7 +129,8 @@
       <div class="section-head">
         <p class="eyebrow" id="competences-label">Skills</p>
         <h2 id="competences-title" data-reveal="words">The whole stack, <em>layer by layer.</em></h2>
-        <p class="section-head__intro">What I can do at each layer, from requirements analysis to going live, with the tools I actually use. Languages: PHP, JavaScript, TypeScript, Python, SQL, HTML and CSS.</p>
+        <p class="section-head__intro">Six layers, from understanding the need to going live, with the tools I actually use.</p>
+        <p class="section-head__intro">I work like a modern team: branches, pull requests and code review, Scrum or Kanban, deployment on every merge. AI speeds up the writing; I stay in charge of architecture, review and testing, and I answer for every line that gets merged.</p>
       </div>
       <div class="skills">
         <div class="skills__aside" aria-hidden="true">
@@ -148,16 +149,16 @@
         <div class="skills__layers">
           <div class="skills__panel" id="couche-analyse" data-layer="0">
             <h3>Analysis and modelling</h3>
-            <p class="skills__lead">What we understand before drawing anything: the client’s requirements, turned into models the whole team can read.</p>
-            <ul class="checks" role="list">
-              <li>Listen to the client: the problem to solve, who uses the service, for what, on which device</li>
-              <li>Analyze what already exists before proposing a solution</li>
-              <li>Model in UML: use cases, classes and sequences</li>
-              <li>Break the requirements down into milestones and tasks, so everyone knows what comes next</li>
-            </ul>
             <ul class="tools" translate="no" role="list" aria-label="Tools">
-              <li>UML</li><li>GitHub Projects</li>
+              <li><svg class="icon" aria-hidden="true" focusable="false"><use href="../icons.svg#uml"></use></svg>UML</li><li><svg class="icon" aria-hidden="true" focusable="false"><use href="../icons.svg#github"></use></svg>GitHub Projects</li><li><svg class="icon" aria-hidden="true" focusable="false"><use href="../icons.svg#trello"></use></svg>Trello</li>
             </ul>
+            <p class="skills__lead">Understanding the need before drawing, and turning it into models the whole team can read.</p>
+            <ul class="checks" role="list">
+              <li>Listening to the client: the problem to solve, who uses the service, on which device</li>
+              <li>Modelling in UML: use cases, classes and sequences</li>
+              <li>Breaking the need into milestones and tasks, with Scrum or Kanban</li>
+            </ul>
+            <p class="skills__ai"><strong class="skills__ai-label">With AI:</strong> I write the need and the acceptance criteria, AI questions them and flags the vague spots; I settle them with the client.</p>
 <pre class="code" translate="no"><code><span class="c"># user story, Easy Life</span>
 <span class="k">As a</span> traveller,
 <span class="k">I want</span> to book my seat and pay with Mobile Money
@@ -166,59 +167,44 @@
 
           <div class="skills__panel" id="couche-design" data-layer="1">
             <h3>Design and experience</h3>
-            <p class="skills__lead">What we imagine before coding: simple journeys and screens designed for the people who use them.</p>
-            <ul class="checks" role="list">
-              <li>Map the user journeys, then design the mockups and a clickable prototype in Figma</li>
-              <li>Simplify every step: guided onboarding, then sign-up in a single form</li>
-              <li>Build out a design system: colours, typography, components, light and dark themes</li>
-              <li>Check readability and accessibility: contrast, sizes, keyboard, mobile first</li>
-            </ul>
             <ul class="tools" translate="no" role="list" aria-label="Tools">
-              <li>Figma</li>
+              <li><svg class="icon" aria-hidden="true" focusable="false"><use href="../icons.svg#figma"></use></svg>Figma</li>
             </ul>
-<pre class="code" translate="no"><code><span class="c">/* two themes, one set of tokens */</span>
-:root {
-  --navy: <span class="s">#0e1b3d</span>;
-  --sun: <span class="s">#ffc72c</span>;
-  --bg: <span class="s">#ffffff</span>;
-}
-[<span class="k">data-theme</span>=<span class="s">"dark"</span>] { --bg: var(--navy); }</code></pre>
+            <p class="skills__lead">Simple user journeys and screens designed for the people who use them, before the first line of code.</p>
+            <ul class="checks" role="list">
+              <li>User journeys, mockups and a clickable prototype in Figma</li>
+              <li>A design system: colours, typography, components, light and dark themes</li>
+              <li>Readability and accessibility checked: contrast, keyboard, mobile first</li>
+            </ul>
+            <p class="skills__ai"><strong class="skills__ai-label">With AI:</strong> an automatic contrast and accessibility audit on every version; every fix goes through me.</p>
           </div>
 
           <div class="skills__panel" id="couche-interface" data-layer="2">
             <h3>Interface</h3>
-            <p class="skills__lead">What you touch: fast, readable and accessible screens.</p>
-            <ul class="checks" role="list">
-              <li>Turn a Figma mockup into reusable, responsive React components</li>
-              <li>Connect an interface to a REST API: authentication, loading states, errors</li>
-              <li>Test every screen on an entry-level phone and a slow connection</li>
-              <li>Animate with restraint (GSAP, three.js) while respecting accessibility</li>
-            </ul>
             <ul class="tools" translate="no" role="list" aria-label="Tools">
-              <li>React</li><li>JavaScript</li><li>TypeScript</li><li>HTML</li><li>CSS</li><li>Tailwind</li><li>Bootstrap</li><li>Figma</li><li>Vite</li>
+              <li><svg class="icon" aria-hidden="true" focusable="false"><use href="../icons.svg#react"></use></svg>React</li><li><svg class="icon" aria-hidden="true" focusable="false"><use href="../icons.svg#javascript"></use></svg>JavaScript</li><li><svg class="icon" aria-hidden="true" focusable="false"><use href="../icons.svg#typescript"></use></svg>TypeScript</li><li><svg class="icon" aria-hidden="true" focusable="false"><use href="../icons.svg#html5"></use></svg>HTML</li><li><svg class="icon" aria-hidden="true" focusable="false"><use href="../icons.svg#css"></use></svg>CSS</li><li><svg class="icon" aria-hidden="true" focusable="false"><use href="../icons.svg#tailwindcss"></use></svg>Tailwind</li><li><svg class="icon" aria-hidden="true" focusable="false"><use href="../icons.svg#bootstrap"></use></svg>Bootstrap</li><li><svg class="icon" aria-hidden="true" focusable="false"><use href="../icons.svg#vite"></use></svg>Vite</li>
             </ul>
-<pre class="code" translate="no"><code><span class="k">export function</span> <span class="f">TripCard</span>({ trip }) {
-  <span class="k">return</span> (
-    &lt;<span class="k">article</span> className=<span class="s">"trip"</span>&gt;
-      &lt;<span class="k">h3</span>&gt;{trip.from} → {trip.to}&lt;/<span class="k">h3</span>&gt;
-      &lt;<span class="f">SeatsLeft</span> count={trip.seats} /&gt;
-    &lt;/<span class="k">article</span>&gt;
-  );
-}</code></pre>
+            <p class="skills__lead">Fast, readable and accessible screens, connected to an API.</p>
+            <ul class="checks" role="list">
+              <li>Reusable, responsive React components, built from a Figma mockup</li>
+              <li>Connected to a REST API: authentication, loading, errors</li>
+              <li>Restrained animations (GSAP, three.js) that respect accessibility</li>
+            </ul>
+            <p class="skills__ai"><strong class="skills__ai-label">With AI:</strong> Claude Code writes a first version of the components; I review the preview, ask for changes and approve before merging.</p>
           </div>
 
           <div class="skills__panel" id="couche-api" data-layer="3">
             <h3>API and back end</h3>
-            <p class="skills__lead">What responds: business rules on the server, never in the interface.</p>
-            <ul class="checks" role="list">
-              <li>Design a REST API with Laravel: routes, thin controllers, validation, JSON resources</li>
-              <li>Secure access: Sanctum tokens, roles and permissions</li>
-              <li>Process payments asynchronously: queues, idempotency, retries</li>
-              <li>Write tools and services in Python (<span translate="no">Flask</span>, Django, Tkinter)</li>
-            </ul>
             <ul class="tools" translate="no" role="list" aria-label="Tools">
-              <li>PHP</li><li>Laravel</li><li>Sanctum</li><li>Python</li><li>Flask</li><li>Django</li><li>Node.js</li><li>Postman</li>
+              <li><svg class="icon" aria-hidden="true" focusable="false"><use href="../icons.svg#php"></use></svg>PHP</li><li><svg class="icon" aria-hidden="true" focusable="false"><use href="../icons.svg#laravel"></use></svg>Laravel</li><li>Sanctum</li><li><svg class="icon" aria-hidden="true" focusable="false"><use href="../icons.svg#python"></use></svg>Python</li><li><svg class="icon" aria-hidden="true" focusable="false"><use href="../icons.svg#flask"></use></svg>Flask</li><li><svg class="icon" aria-hidden="true" focusable="false"><use href="../icons.svg#django"></use></svg>Django</li><li><svg class="icon" aria-hidden="true" focusable="false"><use href="../icons.svg#nodedotjs"></use></svg>Node.js</li><li><svg class="icon" aria-hidden="true" focusable="false"><use href="../icons.svg#postman"></use></svg>Postman</li>
             </ul>
+            <p class="skills__lead">Business rules live on the server, never in the interface.</p>
+            <ul class="checks" role="list">
+              <li>REST APIs with Laravel: routes, thin controllers, validation, JSON resources</li>
+              <li>Secure access: Sanctum tokens, roles and permissions</li>
+              <li>Payments processed asynchronously: queues, idempotency, retries</li>
+            </ul>
+            <p class="skills__ai"><strong class="skills__ai-label">With AI:</strong> draft tests and documentation; I review every access rule myself.</p>
 <pre class="code" translate="no"><code><span class="k">public function</span> <span class="f">store</span>(StoreBookingRequest $request)
 {
     $booking = Booking::<span class="f">create</span>($request-&gt;<span class="f">validated</span>());
@@ -229,16 +215,16 @@
 
           <div class="skills__panel" id="couche-donnees" data-layer="4">
             <h3>Data</h3>
-            <p class="skills__lead">What remembers: I model the data before I code.</p>
-            <ul class="checks" role="list">
-              <li>Model a relational database: DBML schema, constraints, indexes</li>
-              <li>Write ordered, reversible migrations</li>
-              <li>Organize PostgreSQL into schemas, with PostGIS for location data</li>
-              <li>Speed up frequent reads with Redis</li>
-            </ul>
             <ul class="tools" translate="no" role="list" aria-label="Tools">
-              <li>SQL</li><li>PostgreSQL</li><li>PostGIS</li><li>MySQL</li><li>SQLite</li><li>Redis</li><li>DBML</li>
+              <li>SQL</li><li><svg class="icon" aria-hidden="true" focusable="false"><use href="../icons.svg#postgresql"></use></svg>PostgreSQL</li><li>PostGIS</li><li><svg class="icon" aria-hidden="true" focusable="false"><use href="../icons.svg#mysql"></use></svg>MySQL</li><li><svg class="icon" aria-hidden="true" focusable="false"><use href="../icons.svg#sqlite"></use></svg>SQLite</li><li><svg class="icon" aria-hidden="true" focusable="false"><use href="../icons.svg#redis"></use></svg>Redis</li><li>DBML</li>
             </ul>
+            <p class="skills__lead">What remembers: I model before I code.</p>
+            <ul class="checks" role="list">
+              <li>Relational databases modelled in DBML: constraints and indexes</li>
+              <li>Ordered, reversible migrations</li>
+              <li>PostgreSQL in schemas, PostGIS for location data, Redis for frequent reads</li>
+            </ul>
+            <p class="skills__ai"><strong class="skills__ai-label">With AI:</strong> suggested indexes and queries; I check them before adopting them.</p>
 <pre class="code" translate="no"><code><span class="k">Table</span> trips {
   id uuid [pk]
   route_id uuid [ref: &gt; routes.id]
@@ -251,21 +237,16 @@
 
           <div class="skills__panel" id="couche-outils" data-layer="5">
             <h3>Tools and deployment</h3>
-            <p class="skills__lead">What stays online: work that is tracked, versioned and deployed cleanly.</p>
-            <ul class="checks" role="list">
-              <li>Use version control with Git and GitHub: branches, pull requests, reviews</li>
-              <li>Organize work with Scrum or Kanban, on <span translate="no">GitHub Projects</span> or Trello</li>
-              <li>Containerize with Docker and <span translate="no">Laravel Sail</span></li>
-              <li>Deploy on Vercel, <span translate="no">Render</span> or <span translate="no">Railway</span>: domain, authenticated email (SPF, DKIM, DMARC), SEO and <span translate="no">Search Console</span></li>
-              <li>Document and test: functional tests, <span translate="no">Postman</span>, architecture decisions</li>
-            </ul>
             <ul class="tools" translate="no" role="list" aria-label="Tools">
-              <li>Git</li><li>GitHub</li><li>GitHub Projects</li><li>Docker</li><li>WSL</li><li>Vercel</li><li>Render</li><li>Railway</li><li>Trello</li>
+              <li><svg class="icon" aria-hidden="true" focusable="false"><use href="../icons.svg#git"></use></svg>Git</li><li><svg class="icon" aria-hidden="true" focusable="false"><use href="../icons.svg#github"></use></svg>GitHub</li><li><svg class="icon" aria-hidden="true" focusable="false"><use href="../icons.svg#docker"></use></svg>Docker</li><li>WSL</li><li><svg class="icon" aria-hidden="true" focusable="false"><use href="../icons.svg#vercel"></use></svg>Vercel</li><li><svg class="icon" aria-hidden="true" focusable="false"><use href="../icons.svg#render"></use></svg>Render</li><li><svg class="icon" aria-hidden="true" focusable="false"><use href="../icons.svg#railway"></use></svg>Railway</li>
             </ul>
-<pre class="code" translate="no"><code><span class="c">$</span> git switch -c <span class="s">feat/ux-redesign</span>
-<span class="c">$</span> git commit -m <span class="s">"feat(redesign): readable, well-structured page"</span>
-<span class="c">$</span> gh pr create --base <span class="s">main</span>
-<span class="c">#</span> review, fixes, approval, then merge</code></pre>
+            <p class="skills__lead">Work that is tracked, versioned and deployed cleanly.</p>
+            <ul class="checks" role="list">
+              <li>Git and GitHub: branches, pull requests, code review</li>
+              <li>Docker containers and <span translate="no">Laravel Sail</span>; deployment on Vercel, <span translate="no">Render</span> or <span translate="no">Railway</span></li>
+              <li>Domain, authenticated email (SPF, DKIM, DMARC), SEO and <span translate="no">Search Console</span></li>
+            </ul>
+            <p class="skills__ai"><strong class="skills__ai-label">With AI:</strong> every pull request gets an independent review on top of mine; merging stays my decision.</p>
           </div>
         </div>
       </div>
@@ -755,8 +736,8 @@
     <div class="container">
       <div class="section-head">
         <p class="eyebrow" id="journal-label">Journal</p>
-        <h2 id="journal-title" data-reveal="words">My notes, <em>continuously deployed.</em></h2>
-        <p class="section-head__intro">Technical notes, opinions on tools and tech watch: what I learn while building, written as I go.</p>
+        <h2 id="journal-title" data-reveal="words">What I learn, <em>day by day.</em></h2>
+        <p class="section-head__intro">A coding session, a doc I read, a video I watched: I keep the essentials here, in a few lines or a full article.</p>
       </div>
       <!-- journal:latest -->
       <p class="journal__all"><a class="link link--standalone" href="journal/">All notes</a></p>
