@@ -69,14 +69,16 @@ export function scrollToY(y, duration = 0.6) {
   else window.scrollTo({ top: y, behavior: reduced() ? 'auto' : 'smooth' });
 }
 
-/** Défile jusqu'à une position (nombre) ou un élément, sous la barre collante.
+/** Défile jusqu'à une position (nombre) ou un élément, sous la barre collante, au même endroit que le navigateur
+ *  quand il suit une ancre seul (scroll-padding-top, base.css).
  *  Une section épinglée (projets) se vise par son espace d'épinglage, au ras de la barre : on arrive au début
  *  de la section, pas là où elle se trouve après l'épinglage.
  *  immediate : saut sans animation (arrivée par un lien vers une section, src/app.js). */
 export function scrollToTarget(target, { immediate = false } = {}) {
   const header = document.querySelector('.site-header');
   const headerH = header ? header.offsetHeight : 0;
-  let offset = typeof target === 'number' ? 0 : -(headerH + tokenPx('--space-3'));
+  const padding = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop);
+  let offset = typeof target === 'number' ? 0 : -(Number.isNaN(padding) ? headerH + tokenPx('--space-3') : padding);
   if (target instanceof Element && target.parentElement && target.parentElement.classList.contains('pin-spacer')) {
     target = target.parentElement;
     offset = -headerH;
