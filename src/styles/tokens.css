@@ -130,7 +130,7 @@
   --z-raised: 1; /* sections et texte du hero, au-dessus de la scène 3D */
   --z-header: 20;
   --z-skip: 30;
-  --z-grain: 35; /* grain de la pellicule, au-dessus de tout sauf du curseur et de l'intro */
+  --z-grain: 35; /* grain de la pellicule, au-dessus de tout sauf du curseur */
   --z-cursor: 40;
 
   /* ---------- hero et médias ---------- */

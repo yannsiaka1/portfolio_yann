@@ -9,7 +9,8 @@
 //                          aucun style en ligne (la politique les refuse)
 //   6. navigateur          sur le site servi avec les en-têtes de Vercel : aucune erreur ni violation de la
 //                          politique de sécurité, aucun défilement horizontal de 320 à 2 560 px, aucune erreur
-//                          d'accessibilité (axe, WCAG 2.2 AA), barre sur une ligne, cibles de 48 px
+//                          d'accessibilité (axe, WCAG 2.2 AA, et texte contrasté à 7:1, règle du projet), barre sur
+//                          une ligne, cibles de 48 px, un lien vers une section ouvre la page sur elle
 //
 // Le navigateur utilisé est Google Chrome installé sur l'ordinateur (ou Edge) ; pour en choisir un autre :
 //   CHROME_PATH=/chemin/vers/chrome npm run verify
@@ -281,7 +282,11 @@ try {
       await page.goto(origin + path, { waitUntil: 'networkidle' });
       await page.addScriptTag({ content: axeSource });
       const violations = await page.evaluate(async () => {
-        const res = await window.axe.run(document, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'] } });
+        // color-contrast-enhanced : le contraste du texte à 7:1 (4,5:1 pour les grands titres), règle du projet
+        const res = await window.axe.run(document, {
+          runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'] },
+          rules: { 'color-contrast-enhanced': { enabled: true } },
+        });
         return res.violations.map((v) => `${v.id} : ${v.help} (${v.nodes.length} élément(s), ex. ${v.nodes[0].target.join(' ')})`);
       });
       violations.forEach((v) => problems.push(`${path} à ${w} px : ${v}`));
@@ -289,7 +294,47 @@ try {
     }
   }
   if (problems.length) fail('erreurs d’accessibilité', problems);
-  ok(`aucune erreur d’accessibilité (axe, WCAG 2.2 AA) sur ${pages.length} pages, à 390 et 1 440 px`);
+  ok(`aucune erreur d’accessibilité (axe, WCAG 2.2 AA, contraste du texte à 7:1) sur ${pages.length} pages, à 390 et 1 440 px`);
+
+  // d) arrivée par un lien vers une section (onglets du journal, « Me contacter » sous une note, liens du CV), animations
+  //    actives, à la souris et au doigt : la page s'ouvre sur la section, juste sous la barre, son contenu affiché
+  const landing = () => {
+    const target = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+    if (!target) return { missing: true };
+    const header = document.querySelector('.site-header');
+    return {
+      top: Math.round(target.getBoundingClientRect().top),
+      under: Math.round(header ? header.getBoundingClientRect().bottom : 0),
+      // masqués par les révélations (src/sections/reveals.js) : bloc transparent, mot de titre sous son masque
+      hidden: [...target.querySelectorAll('[style]')].filter((el) => el.style.opacity === '0' || /115%/.test(el.style.translate)).length,
+    };
+  };
+  const landed = (label, r) => {
+    if (r.missing) problems.push(`${label} : la section visée n’existe pas`);
+    else if (r.top < r.under - 1 || r.top > r.under + 64) problems.push(`${label} : la section est à ${r.top} px du haut de l’écran (attendu : juste sous la barre, ${r.under} px)`);
+    else if (r.hidden) problems.push(`${label} : ${r.hidden} élément(s) de la section encore masqué(s)`);
+  };
+  const arrivals = ['/#competences', '/#contact', '/en/#contact'];
+  for (const [w, h, touch] of [[1440, 900, false], [390, 844, true]]) {
+    for (const path of arrivals) {
+      const page = await browser.newPage({ viewport: { width: w, height: h }, hasTouch: touch, isMobile: touch });
+      await page.goto(origin + path, { waitUntil: 'networkidle' });
+      await page.waitForTimeout(800);
+      landed(`${path} à ${w} px`, await page.evaluate(landing));
+      await page.close();
+    }
+  }
+  if (pages.includes('/journal/')) {
+    const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+    await page.goto(origin + '/journal/', { waitUntil: 'networkidle' });
+    await Promise.all([page.waitForURL(/\/#competences$/), page.click('.site-nav__link[href$="#competences"]')]);
+    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(800);
+    landed('onglet « Compétences » du journal', await page.evaluate(landing));
+    await page.close();
+  }
+  if (problems.length) fail('liens vers une section', problems);
+  ok('un lien vers une section ouvre la page sur elle, à la souris et au doigt, depuis le journal comme depuis l’extérieur');
 } finally {
   await browser.close();
   server.close();

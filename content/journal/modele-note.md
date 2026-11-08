@@ -1,5 +1,5 @@
 ---
-# Modèle d'une note courte : ce que j'ai appris aujourd'hui, en quelques lignes, sans intertitre.
+# Modèle d'une note courte : ce que j'ai appris aujourd'hui, en quelques lignes, sans intertitre ni image.
 # Elle se lit en entier dans la liste du journal. Le résumé est facultatif : sans lui, le début du texte sert de description.
 type: note
 title: Ce que j'ai appris aujourd'hui

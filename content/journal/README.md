@@ -13,7 +13,7 @@ Le but : garder une trace de ce que j'apprends au jour le jour, une séance de c
 
 | Format | Pour | Ce qui s'affiche | Modèle |
 | --- | --- | --- | --- |
-| `note` | ce que j'ai appris aujourd'hui, en quelques lignes, sans intertitre | le texte entier, directement dans la liste | `modele-note.md` |
+| `note` | ce que j'ai appris aujourd'hui, en quelques lignes, sans intertitre ni image | le texte entier, directement dans la liste | `modele-note.md` |
 | `article` | un sujet développé, avec des parties | le titre et le résumé ; le texte sur sa page, avec sa durée de lecture | `modele.md` |
 | `ressource` | une vidéo ou une page à voir, avec ce que j'en retiens | le résumé ; sur sa page, la vidéo YouTube (chargée au clic) ou le lien vers la page | `modele-ressource.md` |
 
@@ -60,7 +60,7 @@ Déposer l'image dans `images/`, de préférence en WebP, 1200 px de large au pl
 ![Ce que montre l'image, pour qui ne la voit pas](../images/capture-du-tableau-de-bord.webp "Légende facultative")
 ```
 
-La description entre crochets est lue par les lecteurs d'écran et s'affiche si l'image ne charge pas : toujours la remplir. Le chemin part de la note, comme sur GitHub : l'image s'affiche aussi dans l'aperçu Markdown de GitHub. Au build, Vite l'optimise et lui donne un nom unique. Une image introuvable arrête le build, avec son chemin.
+La description entre crochets est lue par les lecteurs d'écran et s'affiche si l'image ne charge pas : toujours la remplir. Le chemin part de la note, comme sur GitHub : l'image s'affiche aussi dans l'aperçu Markdown de GitHub. Au build, Vite l'optimise et lui donne un nom unique ; sa largeur et sa hauteur, lues dans le fichier (photo de téléphone tournée comprise), réservent sa place avant le chargement. Une image introuvable ou illisible arrête le build, avec son chemin. Une note courte (`type: note`) n'a pas d'image : elle se lit aussi sur la page d'accueil ; passer en article pour en mettre une.
 
 ## Liens
 

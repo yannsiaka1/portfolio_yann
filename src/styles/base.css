@@ -13,8 +13,11 @@ html {
   scroll-padding-top: calc(var(--header-h) + var(--space-3));
 }
 
+/* sans JavaScript, les ancres défilent en douceur. Avec, les scripts animent eux-mêmes les ancres (src/ui/nav.js), et
+   une adresse qui vise une section (/#contact) s'ouvre directement sur elle : une animation lancée par le navigateur au
+   chargement serait interrompue par le démarrage de la page (src/app.js) */
 @media (prefers-reduced-motion: no-preference) {
-  html {
+  html:not(.js) {
     scroll-behavior: smooth;
   }
 }

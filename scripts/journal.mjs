@@ -120,23 +120,57 @@ const smart = (s) => String(s).replace(/([\p{L}\p{N}])(?:'|&#39;)(?=[\p{L}\p{N}]
 const formatDate = (iso, lang) =>
   new Intl.DateTimeFormat(TEXT[lang].locale, { dateStyle: 'long', timeZone: 'UTC' }).format(new Date(`${iso}T00:00:00Z`));
 
-/** Début du texte d'une note, sans Markdown : la description d'une note courte qui n'a pas de résumé. */
+/** Entités HTML écrites dans le Markdown (« &amp; », « &#39; »…), rendues en caractères. */
+const ENTITIES = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ' };
+const decodeEntities = (s) =>
+  s.replace(/&(#x[0-9a-f]+|#[0-9]+|[a-z]+);/gi, (m, e) => {
+    if (e[0] !== '#') return ENTITIES[e.toLowerCase()] ?? m;
+    const code = e[1] === 'x' || e[1] === 'X' ? parseInt(e.slice(2), 16) : parseInt(e.slice(1), 10);
+    return code > 0 && code <= 0x10ffff ? String.fromCodePoint(code) : m;
+  });
+
+/** Début du texte d'une note, sans Markdown ni HTML : la description d'une note courte qui n'a pas de résumé. */
 function excerpt(md, max = 155) {
-  const text = md
-    .replace(/```[\s\S]*?```/g, ' ')
-    .replace(/!\[[^\]]*\]\([^)]*\)/g, ' ')
-    .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
-    .replace(/[`*>#|]/g, '')
+  const text = decodeEntities(
+    md
+      .replace(/```[\s\S]*?```/g, ' ') // blocs de code
+      .replace(/!\[[^\]]*\]\([^)]*\)/g, ' ') // images
+      .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1') // liens : le texte reste
+      .replace(/<((?:https?|mailto):[^>\s]+)>/gi, '$1') // liens automatiques <https://…> : l'adresse reste
+      .replace(/<br\s*\/?>/gi, ' ')
+      .replace(/<\/?[a-z][^>]*>/gi, '') // balises écrites dans la note (<span translate="no">…) : le texte reste
+      .replace(/^[ \t]*(?:>[ \t]?)+/gm, '') // citations
+      .replace(/^#{1,6}[ \t]+/gm, '') // intertitres
+      .replace(/[`*|]/g, ''), // code en ligne, gras et italique, tableaux
+  )
     .replace(/\s+/g, ' ')
     .trim();
   if (text.length <= max) return text;
-  return `${text.slice(0, text.lastIndexOf(' ', max)).replace(/[\s,;:.!?–—-]+$/, '')}…`;
+  // coupe au dernier espace ; un premier mot plus long que la description (une adresse) est coupé net
+  const space = text.lastIndexOf(' ', max);
+  let end = space > 0 ? space : max;
+  if (/[\uD800-\uDBFF]/.test(text[end - 1])) end -= 1; // jamais au milieu d'un émoji
+  return `${text.slice(0, end).replace(/[\s,;:.!?–—-]+$/, '')}…`;
 }
 
 /** Données structurées (schema.org) dans la page : « </ » échappé, un texte ne peut pas fermer la balise. */
 const jsonLd = (data) => `<script type="application/ld+json">${JSON.stringify(data).replace(/</g, '\\u003c')}</script>`;
 
-/** Largeur et hauteur d'une image WebP, PNG, JPEG ou GIF, lues dans son en-tête (null pour un autre format). */
+/** Photo JPEG tournée d'un quart de tour par son orientation EXIF (5 à 8, fréquent sur téléphone) : le navigateur
+ *  l'affiche tournée, largeur et hauteur échangées. t : début de l'en-tête TIFF, dans le segment APP1. */
+function exifQuarterTurn(b, t) {
+  const le = b.toString('ascii', t, t + 2) === 'II';
+  const u16 = (o) => (le ? b.readUInt16LE(o) : b.readUInt16BE(o));
+  const ifd = t + (le ? b.readUInt32LE(t + 4) : b.readUInt32BE(t + 4));
+  for (let k = 0, n = u16(ifd); k < n; k++) {
+    const entry = ifd + 2 + k * 12;
+    if (u16(entry) === 0x0112) return u16(entry + 8) >= 5 && u16(entry + 8) <= 8;
+  }
+  return false;
+}
+
+/** Largeur et hauteur affichées d'une image WebP, PNG, JPEG ou GIF, lues dans son en-tête (null pour un autre format).
+ *  Un fichier tronqué lève une erreur : l'appelant la rattache à sa note. */
 function imageSize(file) {
   const b = readFileSync(file);
   if (b.toString('ascii', 0, 4) === 'RIFF' && b.toString('ascii', 8, 12) === 'WEBP') {
@@ -148,11 +182,19 @@ function imageSize(file) {
   if (b.readUInt32BE(0) === 0x89504e47) return { w: b.readUInt32BE(16), h: b.readUInt32BE(20) };
   if (b.toString('ascii', 0, 3) === 'GIF') return { w: b.readUInt16LE(6), h: b.readUInt16LE(8) };
   if (b[0] === 0xff && b[1] === 0xd8) {
+    let turned = false;
     for (let i = 2; i + 9 < b.length; ) {
       const marker = b[i + 1];
-      if (marker >= 0xc0 && marker <= 0xcf && ![0xc4, 0xc8, 0xcc].includes(marker)) return { w: b.readUInt16BE(i + 7), h: b.readUInt16BE(i + 5) };
+      // l'orientation (segment APP1 « Exif ») précède toujours les dimensions
+      if (marker === 0xe1 && b.toString('latin1', i + 4, i + 10) === 'Exif\0\0') turned = exifQuarterTurn(b, i + 10);
+      if (marker >= 0xc0 && marker <= 0xcf && ![0xc4, 0xc8, 0xcc].includes(marker)) {
+        const w = b.readUInt16BE(i + 7);
+        const h = b.readUInt16BE(i + 5);
+        return turned ? { w: h, h: w } : { w, h };
+      }
       i += 2 + b.readUInt16BE(i + 2);
     }
+    throw new Error('JPEG sans dimensions');
   }
   return null;
 }
@@ -297,9 +339,14 @@ function readNotes(root, { drafts, strict, log }) {
         const slug = validate(data, file, name);
         if (data.draft && !drafts) continue;
         const type = data.type || 'article';
-        // une note courte se lit d'un trait dans la liste : pas d'intertitre (les blocs de code ne comptent pas)
-        if (type === 'note' && /^#{1,6}\s/m.test(body.replace(/```[\s\S]*?```/g, ''))) {
+        // une note courte se lit d'un trait dans la liste : pas d'intertitre, ni d'image (la liste de l'accueil est
+        // écrite après le traitement des fichiers par Vite : l'image n'y serait pas publiée). Le code ne compte pas.
+        const prose = type === 'note' ? body.replace(/```[\s\S]*?```/g, '').replace(/`[^`\n]*`/g, '') : '';
+        if (/^#{1,6}\s/m.test(prose)) {
           throw new NoteError(file, 'une note courte se lit d’un trait, sans intertitre : retirer les « ## », ou passer en « type: article ».');
+        }
+        if (/!\[[^\]]*\]\(|<img\b/i.test(prose)) {
+          throw new NoteError(file, 'une note courte n’a pas d’image : elle se lit aussi sur la page d’accueil. Passer en « type: article » pour garder l’image.');
         }
         const words = body.split(/\s+/).filter(Boolean).length;
         notes.push({
@@ -389,7 +436,11 @@ function renderBody(note, notes, root, fromDir = note.dir) {
           const path = posix.normalize(posix.join(mdDir, href));
           if (!existsSync(join(root, path))) throw new NoteError(note.file, `image introuvable : « ${href} » (cherchée dans ${path}).`);
           src = `/${path}`;
-          size = imageSize(join(root, path));
+          try {
+            size = imageSize(join(root, path));
+          } catch (err) {
+            throw new NoteError(note.file, `image illisible : « ${href} » (fichier vide ou tronqué ?). L’exporter de nouveau, en WebP de préférence.`);
+          }
         }
         // ses dimensions réservent sa place avant le chargement : le texte en dessous ne saute pas
         const dims = size ? ` width="${size.w}" height="${size.h}"` : '';
