@@ -6,20 +6,20 @@ tags: [portfolio, vite, accessibilité]
 draft: false
 ---
 
-Pour moi, un portfolio de développeur est déjà une démonstration. Plutôt que de partir d'un modèle tout fait, je l'ai écrit à la main : du HTML, du CSS et du JavaScript sans framework, assemblés par Vite. Voici les choix qui le structurent.
+Pour moi, un portfolio de développeur est déjà une démonstration. Plutôt que de partir d'un modèle tout fait, j'ai écrit le mien à la main : du HTML, du CSS et du JavaScript sans framework, assemblés par Vite. Voici les choix qui le structurent.
 
 ![La page d'accueil : mon nom, l'accroche et le symbole 3D à droite](../images/portfolio-accueil.webp "La page d'accueil, avec le symbole « </> » en 3D")
 
 ## Un établi plutôt qu'une vitrine
 
-J'ai voulu que le site ressemble à mon quotidien de développeur. L'invite de commande, en haut de la page, suit la section que vous lisez (`yann@siaka:~/projets$`). Ma méthode se lit comme un historique Git, et mon parcours comme un fichier CHANGELOG. L'idée : montrer ma façon de travailler autant que ce que j'ai livré.
+J'ai construit le site avec les objets de mon quotidien de développeur. L'invite de commande, en haut de la page, suit la section que vous lisez (`yann@siaka:~/projets$`). Ma méthode se lit comme un historique Git, et mon parcours comme un fichier CHANGELOG. L'idée : montrer ma façon de travailler autant que ce que j'ai livré.
 
 ## Mes outils
 
 - **Vite** construit le site : un serveur de développement instantané, et un build qui produit plusieurs pages, le français à la racine, l'anglais dans `en/`, et maintenant ce journal.
 - **GSAP et ScrollTrigger** animent les révélations au défilement, les projets épinglés et les couches des compétences.
 - **Lenis** adoucit le défilement, sauf quand l'appareil demande moins d'animations.
-- **three.js** dessine le symbole 3D. Je le charge après la page : le hero se lit sans l'attendre, et sur téléphone, il n'arrive qu'au premier geste du visiteur.
+- **three.js** dessine le symbole 3D. Je le charge après la page, et sur téléphone seulement au premier geste du visiteur : le hero se lit sans l'attendre.
 
 ## L'accessibilité d'abord
 

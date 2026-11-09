@@ -50,7 +50,7 @@ Sur github.com, dans le navigateur de l'ordinateur ou du téléphone, ouvrir le 
 
 ## La note du jour avec un assistant IA
 
-À la fin d'une séance de travail avec un assistant (Claude Code, par exemple), je lui demande le brouillon de la note du jour à partir de ce que nous avons fait, avec `draft: true`. Je le relis, je le réécris avec mes mots, puis je passe `draft` à `false`. L'assistant prépare ; ce que je publie, je l'ai relu et je le signe.
+À la fin d'une séance de travail avec un assistant (Claude Code, par exemple), je lui demande le brouillon de la note du jour à partir de ce que nous avons fait, avec `draft: true`. Je le relis, le réécris avec mes mots, puis passe `draft` à `false`. L'assistant prépare ; ce qui est publié, je l'ai relu et je le signe.
 
 ## Images
 
