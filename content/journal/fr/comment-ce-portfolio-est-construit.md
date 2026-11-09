@@ -1,13 +1,13 @@
 ---
-# Brouillon préparé à partir du README du dépôt : à relire et à réécrire avec tes mots avant de passer draft à false.
 title: Comment ce portfolio est construit
 date: 2026-11-06
 summary: Vite, GSAP, three.js et deux langues écrites à la main : les choix techniques derrière ce site, et ce que chacun apporte au visiteur.
 tags: [portfolio, vite, accessibilité]
-draft: true
+draft: false
+date: 2026-11-09
 ---
 
-Un portfolio de développeur est déjà une démonstration. Plutôt qu'un modèle tout fait, j'ai écrit celui-ci à la main : du HTML, du CSS et du JavaScript sans framework, assemblés par Vite. Voici les choix qui le structurent.
+Pour moi, un portfolio de développeur est déjà une démonstration. Plutôt qu'un modèle tout fait, j'ai écrit celui-ci à la main : du HTML, du CSS et du JavaScript sans framework, assemblés par Vite. Voici les choix qui le structurent.
 
 ![La page d'accueil : le nom, l'accroche et le symbole 3D à droite](../images/portfolio-accueil.webp "La page d'accueil, avec le symbole « </> » en 3D")
 
