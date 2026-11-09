@@ -1,8 +1,8 @@
 # Journal
 
-Chaque fichier Markdown de `fr/` ou de `en/` devient une page du site. Pas de base de données ni d'interface d'administration : une note est un fichier, et la publier, c'est faire un commit.
+Chaque fichier Markdown de `fr/` ou de `en/` devient une page de mon site. Pas de base de données ni d'interface d'administration : une note est un fichier, et je la publie par un commit.
 
-Le but : garder une trace de ce que j'apprends au jour le jour, une séance de code, une documentation lue, une vidéo regardée. Mieux vaut une note courte chaque semaine qu'un long article tous les six mois : les dates se voient.
+Mon but : garder une trace de ce que j'apprends au jour le jour, qu'il s'agisse d'une séance de code, d'une documentation lue ou d'une vidéo regardée. Je préfère une note courte chaque semaine à un long article tous les six mois : les dates se voient.
 
 | Fichier | Page en ligne |
 | --- | --- |
@@ -50,7 +50,7 @@ Sur github.com, dans le navigateur de l'ordinateur ou du téléphone, ouvrir le 
 
 ## La note du jour avec un assistant IA
 
-À la fin d'une séance de travail avec un assistant (Claude Code, par exemple), lui demander d'écrire le brouillon de la note du jour à partir de ce qui a été fait, avec `draft: true`. Le relire, le réécrire avec ses propres mots, puis passer `draft` à `false`. L'assistant prépare ; ce qui est publié, je l'ai relu et je le signe.
+À la fin d'une séance de travail avec un assistant (Claude Code, par exemple), je lui demande le brouillon de la note du jour à partir de ce que nous avons fait, avec `draft: true`. Je le relis, je le réécris avec mes mots, puis je passe `draft` à `false`. L'assistant prépare ; ce que je publie, je l'ai relu et je le signe.
 
 ## Images
 
