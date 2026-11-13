@@ -9,7 +9,7 @@ tags: [veille, laravel]
 draft: true
 ---
 
-Le premier paragraphe pose le sujet : ce que tu as essayé, appris ou pensé, et pourquoi c'est utile à quelqu'un d'autre.
+Le premier paragraphe pose le sujet : ce que j'ai essayé, appris ou pensé, et pourquoi c'est utile à quelqu'un d'autre.
 
 ## Une partie
 

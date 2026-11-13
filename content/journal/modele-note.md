@@ -8,6 +8,6 @@ tags: [laravel]
 draft: true
 ---
 
-Le constat en une ou deux phrases : ce qui bloquait, ce qui a marché, et pourquoi.
+Le constat, en une ou deux phrases : ce qui me bloquait, ce qui a marché, et pourquoi.
 
 Une commande ou un bout de code si ça aide : `php artisan queue:work --tries=3`.
