@@ -538,7 +538,7 @@ function page({ root, lang, dir, path, alternate, title: rawTitle, description: 
     `<meta property="og:locale" content="${T.og}">`,
     `<meta property="og:title" content="${esc(title)}">`,
     `<meta property="og:description" content="${esc(description)}">`,
-    `<meta property="og:image" content="__SITE_URL__/og/yann-siaka.png">`,
+    `<meta property="og:image" content="__SITE_URL__/og/yann-siaka-3d.png">`,
     `<meta property="og:image:width" content="1200">`,
     `<meta property="og:image:height" content="630">`,
     `<meta property="og:image:alt" content="${esc(T.ogAlt)}">`,
@@ -714,7 +714,7 @@ ${note.html}
           inLanguage: T.htmlLang,
           url: `__SITE_URL__/${path}`,
           mainEntityOfPage: `__SITE_URL__/${path}`,
-          image: '__SITE_URL__/og/yann-siaka.png',
+          image: '__SITE_URL__/og/yann-siaka-3d.png',
           author: { '@type': 'Person', name: 'Yann Siaka', url: '__SITE_URL__/' },
         },
   });

@@ -31,13 +31,14 @@ scripts/verify.mjs         vérification complète, point par point (npm run ver
 scripts/journal.mjs        journal : notes Markdown → pages, section de l'accueil, flux Atom (extension Vite)
 scripts/site.mjs           adresse du site dans les pages, sitemap.xml, robots.txt, page 404 (extension Vite)
 scripts/icons.mjs          génère public/icons.svg à partir de Simple Icons (mode d'emploi en tête du fichier)
-scripts/og/og-image.html   source de l'image de partage public/og/yann-siaka.png
+scripts/symbole.mjs        photographie la vraie scène 3D : affiches du symbole et image de partage (npm run symbole)
+scripts/og/og-image.html   mise en page de l'image de partage public/og/yann-siaka-3d.png, autour du symbole (symbole.png)
 content/journal/           les notes du journal : fr/, en/, images/, trois modèles et le mode d'emploi (README.md)
 journal/, en/journal/      pages du journal, générées à chaque lancement de Vite (ignorées par Git : ne pas modifier)
-vercel.json                en-têtes de sécurité et de cache ; adresses toujours terminées par « / » (/en/, /journal/…)
+vercel.json                en-têtes de sécurité et de cache ; adresses toujours terminées par « / » (/en/, /journal/…) ; l'ancienne image de partage redirigée vers la nouvelle
 public/favicon.svg
 public/icons.svg           les logos des outils (hero et compétences), une seule couleur, générés par scripts/icons.mjs
-public/og/                 image de partage (LinkedIn, messageries), 1200 × 630
+public/og/                 image de partage (LinkedIn, messageries), 1200 × 630, avec le symbole en 3D
 public/posters/            affiches des vidéos de prototypes, posées à l'approche de leur carte (src/ui/posters.js)
 public/proofs/             pièce justificative agrandissable : attestation D-CLIC (720 et 1200 px)
 public/cv/yann-siaka-cv.pdf CV à télécharger (hero, Contact, pied de page), sans numéro de téléphone ; pour le mettre à jour, remplacer ce fichier en gardant son nom
@@ -51,6 +52,7 @@ src/
 │   ├── i18n.js            langue de la page, pour les textes écrits par les scripts : t({ fr, en })
 │   ├── gsap.js            GSAP + ScrollTrigger enregistrés une seule fois
 │   ├── scroll.js          défilement doux Lenis, synchronisé avec ScrollTrigger et avec le focus clavier
+│   ├── gpu.js             vraie carte graphique ou rendu par le processeur : testé avant de télécharger three.js
 │   └── text.js            découpe de texte et effet de brouillage « terminal »
 ├── ui/
 │   ├── nav.js             invite « yann@siaka:~/section$ », section en cours, menu mobile, ancres
@@ -191,10 +193,10 @@ Pour rafraîchir une capture : construire le site depuis son dépôt (`npm run b
 - **Projets** : épinglés seulement sur un écran d'au moins 1024 × 640 px où chaque carte tient en entier (mesuré au chargement et à chaque redimensionnement : c'est le cas sur les ordinateurs portables courants, jusqu'à une fenêtre de 1280 × 640) ; sinon les cartes s'empilent, et rien n'est jamais coupé. Aux flèches du clavier, un pas suffit pour passer à la carte suivante. La vidéo de l'ERP ne joue que visible, a son propre bouton lecture et pause, et ne se lance jamais seule avec « réduire les animations ».
 - **Compétences** : les six couches sont toutes dans la page, chacune avec son titre de niveau 3 ; la pile isométrique est décorative. Sur grand écran, elle reste à l'écran par une simple position collante, sans épinglage : rien n'est coupé, quelle que soit la hauteur de l'écran.
 - **Code** : les lignes trop longues passent à la ligne, aucune zone ne défile à l'horizontale.
-- **Sans WebGL 2** : un symbole `</>` dessiné en SVG remplace la scène, le reste du site fonctionne. Même repli sans accélération graphique (rendu par le processeur), ou si les premières images de la scène arrivent trop lentement : elle s'arrête alors pour de bon et rend la mémoire de la carte graphique.
-- **Mobile** : matériau métal à la place du verre réfractif, résolution limitée, interactions au toucher. La scène 3D ne se charge qu'au premier geste du visiteur (toucher, défilement), jamais avec l'économiseur de données ; le symbole dessiné tient sa place en attendant.
+- **Sans WebGL 2** : l'affiche du symbole, une photo de la vraie scène en relief (`src/assets/symbole/`, refaite par `npm run symbole`), remplace la scène ; le reste du site fonctionne. Même repli sans accélération graphique (robots, outils de mesure, machines virtuelles), avec l'économiseur de données, ou si elle tourne trop lentement (moins de 22 images par seconde en moyenne, le pire à-coup mis de côté ; décision en deux secondes environ sur une carte lente) : elle s'arrête alors pour de bon, l'affiche revient tout de suite, et la mémoire de la carte graphique est rendue dès que la carte a fini son travail en retard, sans figer la page. Même chose si le navigateur lui retire sa carte graphique (contexte WebGL perdu). Personne ne voit plus un symbole plat.
+- **Mobile** : matériau métal à la place du verre réfractif (l'affiche aussi), résolution limitée, interactions au toucher. La scène se charge sans attendre de geste : le visiteur qui regarde le hero sans toucher l'écran la voit vivre.
 - **Vidéos des prototypes** : lecture automatique, muettes, dès qu'elles arrivent à l'écran, sur ordinateur comme sur mobile ; arrêt hors de l'écran. Si un téléphone refuse la lecture automatique (mode économie d'énergie, données limitées), la vidéo repart au premier toucher. Jamais de lecture automatique avec « réduire les animations » : le bouton de lecture reste là.
-- three.js (≈ 140 ko gzip) arrive après la page : à la souris quand le navigateur est libre, au premier geste sur écran tactile.
+- three.js (≈ 140 ko gzip) arrive après la page, quand le navigateur est libre, et seulement si une vraie carte graphique est là : le test (`src/core/gpu.js`) précède le téléchargement, les robots et les outils de mesure ne le paient pas.
 - **Ouverture** (Lighthouse, mobile, médiane de cinq passages) : performance 94 (de 92 à 99), accessibilité 100, bonnes pratiques 100, référencement 100 ; plus grand élément affiché vers 2,4 s ; sur ordinateur, 100 partout. Le texte du hero se lit dès la première image ; l'interface démarre après le premier affichage, chaque section dans sa propre tâche ; les révélations passent par IntersectionObserver et Web Animations ; affiches des vidéos, police des mots d'accent et horloges arrivent après le premier écran.
 - **Sécurité** (`vercel.json`) : politique de sécurité du contenu stricte (rien ne se charge ni ne s'exécute hors du site, sauf le lecteur YouTube après un clic ; aucun style ni script en ligne, sauf une ligne autorisée par son empreinte, que `npm run verify` contrôle), pas d'intégration dans un cadre, référent limité, caméra, micro et géolocalisation coupés. Aucun service tiers ni témoin.
 - Le rendu 3D s'arrête quand le hero sort de l'écran ou que l'onglet est caché.
