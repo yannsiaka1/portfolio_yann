@@ -6,19 +6,19 @@ import '@fontsource-variable/jetbrains-mono'; // le code et les petites étiquet
 import './styles/index.css';
 
 import { initApp } from './app.js';
-import { coarse } from './core/env.js';
+import { hasGpu } from './core/gpu.js';
 import { signalGlReady } from './core/state.js';
 
 // l'interface démarre juste après le premier affichage : le hero, écrit en HTML et animé en CSS, n'attend pas les
 // scripts, et le navigateur peint la page avant de les exécuter
 requestAnimationFrame(() => setTimeout(initApp, 0));
 
-// three.js (le plus gros fichier du site) arrive après la page : le hero s'affiche et se lit sans l'attendre, et le
-// symbole dessiné tient sa place en attendant (et pour de bon sans WebGL 2).
-// - À la souris : quand le navigateur n'a plus rien d'urgent à faire, une fois la page chargée.
-// - Sur écran tactile : au premier geste (toucher, défilement, touche), pour ne pas dépenser la batterie et le forfait
-//   d'un téléphone avant que le visiteur ne s'intéresse à la page.
-// - Avec l'économiseur de données du navigateur : jamais, le symbole dessiné reste.
+// three.js (le plus gros fichier du site) arrive après la page, quand le navigateur n'a plus rien d'urgent à faire :
+// le hero s'affiche et se lit sans l'attendre, et l'affiche du symbole (une image fixe de la vraie scène) tient sa
+// place en attendant. Sur téléphone aussi, sans attendre un premier geste : le visiteur qui arrive de LinkedIn et
+// regarde le hero sans toucher l'écran voit la scène vivante.
+// Jamais sans vraie carte graphique (src/core/gpu.js, testé avant de télécharger three.js : les robots et les outils
+// de mesure ne paient rien), ni avec l'économiseur de données du navigateur : l'affiche reste.
 let started = false;
 const startScene = () => {
   if (started) return;
@@ -40,13 +40,11 @@ else afterLoad(() => whenIdle(accentReady));
 
 if (navigator.connection && navigator.connection.saveData) {
   signalGlReady(false);
-} else if (coarse) {
-  const gestures = ['pointerdown', 'keydown', 'wheel', 'scroll'];
-  const onFirstGesture = () => {
-    gestures.forEach((type) => window.removeEventListener(type, onFirstGesture));
-    whenIdle(startScene);
-  };
-  gestures.forEach((type) => window.addEventListener(type, onFirstGesture, { passive: true }));
 } else {
-  afterLoad(() => whenIdle(startScene));
+  afterLoad(() =>
+    whenIdle(() => {
+      if (hasGpu()) startScene();
+      else signalGlReady(false);
+    }),
+  );
 }

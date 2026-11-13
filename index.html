@@ -18,7 +18,7 @@
   <meta property="og:locale:alternate" content="en_CA">
   <meta property="og:title" content="Yann Siaka, développeur full-stack à Montréal">
   <meta property="og:description" content="De l’idée à la mise en ligne, je construis des applications web complètes et sur mesure. Votre vision devient mon objectif.">
-  <meta property="og:image" content="__SITE_URL__/og/yann-siaka.png">
+  <meta property="og:image" content="__SITE_URL__/og/yann-siaka-3d.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="Yann Siaka, développeur full-stack à Montréal. Votre vision devient mon objectif.">
@@ -102,7 +102,10 @@
         <p class="status status--live hero__availability">Disponible pour un poste ou une mission, au Canada ou à distance, selon vos besoins.</p>
       </div>
       <div class="hero__stage" id="heroStage">
-        <svg class="hero__fallback" viewBox="0 0 120 80" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><path d="M38 18 14 40l24 22M82 18l24 22-24 22M68 10 52 70" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <picture class="hero__fallback">
+          <source media="(pointer: coarse), (max-width: 699px), (max-height: 699px)" srcset="./src/assets/symbole/symbole-metal.webp">
+          <img src="./src/assets/symbole/symbole-verre.webp" width="1082" height="818" alt="" loading="lazy" decoding="async">
+        </picture>
         <button class="hero__symbol" id="heroSymbol" type="button" aria-label="Afficher le symbole suivant" hidden></button>
         <div class="hero__controls" id="heroControls" data-vibrate>
           <p class="hero__fig" aria-hidden="true"><span class="hero__fig-n" id="figN">01 / 07</span><code class="hero__fig-sym" id="figSym" translate="no">&lt;/&gt;</code><span class="hero__fig-name" id="figName">Interfaces</span><span class="hero__fig-bar"><i id="figBar"></i></span></p>

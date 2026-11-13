@@ -291,16 +291,29 @@
   opacity: 1;
 }
 
-/* Le symbole dessiné tient la place de la scène 3D tant qu'elle n'est pas prête : elle se charge après la page
-   (src/main.js), et jamais sans WebGL 2 ni sans JavaScript. Il s'efface quand la scène rend sa première image. */
+/* Affiche du symbole : une photo de la vraie scène 3D (npm run symbole), en verre ou en métal comme la scène. Elle
+   tient sa place tant que la scène n'est pas prête (elle se charge après la page, src/main.js), et pour de bon sans
+   carte graphique ni JavaScript : robots, outils de mesure, accélération désactivée. Elle s'efface quand la scène
+   rend sa première image.
+   Sa boîte reprend le calcul de la scène (layout, src/hero/scene.js) : le symbole occupe 84 % de la largeur, ou 86 %
+   de la hauteur laissée par la légende, et l'affiche le déborde de sa marge fondue. object-fit: contain retient,
+   comme la scène, la plus forte des deux contraintes : en passant de l'affiche à la scène, le symbole ne bouge pas. */
 .hero__fallback {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
-  padding: var(--space-4);
-  color: var(--accent);
+  pointer-events: none;
   transition: opacity var(--slow) var(--ease);
+}
+
+.hero__fallback img {
+  position: absolute;
+  left: 50%;
+  top: calc((100% - var(--symbol-legend)) / 2);
+  width: calc(var(--symbol-fit-w) * var(--symbol-poster-w));
+  max-width: none;
+  height: calc((100% - var(--symbol-legend)) * var(--symbol-fit-h) * var(--symbol-poster-h));
+  object-fit: contain;
+  translate: -50% -50%;
 }
 
 .gl-ready .hero__fallback {

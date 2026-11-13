@@ -13,6 +13,7 @@
 // Les couleurs et l'espacement viennent des jetons de src/styles/tokens.css.
 import * as THREE from 'three';
 import { coarse, motionQuery, reduced, clamp, token, tokenPx } from '../core/env.js';
+import { isSoftwareGl } from '../core/gpu.js';
 import { state, signalGlReady, EVT_INTRO, EVT_PAUSE } from '../core/state.js';
 import { scramble } from '../core/text.js';
 import { FORMS, POOL, TRACE_DEFS, ZTR, V } from './formations.js';
@@ -79,7 +80,8 @@ function start() {
 
   // three.js exige WebGL 2 : on vérifie avant de créer le renderer, pour un repli sans erreur. Sans accélération
   // matérielle (rendu par le processeur : machine virtuelle, carte graphique désactivée), le navigateur refuse le
-  // contexte (failIfMajorPerformanceCaveat) : chaque image coûterait plus que la page entière, le symbole dessiné reste
+  // contexte (failIfMajorPerformanceCaveat), et un rendu logiciel non signalé est reconnu à son nom (src/core/gpu.js) :
+  // chaque image coûterait plus que la page entière, l'affiche du symbole reste
   const attrs = { antialias: true, alpha: false, powerPreference: 'high-performance' };
   let context = null;
   try {
@@ -87,11 +89,7 @@ function start() {
   } catch (err) {
     context = null;
   }
-  if (!context) return signalGlReady(false);
-  // rendu logiciel que le navigateur ne signale pas toujours (SwiftShader, llvmpipe…) : lu dans le nom du moteur
-  const debug = context.getExtension('WEBGL_debug_renderer_info');
-  const gpu = String(context.getParameter(debug ? debug.UNMASKED_RENDERER_WEBGL : context.RENDERER));
-  if (/swiftshader|llvmpipe|softpipe|software|basic render/i.test(gpu)) return signalGlReady(false);
+  if (!context || isSoftwareGl(context)) return signalGlReady(false);
 
   let renderer;
   try {
@@ -878,15 +876,17 @@ function start() {
   let onScreen = true;
   let screenIo = null;
   let sizeRo = null;
-  // garde-fou : si les premières images arrivent trop lentement (carte graphique lente, rendu logiciel non signalé),
-  // la scène s'arrête et le symbole dessiné reprend sa place : mieux vaut un symbole immobile qu'une page qui rame.
-  // On mesure l'écart entre deux images, ce que voit le visiteur : une carte graphique lente espace les images sans
-  // allonger le calcul de tick(). La première image ne compte pas (dernières préparations de la carte graphique).
-  const PROBE = 8; // images mesurées après la première
-  const SLOW = 50; // ms entre deux images : au-delà, l'écran a manqué plusieurs rafraîchissements
-  const SLOW_LIMIT = 3; // à la troisième image lente parmi les mesurées, la scène s'arrête
+  // garde-fou : si la scène tourne durablement trop lentement (carte graphique faible), elle s'arrête et l'affiche du
+  // symbole reprend sa place : mieux vaut un symbole immobile qu'une page qui rame.
+  // On mesure l'écart moyen entre deux images, ce que voit le visiteur, sur une soixantaine d'images, après la mise en
+  // route. Un à-coup (premier défilement sur téléphone, chargement d'une image) ne suffit pas : seul un rythme lent
+  // tenu sur toute la mesure arrête la scène. Un premier réglage, sur les huit premières images, risquait de l'arrêter
+  // à tort, pendant le premier défilement d'un téléphone.
+  const WARMUP = 30; // images ignorées au démarrage : dernières préparations de la carte graphique
+  const PROBE = 60; // images mesurées ensuite, une seconde environ
+  const SLOW = 45; // ms d'écart moyen : sous 22 images par seconde, la scène ralentit toute la page
   let frames = 0;
-  let slowFrames = 0;
+  let gapSum = 0;
   let disabled = false;
   /** Arrête la scène pour de bon : boucle, écouteurs et observateurs retirés, mémoire de la carte graphique rendue. */
   function giveUp() {
@@ -908,10 +908,10 @@ function start() {
     const dt = clamp(gap / 1000, 0, 0.05);
     last = now;
     tick(dt);
-    if (frames <= PROBE) {
+    if (frames < WARMUP + PROBE) {
       frames += 1;
-      if (frames > 1 && gap > SLOW) slowFrames += 1;
-      if (slowFrames >= SLOW_LIMIT) giveUp();
+      if (frames > WARMUP) gapSum += gap;
+      if (frames === WARMUP + PROBE && gapSum / PROBE > SLOW) giveUp();
     }
   }
   function syncLoop() {
