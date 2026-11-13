@@ -874,43 +874,54 @@ function start() {
   // rendu seulement quand le hero est à l'écran et l'onglet visible
   let rafId = 0;
   let last = 0;
+  let drewLast = false;
   let onScreen = true;
   let screenIo = null;
   let sizeRo = null;
-  // garde-fou : si la scène tourne trop lentement (carte graphique faible), elle s'arrête et l'affiche du symbole
-  // reprend sa place : mieux vaut un symbole immobile qu'une page qui rame.
-  // On mesure l'écart entre deux images dessinées, ce que voit le visiteur, et on retient l'écart moyen, le pire mis
-  // de côté : un à-coup isolé (premier défilement sur téléphone, changement de police, pause du système) ne décide pas
-  // à lui seul ; une page qui se fige à répétition, si. La médiane, essayée d'abord, se laissait tromper : une carte
-  // saturée se bloque plusieurs secondes, puis rend d'un coup quelques images rapides, et la scène restait à deux
-  // images par seconde. Un réglage plus ancien, sur les huit premières images, l'arrêtait à tort au premier
-  // défilement. La mesure se compte en temps : sur une carte lente, la décision tombe en deux secondes environ.
+  // garde-fou : si la scène rend la page trop lente (carte graphique faible ou saturée, téléphone qui chauffe), elle
+  // s'arrête pour de bon et l'affiche du symbole reprend sa place : mieux vaut un symbole immobile qu'une page qui rame.
+  // On mesure, après chaque image dessinée, l'écart jusqu'à l'image suivante : ce que voit le visiteur. La mesure dure
+  // toute la visite, par fenêtres de 1,5 s, avec deux règles :
+  // - lenteur : sur une fenêtre, l'écart moyen dépasse 45 ms (moins de 22 images par seconde). Le pire écart de la
+  //   fenêtre est mis de côté : un à-coup isolé (premier défilement, changement de police, pause du système) ne décide
+  //   pas à lui seul. Sur une carte lente, la décision tombe en deux secondes environ ;
+  // - blocages : deux images d'au moins une seconde, à moins de 10 s de rendu l'une de l'autre. Une carte saturée se
+  //   fige plusieurs secondes, puis rend d'un coup quelques images rapides : sur une fenêtre, sa moyenne peut passer.
+  // Essayés avant : les huit premières images (la scène s'arrêtait à tort au premier défilement), la médiane (trompée
+  // par ces rafales), une seule mesure au départ (aveugle aux blocages espacés et au téléphone qui chauffe).
   const WARMUP = 500; // ms de mise en route ignorées (dernières préparations de la carte graphique)
-  const REWARM = 250; // ms ignorées à chaque reprise, quand le hero revient à l'écran pendant la mesure
-  const PROBE = 60; // images mesurées au plus…
-  const PROBE_MS = 1500; // …ou 1,5 s mesurées, sans le pire écart…
-  const PROBE_MIN = 3; // …sur au moins 3 images
+  const REWARM = 250; // ms ignorées à chaque reprise, quand le hero revient à l'écran
+  const WINDOW = 1500; // ms mesurées par fenêtre, sans son pire écart
   const SLOW = 45; // ms d'écart moyen : sous 22 images par seconde, la scène ralentit toute la page
+  const FREEZE = 1000; // ms : une image aussi longue fige la page
+  const FREEZE_GAP = 10000; // ms de rendu entre deux blocages, au plus, pour arrêter la scène
   let warmLeft = WARMUP;
-  let probeN = 0;
-  let probeSum = 0;
-  let probeMax = 0;
-  let probed = false;
+  let clock = 0; // ms de rendu mesurées depuis le départ (les pauses ne comptent pas)
+  let lastFreeze = -Infinity;
+  let winN = 0;
+  let winSum = 0;
+  let winMax = 0;
   let disabled = false;
-  /** Mesure du garde-fou, image dessinée après image dessinée, jusqu'à sa décision. */
+  /** Mesure du garde-fou : l'écart qui suit une image dessinée. */
   function probe(gap) {
-    if (probed) return;
+    clock += gap;
+    if (gap >= FREEZE) {
+      if (clock - gap - lastFreeze <= FREEZE_GAP) return giveUp();
+      lastFreeze = clock;
+    }
     if (warmLeft > 0) {
       warmLeft -= gap;
       return;
     }
-    probeN += 1;
-    probeSum += gap;
-    probeMax = Math.max(probeMax, gap);
-    const time = probeSum - probeMax;
-    if (probeN < PROBE && (time < PROBE_MS || probeN < PROBE_MIN)) return;
-    probed = true;
-    if (time / (probeN - 1) > SLOW) giveUp();
+    winN += 1;
+    winSum += gap;
+    winMax = Math.max(winMax, gap);
+    const time = winSum - winMax; // au moins deux écarts dès qu'il atteint la fenêtre
+    if (time < WINDOW) return;
+    if (time / (winN - 1) > SLOW) return giveUp();
+    winN = 0;
+    winSum = 0;
+    winMax = 0;
   }
   /** Arrête la scène pour de bon : boucle, écouteurs et observateurs retirés, affiche rendue tout de suite, mémoire
    *  de la carte graphique ensuite. */
@@ -924,23 +935,39 @@ function start() {
     if (sizeRo) sizeRo.disconnect();
     if (symbolBtn) symbolBtn.hidden = true;
     if (tag) tag.classList.remove('is-on');
+    // ce que la boucle tenait à jour : rien ne reste en plein appui (curseur, jauge) ni en plein tremblement
+    state.setHold(0);
+    state.cursorSym(false);
+    if (hint) hint.style.removeProperty('--charge');
+    vibEls.forEach((el) => {
+      el.style.transition = '';
+      el.style.transform = '';
+    });
     signalGlReady(false);
     renderer.dispose();
     releaseContext();
   }
   // Rendre le contexte d'un coup attend que la carte graphique ait fini les images en retard : sur une carte saturée,
-  // la page restait figée cinq secondes de plus. On pose un repère au bout de sa file de travail, on vérifie sans
-  // bloquer qu'elle l'a atteint, et seulement alors on rend le contexte.
+  // la page restait figée cinq secondes de plus. On pose un repère au bout de sa file de travail, on vérifie qu'elle
+  // l'a atteint (Chrome lit ce repère sans bloquer), et seulement alors on rend le contexte.
   function releaseContext() {
     const gl = renderer.getContext();
-    if (gl.isContextLost()) return;
+    if (gl.isContextLost()) {
+      // perdu par le navigateur : three.js a demandé son retour (preventDefault). S'il revient, on le rend aussitôt ;
+      // plus personne ne demande son retour, la perte est définitive
+      canvas.addEventListener('webglcontextrestored', () => renderer.forceContextLoss(), { once: true });
+      return;
+    }
     const fence = gl.fenceSync(gl.SYNC_GPU_COMMANDS_COMPLETE, 0);
     gl.flush();
-    let tries = 100; // 20 s au plus ; au-delà, le canvas caché garde sa mémoire jusqu'à la fin de la visite
+    // 100 essais, toutes les 200 ms (plus espacés dans un onglet caché) ; au-delà, la scène garde sa mémoire sur la
+    // carte graphique jusqu'à la fin de la visite, sous l'affiche
+    let tries = 100;
     const check = () => {
       if (gl.isContextLost()) return;
       if (fence && gl.getSyncParameter(fence, gl.SYNC_STATUS) !== gl.SIGNALED) {
         if (--tries > 0) setTimeout(check, 200);
+        else gl.deleteSync(fence);
         return;
       }
       if (fence) gl.deleteSync(fence);
@@ -951,15 +978,18 @@ function start() {
   function loop(now) {
     rafId = requestAnimationFrame(loop);
     const gap = now - last;
-    const dt = clamp(gap / 1000, 0, 0.05);
     last = now;
-    if (tick(dt)) probe(gap);
+    // l'écart qui se termine ici porte le coût de l'image précédente : mesuré seulement si elle a été dessinée
+    if (drewLast) probe(gap);
+    if (disabled) return;
+    drewLast = tick(clamp(gap / 1000, 0, 0.05));
   }
   function syncLoop() {
     const run = !disabled && onScreen && !document.hidden;
     if (run && !rafId) {
       last = performance.now();
-      if (!probed) warmLeft = Math.max(warmLeft, REWARM);
+      drewLast = false;
+      warmLeft = Math.max(warmLeft, REWARM);
       rafId = requestAnimationFrame(loop);
     } else if (!run && rafId) {
       cancelAnimationFrame(rafId);
@@ -1010,8 +1040,8 @@ function start() {
     renderer.compile(scene, camera);
     renderer.render(scene, camera);
   } catch (err) {
-    if (symbolBtn) symbolBtn.hidden = true;
-    return signalGlReady(false);
+    // arrêt complet : sans lui, l'observateur d'écran relancerait la boucle sous l'affiche
+    return giveUp();
   }
   signalGlReady(true);
   syncLoop();
