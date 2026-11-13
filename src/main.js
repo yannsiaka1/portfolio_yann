@@ -43,7 +43,7 @@ if (navigator.connection && navigator.connection.saveData) {
 } else {
   afterLoad(() =>
     whenIdle(() => {
-      if (hasGpu()) startScene();
+      if (hasGpu(document.getElementById('gl'))) startScene();
       else signalGlReady(false);
     }),
   );

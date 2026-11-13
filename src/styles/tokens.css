@@ -138,11 +138,11 @@
   --stage-h: clamp(14rem, 34svh, 21rem); /* scène au-dessus du nom, sous 1024 px */
   --stage-min-h: 26rem; /* scène à droite du nom, dès 1024 px */
   --canvas-overflow: 30svh; /* le canvas déborde sous la section Projets, qui le recouvre */
-  /* affiche du symbole (hero.css) : mêmes proportions que la scène (FIT_W, FIT_H dans src/hero/scene.js) */
+  /* symbole du hero : la scène (src/hero/scene.js) et son affiche (hero.css) le placent avec ces mêmes jetons */
   --symbol-fit-w: 84%; /* part de la largeur de la scène occupée par le symbole */
   --symbol-fit-h: 0.86; /* part de la hauteur laissée par la légende */
   --symbol-legend: 6.5rem; /* légende sous le symbole (numéro, nom, consigne) et son écart */
-  --symbol-poster-w: 1.33; /* affiche / symbole, marge fondue comprise : donnés par npm run symbole */
+  --symbol-poster-w: 1.33; /* affiche / symbole, marge fondue comprise : npm run symbole cadre la photo ainsi */
   --symbol-poster-h: 1.47;
   --ratio-shot: 16 / 10; /* captures ordinateur (1440 × 900) */
   --ratio-phone: 360 / 779; /* captures mobiles (390 × 844) */

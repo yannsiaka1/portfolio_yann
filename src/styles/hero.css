@@ -295,9 +295,11 @@
    tient sa place tant que la scène n'est pas prête (elle se charge après la page, src/main.js), et pour de bon sans
    carte graphique ni JavaScript : robots, outils de mesure, accélération désactivée. Elle s'efface quand la scène
    rend sa première image.
-   Sa boîte reprend le calcul de la scène (layout, src/hero/scene.js) : le symbole occupe 84 % de la largeur, ou 86 %
-   de la hauteur laissée par la légende, et l'affiche le déborde de sa marge fondue. object-fit: contain retient,
-   comme la scène, la plus forte des deux contraintes : en passant de l'affiche à la scène, le symbole ne bouge pas. */
+   Sa boîte reprend le calcul de la scène (layout, src/hero/scene.js) : le symbole occupe --symbol-fit-w de la
+   largeur, ou --symbol-fit-h de la hauteur laissée par la légende, et l'affiche le déborde de sa marge fondue.
+   object-fit: contain retient, comme la scène, la plus forte des deux contraintes : affiche et scène posent le symbole
+   au même endroit, à la même taille (à quelques pixels près sur très grand écran, où la scène écarte davantage sa
+   légende). À son arrivée, la scène assemble son symbole, sauf avec « réduire les animations ». */
 .hero__fallback {
   position: absolute;
   inset: 0;

@@ -1,6 +1,9 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "trailingSlash": true,
+  "redirects": [
+    { "source": "/og/yann-siaka.png", "destination": "/og/yann-siaka-3d.png", "permanent": true }
+  ],
   "headers": [
     {
       "source": "/(.*)",

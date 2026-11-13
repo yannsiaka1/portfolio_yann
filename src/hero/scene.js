@@ -12,8 +12,8 @@
 // La boîte .hero__stage (CSS) décide où se pose le symbole ; le canvas couvre tout le hero.
 // Les couleurs et l'espacement viennent des jetons de src/styles/tokens.css.
 import * as THREE from 'three';
-import { coarse, motionQuery, reduced, clamp, token, tokenPx } from '../core/env.js';
-import { isSoftwareGl } from '../core/gpu.js';
+import { coarse, motionQuery, reduced, clamp, token, tokenPx, LIGHT_SCENE } from '../core/env.js';
+import { GL_ATTRS, isSoftwareGl } from '../core/gpu.js';
 import { state, signalGlReady, EVT_INTRO, EVT_PAUSE } from '../core/state.js';
 import { scramble } from '../core/text.js';
 import { FORMS, POOL, TRACE_DEFS, ZTR, V } from './formations.js';
@@ -23,8 +23,10 @@ import { t } from '../core/i18n.js';
 const CHARGE = 0.55; // durée de la charge avant l'éclatement (s)
 const CYCLE = 7; // temps passé sur chaque symbole (s)
 const MORPH = 1.35; // durée d'une transition entre symboles (s)
-const FIT_W = 0.84; // part de la largeur de la scène occupée par le symbole
-const FIT_H = 0.86; // part de la hauteur restante une fois la légende placée
+// part de la largeur de la scène occupée par le symbole, et de la hauteur restante une fois la légende placée : les
+// mêmes jetons placent l'affiche du symbole (tokens.css, hero.css), qui tient sa place tant qu'elle n'est pas prête
+const FIT_W = parseFloat(token('--symbol-fit-w')) / 100;
+const FIT_H = parseFloat(token('--symbol-fit-h'));
 const SYM_W = 3.5; // le symbole tient dans un rectangle d'environ 3,5 × 2,4 unités (formations.js)
 const SYM_H = 2.4;
 
@@ -78,14 +80,13 @@ function start() {
   if (!canvas || !hero || !stage) return signalGlReady(false);
   if (tag && coarse) tag.textContent = HINTS.touchTrace;
 
-  // three.js exige WebGL 2 : on vérifie avant de créer le renderer, pour un repli sans erreur. Sans accélération
-  // matérielle (rendu par le processeur : machine virtuelle, carte graphique désactivée), le navigateur refuse le
-  // contexte (failIfMajorPerformanceCaveat), et un rendu logiciel non signalé est reconnu à son nom (src/core/gpu.js) :
-  // chaque image coûterait plus que la page entière, l'affiche du symbole reste
-  const attrs = { antialias: true, alpha: false, powerPreference: 'high-performance' };
+  // three.js exige WebGL 2 : on vérifie avant de créer le renderer, pour un repli sans erreur. Le contexte est celui
+  // que le test de src/main.js (hasGpu) a déjà obtenu, retrouvé avec les mêmes réglages. Sans accélération matérielle
+  // (rendu par le processeur : machine virtuelle, carte graphique désactivée), il est refusé, ou reconnu au nom du
+  // moteur (src/core/gpu.js) : chaque image coûterait plus que la page entière, l'affiche du symbole reste
   let context = null;
   try {
-    context = canvas.getContext('webgl2', { ...attrs, failIfMajorPerformanceCaveat: true });
+    context = canvas.getContext('webgl2', GL_ATTRS);
   } catch (err) {
     context = null;
   }
@@ -93,7 +94,7 @@ function start() {
 
   let renderer;
   try {
-    renderer = new THREE.WebGLRenderer({ canvas, context, ...attrs });
+    renderer = new THREE.WebGLRenderer({ canvas, context, ...GL_ATTRS });
   } catch (err) {
     return signalGlReady(false);
   }
@@ -105,9 +106,8 @@ function start() {
   const BG = new THREE.Color(token('--bg'));
   const ACCENT = new THREE.Color(token('--accent'));
 
-  // verre réfractif sur ordinateur, métal poli (plus léger) sur mobile
-  const small = Math.min(window.innerWidth, window.innerHeight) < 700;
-  const hq = !coarse && !small;
+  // verre réfractif sur ordinateur, métal poli (plus léger) au toucher et sur petit écran : même règle que l'affiche
+  const hq = !window.matchMedia(LIGHT_SCENE).matches;
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
   renderer.setClearColor(BG, 1);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -859,15 +859,16 @@ function start() {
     st.dirty || st.morphing || st.holding || st.settling || st.flashing || st.active ||
     st.charge > 1e-3 || st.clickBurst > 1e-3 || st.kick > 1e-3 || st.introAmt > 1e-3 || st.hoverAmt > 1e-3;
 
+  /** Une image de la scène ; renvoie vrai si elle a été dessinée (le garde-fou ne mesure que celles-là). */
   function tick(dt) {
     st.time += dt;
     st.rect = canvas.getBoundingClientRect();
     st.scrollP = clamp((window.scrollY || 0) / (st.heroH * 0.85), 0, 1);
     update(dt, st.time);
-    if (!still() || busy()) {
-      renderer.render(scene, camera);
-      st.dirty = false;
-    }
+    if (still() && !busy()) return false;
+    renderer.render(scene, camera);
+    st.dirty = false;
+    return true;
   }
 
   // rendu seulement quand le hero est à l'écran et l'onglet visible
@@ -876,20 +877,45 @@ function start() {
   let onScreen = true;
   let screenIo = null;
   let sizeRo = null;
-  // garde-fou : si la scène tourne durablement trop lentement (carte graphique faible), elle s'arrête et l'affiche du
-  // symbole reprend sa place : mieux vaut un symbole immobile qu'une page qui rame.
-  // On mesure l'écart moyen entre deux images, ce que voit le visiteur, sur une soixantaine d'images, après la mise en
-  // route. Un à-coup (premier défilement sur téléphone, chargement d'une image) ne suffit pas : seul un rythme lent
-  // tenu sur toute la mesure arrête la scène. Un premier réglage, sur les huit premières images, risquait de l'arrêter
-  // à tort, pendant le premier défilement d'un téléphone.
-  const WARMUP = 30; // images ignorées au démarrage : dernières préparations de la carte graphique
-  const PROBE = 60; // images mesurées ensuite, une seconde environ
+  // garde-fou : si la scène tourne trop lentement (carte graphique faible), elle s'arrête et l'affiche du symbole
+  // reprend sa place : mieux vaut un symbole immobile qu'une page qui rame.
+  // On mesure l'écart entre deux images dessinées, ce que voit le visiteur, et on retient l'écart moyen, le pire mis
+  // de côté : un à-coup isolé (premier défilement sur téléphone, changement de police, pause du système) ne décide pas
+  // à lui seul ; une page qui se fige à répétition, si. La médiane, essayée d'abord, se laissait tromper : une carte
+  // saturée se bloque plusieurs secondes, puis rend d'un coup quelques images rapides, et la scène restait à deux
+  // images par seconde. Un réglage plus ancien, sur les huit premières images, l'arrêtait à tort au premier
+  // défilement. La mesure se compte en temps : sur une carte lente, la décision tombe en deux secondes environ.
+  const WARMUP = 500; // ms de mise en route ignorées (dernières préparations de la carte graphique)
+  const REWARM = 250; // ms ignorées à chaque reprise, quand le hero revient à l'écran pendant la mesure
+  const PROBE = 60; // images mesurées au plus…
+  const PROBE_MS = 1500; // …ou 1,5 s mesurées, sans le pire écart…
+  const PROBE_MIN = 3; // …sur au moins 3 images
   const SLOW = 45; // ms d'écart moyen : sous 22 images par seconde, la scène ralentit toute la page
-  let frames = 0;
-  let gapSum = 0;
+  let warmLeft = WARMUP;
+  let probeN = 0;
+  let probeSum = 0;
+  let probeMax = 0;
+  let probed = false;
   let disabled = false;
-  /** Arrête la scène pour de bon : boucle, écouteurs et observateurs retirés, mémoire de la carte graphique rendue. */
+  /** Mesure du garde-fou, image dessinée après image dessinée, jusqu'à sa décision. */
+  function probe(gap) {
+    if (probed) return;
+    if (warmLeft > 0) {
+      warmLeft -= gap;
+      return;
+    }
+    probeN += 1;
+    probeSum += gap;
+    probeMax = Math.max(probeMax, gap);
+    const time = probeSum - probeMax;
+    if (probeN < PROBE && (time < PROBE_MS || probeN < PROBE_MIN)) return;
+    probed = true;
+    if (time / (probeN - 1) > SLOW) giveUp();
+  }
+  /** Arrête la scène pour de bon : boucle, écouteurs et observateurs retirés, affiche rendue tout de suite, mémoire
+   *  de la carte graphique ensuite. */
   function giveUp() {
+    if (disabled) return;
     disabled = true;
     cancelAnimationFrame(rafId);
     rafId = 0;
@@ -898,26 +924,42 @@ function start() {
     if (sizeRo) sizeRo.disconnect();
     if (symbolBtn) symbolBtn.hidden = true;
     if (tag) tag.classList.remove('is-on');
-    renderer.dispose();
-    renderer.forceContextLoss();
     signalGlReady(false);
+    renderer.dispose();
+    releaseContext();
+  }
+  // Rendre le contexte d'un coup attend que la carte graphique ait fini les images en retard : sur une carte saturée,
+  // la page restait figée cinq secondes de plus. On pose un repère au bout de sa file de travail, on vérifie sans
+  // bloquer qu'elle l'a atteint, et seulement alors on rend le contexte.
+  function releaseContext() {
+    const gl = renderer.getContext();
+    if (gl.isContextLost()) return;
+    const fence = gl.fenceSync(gl.SYNC_GPU_COMMANDS_COMPLETE, 0);
+    gl.flush();
+    let tries = 100; // 20 s au plus ; au-delà, le canvas caché garde sa mémoire jusqu'à la fin de la visite
+    const check = () => {
+      if (gl.isContextLost()) return;
+      if (fence && gl.getSyncParameter(fence, gl.SYNC_STATUS) !== gl.SIGNALED) {
+        if (--tries > 0) setTimeout(check, 200);
+        return;
+      }
+      if (fence) gl.deleteSync(fence);
+      renderer.forceContextLoss();
+    };
+    setTimeout(check, 200);
   }
   function loop(now) {
     rafId = requestAnimationFrame(loop);
     const gap = now - last;
     const dt = clamp(gap / 1000, 0, 0.05);
     last = now;
-    tick(dt);
-    if (frames < WARMUP + PROBE) {
-      frames += 1;
-      if (frames > WARMUP) gapSum += gap;
-      if (frames === WARMUP + PROBE && gapSum / PROBE > SLOW) giveUp();
-    }
+    if (tick(dt)) probe(gap);
   }
   function syncLoop() {
     const run = !disabled && onScreen && !document.hidden;
     if (run && !rafId) {
       last = performance.now();
+      if (!probed) warmLeft = Math.max(warmLeft, REWARM);
       rafId = requestAnimationFrame(loop);
     } else if (!run && rafId) {
       cancelAnimationFrame(rafId);
@@ -934,6 +976,9 @@ function start() {
     screenIo.observe(hero);
   }
   document.addEventListener('visibilitychange', syncLoop, { signal });
+  // contexte perdu (téléphone à court de mémoire, carte graphique réinitialisée) : rien ne garantit son retour, la
+  // scène s'arrête et l'affiche reprend sa place, plutôt qu'une zone vide
+  canvas.addEventListener('webglcontextlost', giveUp, { signal });
 
   // la taille du hero change avec la fenêtre, le chargement de la police ou la barre d'adresse mobile
   let layoutQueued = false;

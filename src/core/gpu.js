@@ -12,17 +12,22 @@ export function isSoftwareGl(gl) {
   return SOFTWARE.test(String(gl.getParameter(debug ? debug.UNMASKED_RENDERER_WEBGL : gl.RENDERER)));
 }
 
-/** Test léger, avant de télécharger three.js : le navigateur peut-il créer un contexte WebGL 2 accéléré ?
- *  Le contexte d'essai est rendu aussitôt (loseContext), la scène crée le sien. */
-export function hasGpu() {
+/** Réglages du contexte WebGL 2 de la scène. failIfMajorPerformanceCaveat : le navigateur refuse le contexte s'il ne
+ *  peut le dessiner qu'avec le processeur (Firefox ne le respecte plus : le nom du moteur sert alors de filet). */
+export const GL_ATTRS = { antialias: true, alpha: false, powerPreference: 'high-performance', failIfMajorPerformanceCaveat: true };
+
+/** Test léger, avant de télécharger three.js : le canvas de la scène obtient-il un contexte WebGL 2 accéléré ?
+ *  Le contexte est créé avec les réglages de la scène et gardé : la scène le retrouvera tel quel (getContext rend le
+ *  même), sans en créer un second. Refusé, il est rendu aussitôt (loseContext). */
+export function hasGpu(canvas) {
   let gl = null;
   try {
-    gl = document.createElement('canvas').getContext('webgl2', { failIfMajorPerformanceCaveat: true });
-    return Boolean(gl) && !isSoftwareGl(gl);
+    gl = canvas ? canvas.getContext('webgl2', GL_ATTRS) : null;
   } catch (err) {
-    return false;
-  } finally {
-    const lose = gl && gl.getExtension('WEBGL_lose_context');
-    if (lose) lose.loseContext();
+    gl = null;
   }
+  if (gl && !isSoftwareGl(gl)) return true;
+  const lose = gl && gl.getExtension('WEBGL_lose_context');
+  if (lose) lose.loseContext();
+  return false;
 }

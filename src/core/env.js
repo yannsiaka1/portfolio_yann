@@ -15,6 +15,9 @@ export const reduced = () => reducedNow;
 export const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 /** Écran tactile : interactions au toucher, rendu 3D allégé. */
 export const coarse = window.matchMedia('(pointer: coarse)').matches;
+/** Scène allégée (métal poli au lieu du verre réfractif) : écran tactile ou petite fenêtre. La même requête choisit
+ *  l'affiche du symbole dans index.html et en/index.html (<source media>) : les deux doivent rester identiques. */
+export const LIGHT_SCENE = '(pointer: coarse), (max-width: 699.98px), (max-height: 699.98px)';
 
 export const $ = (selector, context = document) => context.querySelector(selector);
 export const $$ = (selector, context = document) => Array.from(context.querySelectorAll(selector));
