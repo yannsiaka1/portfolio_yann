@@ -19,7 +19,7 @@ J'ai construit le site avec les objets de mon quotidien de développeur. L'invit
 - **Vite** construit le site : un serveur de développement instantané, et un build qui produit plusieurs pages, le français à la racine, l'anglais dans `en/`, et maintenant ce journal.
 - **GSAP et ScrollTrigger** animent les révélations au défilement, les projets épinglés et les couches des compétences.
 - **Lenis** adoucit le défilement, sauf quand l'appareil demande moins d'animations.
-- **three.js** dessine le symbole 3D. Je le charge après la page, et sur téléphone seulement au premier geste du visiteur : le hero se lit sans l'attendre.
+- **three.js** dessine le symbole 3D. Je le charge après la page : le hero se lit sans l'attendre.
 
 ## L'accessibilité d'abord
 
